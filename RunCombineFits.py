@@ -6,30 +6,50 @@ import logging
 logging.basicConfig(filename="CombineHistory.log",filemode="w",level=logging.INFO,format='%(asctime)s %(message)s')
 
 parser = argparse.ArgumentParser(description="Centralized script for running combine fits on dynamically changing analysis categories.")
-parser.add_argument('year',choices=['2016','2017','2018'],help="Specify the year to run the fit for")
+parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Specify the year(s) to run the fit for",required=True)
+parser.add_argument('--channels',nargs="+",choices=['mt','et','tt'],help="specify the channels to create data cards for",required=True)
+parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
+parser.add_argument('--RunBinByBinLess',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
 
-args = parser.parse_args()
+args = parser.parse_args() 
 
-if args.year == "2016":
-    raise RuntimeError("2016 not implemented! Implement me!")
-elif args.year == "2017":
-    os.system("SMHTT2017_mt")
-    TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh2017mt.root")
-elif args.year == "2018":
-    os.system("SMHTT2018_mt")
-    TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh2018mt.root")
+DataCardCreationCommand = ""
 
+ChannelCards = []
+
+for year in args.years:
+    DataCardCreationCommand="SMHTT"+year
+    for channel in args.channels:
+        DataCardCreationCommand+="_"+channel
+        if args.RunShapeless:
+            DataCardCreationCommand+=" -s"
+        if args.RunBinByBinLess:
+            DataCardCreationCommand+=" -b"
+        logging.info("Data Card Creation Command:")
+        logging.info('\n\n'+DataCardCreationCommand+'\n')
+        os.system(DataCardCreationCommand)        
+
+        TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")        
+        CardCombiningCommand = "combineCards.py"
+        CardNum = 1
+        for Directory in TheFile.GetListOfKeys():
+            CardCombiningCommand += " "+Directory.GetName()+"=smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
+            CardNum+=1
+        CombinedChannelName = channel.upper()+year+"DataCard.txt"
+        CardCombiningCommand += ("> "+CombinedChannelName)
+        logging.info("Channel Combining Command:")
+        logging.info('\n\n'+CardCombiningCommand+'\n')
+        os.system(CardCombiningCommand)        
+        ChannelCards.append(CombinedChannelName)
+        
+#combine all cards together
 CardCombiningCommand = "combineCards.py"
-CardNum = 1
-for Directory in TheFile.GetListOfKeys():
-    CardCombiningCommand += " "+Directory.GetName()+"=smh"+args.year+"_mt_"+str(CardNum)+"_13TeV_.txt "
-    CardNum+=1
-CombinedCardName = "MT"+args.year+"DataCard.txt"
+for CombinedChannelCard in ChannelCards:
+    CardCombiningCommand+=" "+CombinedChannelCard
+CombinedCardName = "FinalCard.txt"
 CardCombiningCommand += ("> "+CombinedCardName)
-
-logging.info("Card Combining Command:")
+logging.info("Final Card Combining Command:")
 logging.info('\n\n'+CardCombiningCommand+'\n')
-
 os.system(CardCombiningCommand)
 
 #per signal card workspace set up
@@ -50,7 +70,7 @@ CategorySignalNames=[]
 for Directory in TheFile.GetListOfKeys():
     CategorySignalNames.append("r"+Directory.GetName()[2:])
     PerCategoryWorkspaceCommand += "--PO 'map="+Directory.GetName()+"/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
-PerCategoryWorkspaceCommand+="MT2018DataCard.txt -o workspace_per_cat_breakdown_2018_cmb.root -m 125"
+PerCategoryWorkspaceCommand+=CombinedCardName+" -o workspace_per_cat_breakdown_2018_cmb.root -m 125"
 
 logging.info("Per Category Workspace Command: ")
 logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
@@ -85,7 +105,7 @@ STXSSignalNames=[]
 for Bin in STXSBins:
     STXSSignalNames.append("r_"+Bin)
     PerSTXSBinsWorkSpaceCommand += "--PO 'map=.*/"+Bin+":"+"r_"+Bin+"[1,-25,25]' "
-PerSTXSBinsWorkSpaceCommand += "MT2018DataCard.txt -o workspace_per_STXS_breakdown_2018_cmb.root -m 125"
+PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_2018_cmb.root -m 125"
 
 logging.info("Per STXS Bins Work Space Command")
 logging.info('\n\n'+PerSTXSBinsWorkSpaceCommand+'\n')
@@ -117,19 +137,20 @@ PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTH
 PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
 PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
 PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
-PerMergedBinWorkSpaceCommand += "MT2018DataCard.txt -o workspace_per_Merged_breakdown_2018_cmb.root -m 125"
+PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_2018_cmb.root -m 125"
 
 logging.info("Per Meged Bin Work Space Command")
 logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
 os.system(PerMergedBinWorkSpaceCommand)
 
-TextWorkspaceCommand = "text2workspace.py MT2018DataCard.txt"
+TextWorkspaceCommand = "text2workspace.py "+CombinedCardName
 logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
 
 #run the inclusive
-InclusiveCommand="combine -M MultiDimFit MT2018DataCard.root --robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --expectSignal=1 -t -1 --algo=singles --cl=0.68"
+CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
+InclusiveCommand="combine -M MultiDimFit "+CombinedWorkspaceName+" --robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --expectSignal=1 -t -1 --algo=singles --cl=0.68"
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 os.system(InclusiveCommand)
@@ -166,5 +187,5 @@ for MergedBin in MergedSignalNames:
         CombineCommand+=("r_"+BinName+"=1,")
     CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
     logging.info("Merged Bin Combine Command:")
-    logging.info('\n\n'+MergedBin+'\n')
+    logging.info('\n\n'+CombineCommand+'\n')
     os.system(CombineCommand)
