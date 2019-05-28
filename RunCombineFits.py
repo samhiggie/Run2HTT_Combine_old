@@ -10,6 +10,8 @@ parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Spe
 parser.add_argument('--channels',nargs="+",choices=['mt','et','tt'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
 parser.add_argument('--RunBinByBinLess',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
+#Currently bugged. No visible effect.
+#parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 
 args = parser.parse_args() 
 
@@ -45,12 +47,17 @@ for year in args.years:
 #combine all cards together
 CardCombiningCommand = "combineCards.py"
 for CombinedChannelCard in ChannelCards:
-    CardCombiningCommand+=" "+CombinedChannelCard
+    CardCombiningCommand+=" "+CombinedChannelCard[:6]+"="+CombinedChannelCard
 CombinedCardName = "FinalCard.txt"
 CardCombiningCommand += ("> "+CombinedCardName)
 logging.info("Final Card Combining Command:")
 logging.info('\n\n'+CardCombiningCommand+'\n')
 os.system(CardCombiningCommand)
+
+#Currently bugged. No visible effect.
+#if args.RunWithAutoMCStats:
+#    CardFile = open(CombinedCardName,"a+")
+#    CardFile.write(" autoMCStats 0")
 
 #per signal card workspace set up
 PerSignalWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
@@ -69,7 +76,7 @@ PerCategoryWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.
 CategorySignalNames=[]
 for Directory in TheFile.GetListOfKeys():
     CategorySignalNames.append("r"+Directory.GetName()[2:])
-    PerCategoryWorkspaceCommand += "--PO 'map="+Directory.GetName()+"/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
+    PerCategoryWorkspaceCommand += "--PO 'map=.*"+Directory.GetName()+".*/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
 PerCategoryWorkspaceCommand+=CombinedCardName+" -o workspace_per_cat_breakdown_2018_cmb.root -m 125"
 
 logging.info("Per Category Workspace Command: ")
