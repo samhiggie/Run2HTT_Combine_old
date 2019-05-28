@@ -111,16 +111,18 @@ int main(int argc, char **argv) {
   //Tau ID uncertainty: applied to genuine tau contributions.
   cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
 
-  //Muon ID efficiency: Decorollated in 18-032 datacards.
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.014));
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_mc_m","lnN",SystMap<>::init(1.014));
+  //Muon ID efficiency: Decorollated in 18-032 datacards.  
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
 
   //lnN Fake Factor Uncertainties: Values from 18-032 data cards.
-  cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_stat_mt_mt_qqh_unrolled_Run2018","lnN",SystMap<>::init(1.048));
+  // 28/5/19 Update: Decision is to pull all FF lnN uncertainties and simply proceed with un-renormalized shapes for now
+  // so to avoid artificial reduction of errors.
+  // Left commented out
+  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_stat_mt_mt_qqh_unrolled_Run2018","lnN",SystMap<>::init(1.048));
   //Quadrature addition of CMS_ff_norm_syst_mt and CMS_ff_norm_syst_mt_Run2018
-  cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_syst_mt","lnN",SystMap<>::init(1.058));
+  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_syst_mt","lnN",SystMap<>::init(1.058));
   //Quadrature addition of CMS_ff_sub_syst_mt_mt_qqh_unrolled and CMS_ff_sub_syst_mt_mt_qqh_unrolled_Run2018
-  cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_sub_syst_mt_mt_qqh_unrolled", "lnN",SystMap<>::init(1.04));
+  //cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_sub_syst_mt_mt_qqh_unrolled", "lnN",SystMap<>::init(1.04));
 
   // b-tagging efficiency: Changed into lnN.
   //5% in ttbar and 0.5% otherwise.
@@ -135,39 +137,7 @@ int main(int argc, char **argv) {
   //DY XSection Uncertainty
   cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));
-
-  //Quadrature addition of CMS_Scale_mc_t_1prong and CMS_Scale_mc_t_1prong_Run2018
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN", ch::syst::SystMapAsymm<>::init(0.99349,1.00655));
-  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.9779,1.02244));
-  cb.cp().process({"WH_htt125"}).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.99758,1.00242));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.9922,1.00785));
-  cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.99717,1.00283));
-  cb.cp().process(ggH_STXS).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.99339,1.00665));
-  cb.cp().process(qqH_STXS).AddSyst(cb,"CMS_Scale_mc_t_1prong","lnN",ch::syst::SystMapAsymm<>::init(0.99602,1.004));
-
-  //Quadrature addition of CMS_scale_mc_t_1prong1pizero and CMS_scale_mc_t_1prong1pizero_Run2018
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.985821,1.014325));
-  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.997992,1.014325));
-  cb.cp().process({"WH_htt125"}).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.99655,1.00345));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.99238,1.00767));
-  cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.991626,1.00843));
-  cb.cp().process(ggH_STXS).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.99259,1.00744));
-  cb.cp().process(qqH_STXS).AddSyst(cb,"CMS_scale_mc_t_1prongpizero","lnN",ch::syst::SystMapAsymm<>::init(0.9941,1.00594));
-  
-  //Quadrature addition of CMS_scale_mc_t_3prong and CMS_Scale_mc_t_3prong_Run2018
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.996,1.004));
-  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.994713,1.0053));
-  cb.cp().process({"WH_htt125"}).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.9947,1.0053));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.9945,1.00549));
-  cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.9966,1.0034));
-  cb.cp().process(ggH_STXS).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.997,1.0029));
-  cb.cp().process(qqH_STXS).AddSyst(cb,"CMS_scale_mc_t_3prong","lnN",ch::syst::SystMapAsymm<>::init(0.9972,1.00283));
-
-  ////cb.cp().process({"VVL","TTL"}).AddSyst(cb,"CMS_scale_met_unclustered", "shape", SystMap<>::init(1.00));
-  cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_scale_met_unclustered","lnN",ch::syst::SystMapAsymm<>::init(0.999559,1.00044));
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_scale_met_unclustered","lnN",ch::syst::SystMapAsymm<>::init(0.983288,1.017));
-  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_scale_met_unclustered","lnN",ch::syst::SystMapAsymm<>::init(0.976299,1.02428));
+  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));    
   
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
@@ -200,9 +170,12 @@ int main(int argc, char **argv) {
       cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_w_njet1_mt_stat","shape",SystMap<>::init(1.00));
       cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_w_syst","shape",SystMap<>::init(1.00));  
 
-      //Recoil Shapes:
-      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_reso_met", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_scale_met", "shape", SystMap<>::init(1.00));  
+      //MET Unclustered Energy Scale
+      cb.cp().process({"TTT","TTL","VVT","VVL"}).AddSyst(cb,"CMS_scale_met_unclustered","shape",ch::syst::SystMap<>::init(1.00));
+
+      //Recoil Shapes:      
+      cb.cp().process(JoinStr({{"ZT","ZL"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_htt_boson_reso_met", "shape", SystMap<>::init(1.00));
+      cb.cp().process(JoinStr({{"ZT","ZL"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_htt_boson_scale_met", "shape", SystMap<>::init(1.00));  
 
       //ZPT Reweighting Shapes:
       cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_dyShape", "shape", SystMap<>::init(1.00));
@@ -210,10 +183,10 @@ int main(int argc, char **argv) {
       //Top Pt Reweighting
       cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_ttbarShape", "shape", SystMap<>::init(1.00));
   
-      //TES Uncertainty
-      cb.cp().process({"ZT","ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"ZT","ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"ZT","ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+      //TES Uncertainty      
+      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
+      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
+      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
 
       // Jet Energy Scale Uncertainties
       cb.cp().process(JoinStr({sig_procs, {"ZT","ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetRelativeBal", "shape", SystMap<>::init(1.00));
@@ -275,7 +248,7 @@ int main(int argc, char **argv) {
 
   //! [part8]
 
-  //Commented out for speed.
+  //TODO: Ongoing effort to move to autoMCstats instead of combineharvester bin-by-bin.
   if (not Input.OptionExists("-b"))
     {
       auto bbb = ch::BinByBinFactory()
