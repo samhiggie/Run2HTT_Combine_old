@@ -157,8 +157,8 @@ int main(int argc, char **argv) {
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
-      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong_Run2018","shape",SystMap<>::init(1.00));
-      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong1pizero_Run2018","shape",SystMap<>::init(1.00));      
+      cb.cp().process({"ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong_Run2018","shape",SystMap<>::init(1.00));
+      cb.cp().process({"ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong1pizero_Run2018","shape",SystMap<>::init(1.00));      
       
       //Fake factor shapes: taken from 18-032 data cards.
       cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_qcd_mt_syst", "shape", SystMap<>::init(1.00));
