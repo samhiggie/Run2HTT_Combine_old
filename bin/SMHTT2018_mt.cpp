@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
       cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_dyShape", "shape", SystMap<>::init(1.00));
 
       //Top Pt Reweighting
-      cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_ttbarShape", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"TTL","TTT"}).AddSyst(cb,"CMS_htt_ttbarShape", "shape", SystMap<>::init(1.00));
   
       //TES Uncertainty      
       cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
