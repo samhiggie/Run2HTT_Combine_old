@@ -10,6 +10,7 @@ parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Spe
 parser.add_argument('--channels',nargs="+",choices=['mt','et','tt'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
 parser.add_argument('--RunBinByBinLess',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
+parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 #Currently bugged. No visible effect.
 #parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 
@@ -27,6 +28,8 @@ for year in args.years:
             DataCardCreationCommand+=" -s"
         if args.RunBinByBinLess:
             DataCardCreationCommand+=" -b"
+        if args.RunEmbeddedLess:
+            DataCardCreationCommand+=" -e"
         logging.info("Data Card Creation Command:")
         logging.info('\n\n'+DataCardCreationCommand+'\n')
         os.system(DataCardCreationCommand)        
