@@ -36,8 +36,7 @@ int main(int argc, char **argv) {
     {
       std::cout<<"Making category for: "<<i<<" "<<TheFile->GetListOfKeys()->At(i)->GetName()<<std::endl;
       cats.push_back({i+1,TheFile->GetListOfKeys()->At(i)->GetName()});
-    }
-  TheFile->Close();
+    }  
 
   // Create an empty CombineHarvester instance that will hold all of the
   // datacard configuration and histograms etc.
@@ -175,8 +174,8 @@ int main(int argc, char **argv) {
 
       //Recoil Shapes:      
       //check these for empty shapes
-      cb.cp().process(JoinStr({{"ZT","ZL"},ggH_STXS/*,qqH_STXS*/})).AddSyst(cb,"CMS_htt_boson_reso_met", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({{"ZT","ZL"},ggH_STXS/*,qqH_STXS*/})).AddSyst(cb,"CMS_htt_boson_scale_met", "shape", SystMap<>::init(1.00));  
+      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_reso_met", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_scale_met", "shape", SystMap<>::init(1.00)); 
 
       //ZPT Reweighting Shapes:
       cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_dyShape", "shape", SystMap<>::init(1.00));
@@ -186,19 +185,21 @@ int main(int argc, char **argv) {
   
       //TES Uncertainty      
       //check these for empty shapes
-      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({{"VVT","ZT","TTT","WH_htt125","ZH_htt125"},ggH_STXS,qqH_STXS})).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
 
       // Jet Energy Scale Uncertainties
-      //fix these. And Check them for 
-      cb.cp().process(JoinStr({sig_procs, {"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetRelativeBal", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({sig_procs, {"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetEta3to5", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({sig_procs, {"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetEta0to5", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({sig_procs, {"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetEta0to3", "shape", SystMap<>::init(1.00));
-      cb.cp().process(JoinStr({sig_procs, {"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}})).AddSyst(cb,"CMS_JetRelativeSample", "shape", SystMap<>::init(1.00));
+      //fix these. And Check them for empty stuff
+      cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetRelativeBal", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta3to5", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta0to5", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta0to3", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetRelativeSample", "shape", SystMap<>::init(1.00));
 
       //ggH theory uncertainties
+      //check them for empties.
+      /*
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Mu", "shape", SystMap<>::init(1.00));
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Res", "shape", SystMap<>::init(1.00));
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Mig01", "shape", SystMap<>::init(1.00));
@@ -208,6 +209,156 @@ int main(int argc, char **argv) {
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_qmtop", "shape", SystMap<>::init(1.00));
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_PT60", "shape", SystMap<>::init(1.00));
       cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_PT120", "shape", SystMap<>::init(1.00));
+      */
+      //check our STXS bins for any empty histograms.
+      //if we find any, Don't use the shape.
+      std::vector<string> RecoilShapes = {"CMS_htt_boson_reso_met","CMS_htt_boson_scale_met"};
+      std::vector<string> TESShapes = {"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"};
+      std::vector<string> JESShapes = {"CMS_JetRelativeBal","CMS_JetEta3to5","CMS_JetEta0to5","CMS_JetEta0to3","CMS_JetRelativeSample"};
+      std::vector<string> ggHTheoryShapes = {"THU_ggH_Mu","THU_ggH_Res",
+					     "THU_ggH_Mig01","THU_ggH_Mig12",
+					     "THU_ggH_VBF2j","THU_ggH_VBF3j",
+					     "THU_ggH_qmtop","THU_ggH_PT60",
+					     "THU_ggH_PT120"};
+      std::cout<<"Setting up shapes on signals..."<<std::endl;
+      for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries();++i)
+	{
+	  string DirectoryName =  TheFile->GetListOfKeys()->At(i)->GetName();
+	  TDirectory* TheDirectory = (TDirectory*) TheFile->Get(DirectoryName.c_str());
+	    for(std::vector<string>::iterator it = ggH_STXS.begin(); it != ggH_STXS.end(); ++it)
+	      {		
+		TH1F* NominalggHHisto = (TH1F*) TheDirectory->Get((*it).c_str());		
+		Float_t NominalIntegral = NominalggHHisto->Integral();
+		TH1F* UpHisto;
+		TH1F* DownHisto;
+		//Okay, now let's loop over all Recoil Uncertainties
+		for(std::vector<string>::iterator Unc_it = RecoilShapes.begin(); Unc_it != RecoilShapes.end(); ++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,*Unc_it,"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of recoil shapes loop
+		//Loop over all TES shapes
+		for(std::vector<string>::iterator Unc_it = TESShapes.begin(); Unc_it != TESShapes.end();++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto=(TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,(*Unc_it).c_str(),"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of TES loop
+		//Jet energy uncertainty
+		for(std::vector<string>::iterator Unc_it = JESShapes.begin(); Unc_it != JESShapes.end(); ++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto=(TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,(*Unc_it).c_str(),"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of JES shapes
+		//now we loop over all ggH theory uncerts
+		for(std::vector<string>::iterator Unc_it = ggHTheoryShapes.begin(); Unc_it != ggHTheoryShapes.end(); ++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto=(TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,(*Unc_it).c_str(),"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of ggH Theory Uncert loop
+	      }//end of ggH loop
+	    //now we loop over all the various qqH shapes
+	    for(std::vector<string>::iterator it = qqH_STXS.begin(); it != qqH_STXS.end(); ++it)
+	      {
+		TH1F* NominalqqHHisto = (TH1F*) TheDirectory->Get((*it).c_str());
+		Float_t NominalIntegral = NominalqqHHisto->Integral();
+		TH1F* UpHisto;
+		TH1F* DownHisto;
+		for(std::vector<string>::iterator Unc_it = RecoilShapes.begin(); Unc_it != RecoilShapes.end(); ++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,*Unc_it,"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of recoil shapes loop
+		//Loop over all TES shapes
+		for(std::vector<string>::iterator Unc_it = TESShapes.begin(); Unc_it != TESShapes.end();++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto=(TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,(*Unc_it).c_str(),"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of TES loop
+		//Jet energy uncertainty
+		for(std::vector<string>::iterator Unc_it = JESShapes.begin(); Unc_it != JESShapes.end(); ++Unc_it)
+		  {
+		    UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
+		    DownHisto=(TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
+		    Float_t UpIntegral = UpHisto->Integral();
+		    Float_t DownIntegral = DownHisto->Integral();
+		    if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
+		      {
+			cb.cp().bin({TheDirectory->GetName()}).process({*it})
+			  .AddSyst(cb,(*Unc_it).c_str(),"shape",SystMap<>::init(1.00));
+		      }
+		    else
+		      {
+			std::cout<<"Skipping Uncertainty:"<<*Unc_it<<" for "<<*it<<std::endl;
+		      }
+		  }//end of JES shapes
+	      }//end of qqH loop
+	}//end of directory loop
     }
   //********************************************************************************************************************************
 
