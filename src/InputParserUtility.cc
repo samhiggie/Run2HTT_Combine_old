@@ -12,5 +12,9 @@ InputParserUtility::InputParserUtility(int &argc, char **argv)
 
 bool InputParserUtility::OptionExists(const std::string &Option)
 {
-  return std::find(this->tokens.begin(),this->tokens.end(), Option) != this->tokens.end();
+  for(auto it = this->tokens.begin(); it != this->tokens.end(); ++it)
+    {
+      if(*it == Option) return true;
+    }
+  return false;  
 }

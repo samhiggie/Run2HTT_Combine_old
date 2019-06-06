@@ -156,6 +156,7 @@ int main(int argc, char **argv) {
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+      //Mu to tau fake energy scale and e to tau energy fake scale
       cb.cp().process({"ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong","shape",SystMap<>::init(1.00));
       cb.cp().process({"ZL"}).AddSyst(cb,"CMS_ZLShape_mt_1prong1pizero","shape",SystMap<>::init(1.00));      
       
