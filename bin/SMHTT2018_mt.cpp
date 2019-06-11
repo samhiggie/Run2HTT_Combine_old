@@ -173,8 +173,7 @@ int main(int argc, char **argv) {
       //MET Unclustered Energy Scale
       cb.cp().process({"TTT","TTL","VVT","VVL"}).AddSyst(cb,"CMS_scale_met_unclustered","shape",ch::syst::SystMap<>::init(1.00));
 
-      //Recoil Shapes:      
-      //check these for empty shapes
+      //Recoil Shapes:            
       cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_reso_met", "shape", SystMap<>::init(1.00));
       cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_boson_scale_met", "shape", SystMap<>::init(1.00)); 
 
@@ -184,33 +183,18 @@ int main(int argc, char **argv) {
       //Top Pt Reweighting
       cb.cp().process({"TTL","TTT"}).AddSyst(cb,"CMS_htt_ttbarShape", "shape", SystMap<>::init(1.00));
   
-      //TES Uncertainty      
-      //check these for empty shapes
+      //TES Uncertainty            
       cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
       cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
       cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
 
-      // Jet Energy Scale Uncertainties
-      //fix these. And Check them for empty stuff
+      // Jet Energy Scale Uncertainties      
       cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetRelativeBal", "shape", SystMap<>::init(1.00));
       cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta3to5", "shape", SystMap<>::init(1.00));
       cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta0to5", "shape", SystMap<>::init(1.00));
       cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetEta0to3", "shape", SystMap<>::init(1.00));
       cb.cp().process({"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb,"CMS_JetRelativeSample", "shape", SystMap<>::init(1.00));
-
-      //ggH theory uncertainties
-      //check them for empties.
-      /*
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Mu", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Res", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Mig01", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_Mig12", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_VBF2j", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_VBF3j", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_qmtop", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_PT60", "shape", SystMap<>::init(1.00));
-      cb.cp().process(ggH_STXS).AddSyst(cb,"THU_ggH_PT120", "shape", SystMap<>::init(1.00));
-      */
+      
       //check our STXS bins for any empty histograms.
       //if we find any, Don't use the shape.
       std::vector<string> RecoilShapes = {"CMS_htt_boson_reso_met","CMS_htt_boson_scale_met"};
