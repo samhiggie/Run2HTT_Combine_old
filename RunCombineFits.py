@@ -14,6 +14,7 @@ parser.add_argument('--RunEmbeddedLess',help="Run combine model without using th
 #Currently bugged. No visible effect.
 #parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 
+print("Parsing command line arguments.")
 args = parser.parse_args() 
 
 DataCardCreationCommand = ""
