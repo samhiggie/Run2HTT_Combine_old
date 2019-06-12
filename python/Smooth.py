@@ -10,11 +10,13 @@ parser.add_argument("--bins_per_slice",type=int,nargs="?",help="# of bins in a s
 parser.add_argument("--bins_per_slice_0jet",type=int,nargs="?",help="# of bins per each 0jet slice",default=8)
 parser.add_argument("--bins_per_slice_boosted",type=int,nargs="?",help="# of bins per boosted slice",default=10)
 parser.add_argument("--bins_per_slice_vbf",type=int,nargs="?",help="# of bins per vbf slice",default=6)
+parser.add_argument("--bins_per_slice_Inclusive",type=int,nargs="?",help="# of bins per slice in inclusive categories",default=11)
 
 parser.add_argument("--nslices",type=int,nargs="?",help="# of slices",default=0)
 parser.add_argument("--nslices_0jet",type=int,nargs="?",help="# of slices in 0jet",default=5)
 parser.add_argument("--nslices_boosted",type=int,nargs="?",help="# of slices in boosted",default=5)
 parser.add_argument("--nslices_vbf",type=int,nargs="?",help="# of slices in 0jet",default=5)
+parser.add_argument("--nslices_Inclusive",type=int,nargs="?",help="# of slices in inclusive categories",default=1)
 
 parser.add_argument("--file_in",nargs="?",help="Name of input file",default="smh_et.root")
 parser.add_argument("--file_out",nargs="?",help="Name of output file",default="smh_et_smooth.root")
@@ -26,11 +28,13 @@ bins_per_slice=args.bins_per_slice
 bins_per_slice_0jet=args.bins_per_slice_0jet
 bins_per_slice_boosted=args.bins_per_slice_boosted
 bins_per_slice_vbf=args.bins_per_slice_vbf
+bins_per_slice_Inclusive=args.bins_per_slice_Inclusive
 
 nslices=args.nslices
 nslices_0jet=args.nslices_0jet
 nslices_boosted=args.nslices_boosted
 nslices_vbf=args.nslices_vbf
+nslices_Inclusive=args.nslices_Inclusive
 
 file_in=ROOT.TFile(args.file_in,"r")
 file_out=ROOT.TFile(args.file_out,"recreate")
@@ -50,6 +54,9 @@ for k1 in dirList:
          if "vbf" in h1.GetName():
             nslices=nslices_vbf
             bins_per_slice=bins_per_slice_vbf
+         if "Inclusive" in h1.GetName():
+                  nslices=nslices_Inclusive
+                  bins_per_slice=bins_per_slice_Inclusive
 
          h1.cd()
          dirList2 = gDirectory.GetListOfKeys()
@@ -71,8 +78,8 @@ for k1 in dirList:
 			same_bins=same_bins+1
 		 if (same_bins>bins_per_slice/2):
 		     factor=0.0
-		     if h_nominal.Integral(i*bins_per_slice+1,i*bins_per_slice+8)>0:
-			factor=h_shape.Integral(i*bins_per_slice+1,i*bins_per_slice+8)/h_nominal.Integral(i*bins_per_slice+1,i*bins_per_slice+8)
+		     if h_nominal.Integral(i*bins_per_slice+1,(i+1)*bins_per_slice)>0:
+			factor=h_shape.Integral(i*bins_per_slice+1,(i+1)*bins_per_slice)/h_nominal.Integral(i*bins_per_slice+1,(i+1)*bins_per_slice)
 		     for j in range(0,bins_per_slice):
 			h_shape.SetBinContent(i*bins_per_slice+1+j,h_nominal.GetBinContent(i*bins_per_slice+1+j)*factor)
 	    file_out.cd(h1.GetName())
