@@ -12,7 +12,7 @@ parser.add_argument('--RunShapeless',help="Run combine model without using any s
 parser.add_argument('--RunBinByBinLess',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
 parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 #Currently bugged. No visible effect.
-#parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
+parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -59,9 +59,9 @@ logging.info('\n\n'+CardCombiningCommand+'\n')
 os.system(CardCombiningCommand)
 
 #Currently bugged. No visible effect.
-#if args.RunWithAutoMCStats:
-#    CardFile = open(CombinedCardName,"a+")
-#    CardFile.write(" autoMCStats 0")
+if args.RunWithAutoMCStats:
+    CardFile = open(CombinedCardName,"a+")
+    CardFile.write("* autoMCStats 0.0")
 
 #per signal card workspace set up
 PerSignalWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
