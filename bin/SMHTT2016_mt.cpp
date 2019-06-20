@@ -102,18 +102,7 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
-
-  // these 4 have been replaced with one overarching tau ID efficiency uncertainty
-  //Quadrature addition of CMS_eff_mc__t and CMS_eff_mc_t_Run2017
-  //cb.cp().process({"ZT","TTT","VVT","ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_mc_t","lnN",SystMap<>::init(1.019));
-  //Quadrature addition of CMS_eff_mc_t_mt and CMS_eff_mc_t_mt_Run2017
-  //cb.cp().process({"ZT","TTT","VVT","ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_mc_t_mt","lnN",SystMap<>::init(1.0084));
-  //Quadrature addition of CMS_eff_t and CMS_eff_t_Run2017
-  //cb.cp().process({"ZT","TTT","VVT","ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_t","lnN",SystMap<>::init(1.019));
-  //Quadrature addition of CMS_eff_tmt and CMS_eff_t_mt_Run2017
-  //cb.cp().process({"ZT","TTT","VVT","ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_t_mt","lnN",SystMap<>::init(1.0084));
   
-  //this is what it was replaced with
   //Tau ID uncertainty: applied to genuine tau contributions.
   cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
 
