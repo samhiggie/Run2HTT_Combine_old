@@ -13,6 +13,8 @@ parser.add_argument('--RunBinByBinLess',help="Run combine model without using bi
 parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 #Currently bugged. No visible effect.
 parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
+parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
+parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -31,6 +33,10 @@ for year in args.years:
             DataCardCreationCommand+=" -b"
         if args.RunEmbeddedLess:
             DataCardCreationCommand+=" -e"
+        if args.RunInclusiveggH:
+            DataCardCreationCommand+=" -g"
+        if args.RunInclusiveqqH:
+            DataCardCreationCommand+=" -q"
         logging.info("Data Card Creation Command:")
         logging.info('\n\n'+DataCardCreationCommand+'\n')
         os.system(DataCardCreationCommand)        
@@ -88,71 +94,72 @@ logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
 os.system(PerCategoryWorkspaceCommand)
 
 #Set up the possible STXS bins list
-STXSBins = ["ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
-            "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
-            "ggH_PTH_0_200_1J_PTH_120_200_htt125",
-            "ggH_PTH_0_200_1J_PTH_60_120_htt125",
-            "ggH_PTH_0_200_1J_PTH_0_60_htt125",
-            "ggH_PTH_0_200_0J_PTH_10_200_htt125",
-            "ggH_PTH_0_200_0J_PTH_0_10_htt125",
-            "ggH_PTH_GE200_htt125",
-            "qqH_0J_htt125",
-            "qqH_1J_htt125",
-            "qqH_GE2J_MJJ_0_60_htt125",
-            "qqH_GE2J_MJJ_60_120_htt125",
-            "qqH_GE2J_MJJ_120_350_htt125",
-            "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
-            "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
-            "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
-            "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
-            "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"]
-PerSTXSBinsWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
-STXSSignalNames=[]
-for Bin in STXSBins:
-    STXSSignalNames.append("r_"+Bin)
-    PerSTXSBinsWorkSpaceCommand += "--PO 'map=.*/"+Bin+":"+"r_"+Bin+"[1,-25,25]' "
-PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_2018_cmb.root -m 125"
+if not (args.RunInclusiveggH or args.RunInclusiveqqH):
+    STXSBins = ["ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
+                "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
+                "ggH_PTH_0_200_1J_PTH_120_200_htt125",
+                "ggH_PTH_0_200_1J_PTH_60_120_htt125",
+                "ggH_PTH_0_200_1J_PTH_0_60_htt125",
+                "ggH_PTH_0_200_0J_PTH_10_200_htt125",
+                "ggH_PTH_0_200_0J_PTH_0_10_htt125",
+                "ggH_PTH_GE200_htt125",
+                "qqH_0J_htt125",
+                "qqH_1J_htt125",
+                "qqH_GE2J_MJJ_0_60_htt125",
+                "qqH_GE2J_MJJ_60_120_htt125",
+                "qqH_GE2J_MJJ_120_350_htt125",
+                "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
+                "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
+                "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
+                "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
+                "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"]
+    PerSTXSBinsWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
+    STXSSignalNames=[]
+    for Bin in STXSBins:
+        STXSSignalNames.append("r_"+Bin)
+        PerSTXSBinsWorkSpaceCommand += "--PO 'map=.*/"+Bin+":"+"r_"+Bin+"[1,-25,25]' "
+    PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_2018_cmb.root -m 125"
 
-logging.info("Per STXS Bins Work Space Command")
-logging.info('\n\n'+PerSTXSBinsWorkSpaceCommand+'\n')
-os.system(PerSTXSBinsWorkSpaceCommand)
+    logging.info("Per STXS Bins Work Space Command")
+    logging.info('\n\n'+PerSTXSBinsWorkSpaceCommand+'\n')
+    os.system(PerSTXSBinsWorkSpaceCommand)
 
-#add in the merged ones
-PerMergedBinWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
-MergedSignalNames=[]
-#qqH, less than 2 Jets
-MergedSignalNames.append("qqH_LT2J")
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_0J_htt125:r_qqH_LT2J[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_1J_htt125:r_qqH_LT2J[1,-25,25]' "
-#qqH mjj 0-350
-MergedSignalNames.append("qqH_GE2J_MJJ_0_350")
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_0_60_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_60_120_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_120_350_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
-#qqH mjj 350-700, all PtH
-MergedSignalNames.append("qqH_GE2J_MJJ_350_700_PTH_0_200")
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125:r_qqH_GE2J_MJJ_350_700_PTH_0_200[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125:r_qqH_GE2J_MJJ_350_700_PTH_0_200[1,-25,25]' "
-#qqH mjj 700+, all PtH
-MergedSignalNames.append("qqH_GE2J_MJJ_GE700_PTH_0_200")
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125:r_qqH_GE2J_MJJ_GE700_PTH_0_200[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125:r_qqH_GE2J_MJJ_GE700_PTH_0_200[1,-25,25]' "
-#ggH 2Jets, mjj 350+
-MergedSignalNames.append("ggH_PTH_0_200_GE2J_MJJ_GE350")
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
-PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
-PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_2018_cmb.root -m 125"
+    #add in the merged ones
+    PerMergedBinWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
+    MergedSignalNames=[]
+    #qqH, less than 2 Jets
+    MergedSignalNames.append("qqH_LT2J")
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_0J_htt125:r_qqH_LT2J[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_1J_htt125:r_qqH_LT2J[1,-25,25]' "
+    #qqH mjj 0-350
+    MergedSignalNames.append("qqH_GE2J_MJJ_0_350")
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_0_60_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_60_120_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_120_350_htt125:r_qqH_GE2J_MJJ_0_350[1,-25,25]' "
+    #qqH mjj 350-700, all PtH
+    MergedSignalNames.append("qqH_GE2J_MJJ_350_700_PTH_0_200")
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125:r_qqH_GE2J_MJJ_350_700_PTH_0_200[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125:r_qqH_GE2J_MJJ_350_700_PTH_0_200[1,-25,25]' "
+    #qqH mjj 700+, all PtH
+    MergedSignalNames.append("qqH_GE2J_MJJ_GE700_PTH_0_200")
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125:r_qqH_GE2J_MJJ_GE700_PTH_0_200[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125:r_qqH_GE2J_MJJ_GE700_PTH_0_200[1,-25,25]' "
+    #ggH 2Jets, mjj 350+
+    MergedSignalNames.append("ggH_PTH_0_200_GE2J_MJJ_GE350")
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
+    PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
+    PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_2018_cmb.root -m 125"
 
-logging.info("Per Meged Bin Work Space Command")
-logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
-os.system(PerMergedBinWorkSpaceCommand)
+    logging.info("Per Meged Bin Work Space Command")
+    logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
+    os.system(PerMergedBinWorkSpaceCommand)
 
 TextWorkspaceCommand = "text2workspace.py "+CombinedCardName
 logging.info("Text 2 Worskpace Command:")
@@ -181,22 +188,22 @@ for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
     os.system(CombineCommand)
 
 # run the STXS bins
-for STXSBin in STXSBins:
-    CombineCommand = "combine -M MultiDimFit workspace_per_STXS_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
-    for BinName in STXSBins:
-        CombineCommand+=("r_"+BinName+"=1,")
-    CombineCommand[:len(CombineCommand)-1]
-    CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
-    logging.info("STXS Combine Command:")
-    logging.info('\n\n'+CombineCommand+'\n')    
-    os.system(CombineCommand)
-
-#run the merged bins
-for MergedBin in MergedSignalNames:
-    CombineCommand = "combine -M MultiDimFit workspace_per_Merged_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
-    for BinName in MergedSignalNames:
-        CombineCommand+=("r_"+BinName+"=1,")
-    CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
-    logging.info("Merged Bin Combine Command:")
-    logging.info('\n\n'+CombineCommand+'\n')
-    os.system(CombineCommand)
+if not (args.RunInclusiveggH or args.RunInclusiveqqH):
+    for STXSBin in STXSBins:
+        CombineCommand = "combine -M MultiDimFit workspace_per_STXS_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
+        for BinName in STXSBins:
+            CombineCommand+=("r_"+BinName+"=1,")
+        CombineCommand[:len(CombineCommand)-1]
+        CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
+        logging.info("STXS Combine Command:")
+        logging.info('\n\n'+CombineCommand+'\n')    
+        os.system(CombineCommand)
+    #run the merged bins
+    for MergedBin in MergedSignalNames:
+        CombineCommand = "combine -M MultiDimFit workspace_per_Merged_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
+        for BinName in MergedSignalNames:
+            CombineCommand+=("r_"+BinName+"=1,")
+        CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
+        logging.info("Merged Bin Combine Command:")
+        logging.info('\n\n'+CombineCommand+'\n')
+        os.system(CombineCommand)

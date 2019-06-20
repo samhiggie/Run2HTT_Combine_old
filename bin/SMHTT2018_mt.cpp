@@ -3,6 +3,8 @@
 // -s disables shape uncertainties
 // -e disables embedded
 // -b disables bin-by-bin uncertainties
+// -g uses the inclusive ggH process (No STXS bins)
+// -q uses the inclusive qqH process (No STXS bins)
 #include <string>
 #include <map>
 #include <set>
@@ -52,30 +54,34 @@ int main(int argc, char **argv) {
   vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
 
-  vector<string> ggH_STXS = {"ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
-			     "ggH_PTH_0_200_1J_PTH_120_200_htt125",
-			     "ggH_PTH_0_200_1J_PTH_60_120_htt125",
-			     "ggH_PTH_0_200_1J_PTH_0_60_htt125",
-			     "ggH_PTH_0_200_0J_PTH_10_200_htt125",
-			     "ggH_PTH_0_200_0J_PTH_0_10_htt125",
-			     "ggH_PTH_GE200_htt125"};
+  vector<string> ggH_STXS;
+  if (Input.OptionExists("-g")) ggH_STXS = {"ggH_htt125"};
+  else ggH_STXS = {"ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
+		   "ggH_PTH_0_200_1J_PTH_120_200_htt125",
+		   "ggH_PTH_0_200_1J_PTH_60_120_htt125",
+		   "ggH_PTH_0_200_1J_PTH_0_60_htt125",
+		   "ggH_PTH_0_200_0J_PTH_10_200_htt125",
+		   "ggH_PTH_0_200_0J_PTH_0_10_htt125",
+		   "ggH_PTH_GE200_htt125"};
   
-  vector<string> qqH_STXS = {"qqH_0J_htt125",
-			     "qqH_1J_htt125",
-			     "qqH_GE2J_MJJ_0_60_htt125",
-			     "qqH_GE2J_MJJ_60_120_htt125",
-			     "qqH_GE2J_MJJ_120_350_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
+  vector<string> qqH_STXS; 
+  if(Input.OptionExists("-q")) qqH_STXS = {"qqH_htt125"};
+  else qqH_STXS = {"qqH_0J_htt125",
+		   "qqH_1J_htt125",
+		   "qqH_GE2J_MJJ_0_60_htt125",
+		   "qqH_GE2J_MJJ_60_120_htt125",
+		   "qqH_GE2J_MJJ_120_350_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
   vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ZH_htt125","WH_htt125"}});
   
@@ -187,10 +193,7 @@ int main(int argc, char **argv) {
 			  &cb,
 			  TheFile);
   
-      //TES Uncertainty            
-      //cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
-      //cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
-      //cb.cp().process({"VVT","ZT","TTT","WH_htt125","ZH_htt125"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+      //TES Uncertainty                  
       AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,

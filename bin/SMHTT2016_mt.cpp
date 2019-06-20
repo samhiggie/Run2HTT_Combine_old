@@ -54,30 +54,34 @@ int main(int argc, char **argv)
   vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
   cb.AddProcesses({"*"}, {"smh2016"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
 
-  vector<string> ggH_STXS = {"ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
-			     "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
-			     "ggH_PTH_0_200_1J_PTH_120_200_htt125",
-			     "ggH_PTH_0_200_1J_PTH_60_120_htt125",
-			     "ggH_PTH_0_200_1J_PTH_0_60_htt125",
-			     "ggH_PTH_0_200_0J_PTH_10_200_htt125",
-			     "ggH_PTH_0_200_0J_PTH_0_10_htt125",
-			     "ggH_PTH_GE200_htt125"};
+  vector<string> ggH_STXS;
+  if (Input.OptionExists("-g")) ggH_STXS = {"ggH_htt125"};
+  else ggH_STXS = {"ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_0_25_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_120_200_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_60_120_htt125",
+		   "ggH_PTH_0_200_GE2J_MJJ_0_350_PTH_0_60_htt125",
+		   "ggH_PTH_0_200_1J_PTH_120_200_htt125",
+		   "ggH_PTH_0_200_1J_PTH_60_120_htt125",
+		   "ggH_PTH_0_200_1J_PTH_0_60_htt125",
+		   "ggH_PTH_0_200_0J_PTH_10_200_htt125",
+		   "ggH_PTH_0_200_0J_PTH_0_10_htt125",
+		   "ggH_PTH_GE200_htt125"};
   
-  vector<string> qqH_STXS = {"qqH_0J_htt125",
-			     "qqH_1J_htt125",
-			     "qqH_GE2J_MJJ_0_60_htt125",
-			     "qqH_GE2J_MJJ_60_120_htt125",
-			     "qqH_GE2J_MJJ_120_350_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
-			     "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
+  vector<string> qqH_STXS; 
+  if(Input.OptionExists("-q")) qqH_STXS = {"qqH_htt125"};
+  else qqH_STXS = {"qqH_0J_htt125",
+		   "qqH_1J_htt125",
+		   "qqH_GE2J_MJJ_0_60_htt125",
+		   "qqH_GE2J_MJJ_60_120_htt125",
+		   "qqH_GE2J_MJJ_120_350_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_0_25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_350_700_PTHJJ_GE25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
+		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
   vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ZH_htt125","WH_htt125"}});
   
