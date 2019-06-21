@@ -32,7 +32,7 @@ int main(int argc, char **argv)
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
 
   //Dynamic Category Loading
-  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());
+  TFile* TheFile = new TFile((aux_shapes+"smh2017mt.root").c_str());
   std::vector<std::pair<int,std::string>> cats = {};
   for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries(); ++i)
     {
