@@ -15,6 +15,7 @@ parser.add_argument('--RunEmbeddedLess',help="Run combine model without using th
 parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
+parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -75,7 +76,7 @@ PerSignalWorkspaceCommand+= "--PO 'map=.*/ggH.*:r_ggH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/qqH.*:r_qqH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/WH.*:r_WH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/ZH.*:r_ZH[1,-25,25]' "
-PerSignalWorkspaceCommand+= CombinedCardName +" -o workspace_per_signal_breakdown_2018_cmb.root -m 125"
+PerSignalWorkspaceCommand+= CombinedCardName +" -o workspace_per_signal_breakdown_cmb.root -m 125"
 
 logging.info("Per Signal Workspace Command:")
 logging.info('\n\n'+PerSignalWorkspaceCommand+'\n')
@@ -87,7 +88,7 @@ CategorySignalNames=[]
 for Directory in TheFile.GetListOfKeys():
     CategorySignalNames.append("r"+Directory.GetName()[2:])
     PerCategoryWorkspaceCommand += "--PO 'map=.*"+Directory.GetName()+".*/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
-PerCategoryWorkspaceCommand+=CombinedCardName+" -o workspace_per_cat_breakdown_2018_cmb.root -m 125"
+PerCategoryWorkspaceCommand+=CombinedCardName+" -o workspace_per_cat_breakdown_cmb.root -m 125"
 
 logging.info("Per Category Workspace Command: ")
 logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
@@ -123,7 +124,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH):
     for Bin in STXSBins:
         STXSSignalNames.append("r_"+Bin)
         PerSTXSBinsWorkSpaceCommand += "--PO 'map=.*/"+Bin+":"+"r_"+Bin+"[1,-25,25]' "
-    PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_2018_cmb.root -m 125"
+    PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_cmb.root -m 125"
 
     logging.info("Per STXS Bins Work Space Command")
     logging.info('\n\n'+PerSTXSBinsWorkSpaceCommand+'\n')
@@ -155,7 +156,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH):
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
-    PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_2018_cmb.root -m 125"
+    PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_cmb.root -m 125"
 
     logging.info("Per Meged Bin Work Space Command")
     logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
@@ -166,41 +167,47 @@ logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
 
+PhysModel = 'MultiDimFit'
+ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --algo=singles --cl=0.68'
+if args.ComputeSignificance:
+    PhysModel = 'Significance'
+    ExtraCombineOptions = '--X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --cl=0.68'
+
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
-InclusiveCommand="combine -M MultiDimFit "+CombinedWorkspaceName+" --robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --expectSignal=1 -t -1 --algo=singles --cl=0.68"
+InclusiveCommand="combine -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 os.system(InclusiveCommand)
 
-#run the per categories
-for SignalName in CategorySignalNames:
-    CombineCommand = "combine -M MultiDimFit workspace_per_cat_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
-    logging.info("Category Signal Command: ")
-    logging.info('\n\n'+CombineCommand+'\n')    
-    os.system(CombineCommand)
+if not args.ComputeSignificance:
+    #run the signal samples
+    for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
+        CombineCommand = "combine -M "+PhysModel+" workspace_per_signal_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
+        logging.info("Signal Sample Signal Command: ")
+        logging.info('\n\n'+CombineCommand+'\n')
+        os.system(CombineCommand)
 
-#run the signal samples
-for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
-    CombineCommand = "combine -M MultiDimFit workspace_per_signal_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
-    logging.info("Signal Sample Signal Command: ")
-    logging.info('\n\n'+CombineCommand+'\n')
-    os.system(CombineCommand)
+    #run the per categories
+    for SignalName in CategorySignalNames:
+        CombineCommand = "combine -M "+PhysModel+" workspace_per_cat_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+        logging.info("Category Signal Command: ")
+        logging.info('\n\n'+CombineCommand+'\n')    
+        os.system(CombineCommand)
 
 # run the STXS bins
-if not (args.RunInclusiveggH or args.RunInclusiveqqH):
+if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
     for STXSBin in STXSBins:
-        CombineCommand = "combine -M MultiDimFit workspace_per_STXS_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
+        CombineCommand = "combine -M "+PhysModel+" workspace_per_STXS_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in STXSBins:
-            CombineCommand+=("r_"+BinName+"=1,")
-        CombineCommand[:len(CombineCommand)-1]
+            CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
     #run the merged bins
     for MergedBin in MergedSignalNames:
-        CombineCommand = "combine -M MultiDimFit workspace_per_Merged_breakdown_2018_cmb.root --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd FITTER_BOUND --robustFit=1 --algo=singles --cl=0.68 -t -1 --setParameters "
+        CombineCommand = "combine -M "+PhysModel+" workspace_per_Merged_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in MergedSignalNames:
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
