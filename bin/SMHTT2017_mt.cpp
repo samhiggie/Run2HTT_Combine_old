@@ -51,7 +51,7 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, cats);
 
-  vector<string> bkg_procs = {"ZT","jetFakes","ZL","VVL","TTL"};
+  vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -97,61 +97,54 @@ int main(int argc, char **argv)
   //start with lnN errors
   //********************************************************************************************************************************
 
-  cb.cp().process({"ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125"}).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
-  cb.cp().process({"ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125"}).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
-  cb.cp().process({"ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125"}).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));    
+  //What are these: Present in 18-032 Data cards.
+  cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
+  cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
+  cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
-  cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","embedded","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.014));
-  cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_mc_m","lnN",SystMap<>::init(1.014));
-  
-  // these 4 have been replaced with one overarching tau ID efficiency uncertainty
-  //Quadrature addition of CMS_eff_mc__t and CMS_eff_mc_t_Run2017
-  //cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_mc_t","lnN",SystMap<>::init(1.019));
-  //Quadrature addition of CMS_eff_mc_t_mt and CMS_eff_mc_t_mt_Run2017
-  //cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_mc_t_mt","lnN",SystMap<>::init(1.0084));
-  //Quadrature addition of CMS_eff_t and CMS_eff_t_Run2017
-  //cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","embedded","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_t","lnN",SystMap<>::init(1.019));
-  //Quadrature addition of CMS_eff_tmt and CMS_eff_t_mt_Run2017
-  //cb.cp().process({"ZL","TTL","VVL","WH_htt125","ZH_htt125","embedded","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_eff_t_mt","lnN",SystMap<>::init(1.0084));
-  
-  //TauID Uncertainty: applied to genuine tau contributions
-  cb.cp().process(sig_procs).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
+  //Tau ID uncertainty: applied to genuine tau contributions.
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
 
-  //removed in favor not renormalizing shapes
-  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_stat_mt_mt_qqh_unrolled_Run2017","lnN",SystMap<>::init(1.048));
-  //Quadrature addition of CMS_ff_norm_syst_mt and CMS_ff_norm_syst_mt_Run2017
+  //Muon ID efficiency: Decorollated in 18-032 datacards.  
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
+
+  //lnN Fake Factor Uncertainties: Values from 18-032 data cards.
+  // 28/5/19 Update: Decision is to pull all FF lnN uncertainties and simply proceed with un-renormalized shapes for now
+  // so to avoid artificial reduction of errors.
+  // Left commented out
+  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_stat_mt_mt_qqh_unrolled_Run2018","lnN",SystMap<>::init(1.048));
+  //Quadrature addition of CMS_ff_norm_syst_mt and CMS_ff_norm_syst_mt_Run2018
   //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_syst_mt","lnN",SystMap<>::init(1.058));
-  
-  //Quadrature addition of CMS_ff_sub_syst_mt_mt_qqh_unrolled and CMS_ff_sub_syst_mt_mt_qqh_unrolled_Run2017
+  //Quadrature addition of CMS_ff_sub_syst_mt_mt_qqh_unrolled and CMS_ff_sub_syst_mt_mt_qqh_unrolled_Run2018
   //cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_sub_syst_mt_mt_qqh_unrolled", "lnN",SystMap<>::init(1.04));
 
   // b-tagging efficiency: Changed into lnN.
   //5% in ttbar and 0.5% otherwise.
-  cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
-  cb.cp().process({"ZL","VVL","WH_htt125","ZH_htt125","ggH_htt125","qqH_htt125"}).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
+  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
+  cb.cp().process(JoinStr({{"ZT","VVT","ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
 
   // TTbar XSection Uncertainty
-  cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
-  
+  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
+
   // Diboson XSection Uncertainty
-  cb.cp().process({"VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
+  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
+  cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));      
+  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));    
   
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
-  cb.cp().process({"qqH_htt125"}).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
+  cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
 
   //Luminosity Uncertainty
-  cb.cp().process({"ggH_htt125","qqH_htt125","WH_htt125","ZH_htt125","VVL","ZL","TTL"}).AddSyst(cb, "lumi_Run2017", "lnN", SystMap<>::init(1.023));
+  cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2017", "lnN", SystMap<>::init(1.023));
 
   //??? present in HIG 18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
-  cb.cp().process({"ggH_htt125"}).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
-  cb.cp().process({"qqH_htt125"}).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));  
+  cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
+  cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));  
   //********************************************************************************************************************************  
     
   //shape uncertainties
