@@ -46,6 +46,10 @@ for year in args.years:
         CardCombiningCommand = "combineCards.py"
         CardNum = 1
         for Directory in TheFile.GetListOfKeys():
+            if args.RunWithAutoMCStats:
+                CardFile = open("smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
+                CardFile.write("* autoMCStats 0.0")
+
             CardCombiningCommand += " "+Directory.GetName()+"=smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
             CardNum+=1
         CombinedChannelName = channel.upper()+year+"DataCard.txt"
@@ -64,11 +68,6 @@ CardCombiningCommand += ("> "+CombinedCardName)
 logging.info("Final Card Combining Command:")
 logging.info('\n\n'+CardCombiningCommand+'\n')
 os.system(CardCombiningCommand)
-
-#Currently bugged. No visible effect.
-if args.RunWithAutoMCStats:
-    CardFile = open(CombinedCardName,"a+")
-    CardFile.write("* autoMCStats 0.0")
 
 #per signal card workspace set up
 PerSignalWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
