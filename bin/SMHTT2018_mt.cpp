@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     }  
 
   // Create an empty CombineHarvester instance that will hold all of the
-  // datacard configuration and histograms etc.
+  // datacard configuration and histograms etc.  
   ch::CombineHarvester cb;
   // Uncomment this next line to see a *lot* of debug information
   // cb.SetVerbosity(3);
@@ -212,6 +212,13 @@ int main(int argc, char **argv) {
 	ggH_STXS,
 	&cb,
 	TheFile);            
+
+      //Muon Energy scale uncertainties      
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
+	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
+	&cb,
+	TheFile);
     }
   //********************************************************************************************************************************
 
