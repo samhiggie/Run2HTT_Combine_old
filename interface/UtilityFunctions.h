@@ -42,9 +42,17 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
 	    {
               UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
               DownHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
-              Float_t UpIntegral = UpHisto->Integral();
-              Float_t DownIntegral = DownHisto->Integral();
-
+	      Float_t UpIntegral;
+	      Float_t DownIntegral;
+	      try
+		{
+		  UpIntegral = UpHisto->Integral();
+		  DownIntegral = DownHisto->Integral();
+		}
+	      catch (const char* msg)
+		{
+		  throw "Error reading Histograms for shape: "+(string)(*Unc_it)+" on distribution "+(string)(*it);
+		}
               if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
 		{
                   cb->cp().bin({TheDirectory->GetName()}).process({*it})
