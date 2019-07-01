@@ -9,10 +9,10 @@ parser = argparse.ArgumentParser(description="Centralized script for running com
 parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Specify the year(s) to run the fit for",required=True)
 parser.add_argument('--channels',nargs="+",choices=['mt','et','tt'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
-parser.add_argument('--RunBinByBinLess',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
+parser.add_argument('--RunWithBinByBin',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
 parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 #Currently bugged. No visible effect.
-parser.add_argument('--RunWithAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
+parser.add_argument('--RunWithoutAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
@@ -30,7 +30,7 @@ for year in args.years:
         DataCardCreationCommand+="_"+channel
         if args.RunShapeless:
             DataCardCreationCommand+=" -s"
-        if args.RunBinByBinLess:
+        if not args.RunWithBinByBin:
             DataCardCreationCommand+=" -b"
         if args.RunEmbeddedLess:
             DataCardCreationCommand+=" -e"
@@ -46,7 +46,7 @@ for year in args.years:
         CardCombiningCommand = "combineCards.py"
         CardNum = 1
         for Directory in TheFile.GetListOfKeys():
-            if args.RunWithAutoMCStats:
+            if not args.RunWithoutAutoMCStats:
                 CardFile = open("smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
                 CardFile.write("* autoMCStats 0.0")
 
