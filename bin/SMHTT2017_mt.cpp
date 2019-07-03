@@ -39,7 +39,6 @@ int main(int argc, char **argv)
       std::cout<<"Making category for: "<<i<<" "<<TheFile->GetListOfKeys()->At(i)->GetName()<<std::endl;
       cats.push_back({i+1,TheFile->GetListOfKeys()->At(i)->GetName()});
     }
-  TheFile->Close();
 
   // Create an empty CombineHarvester instance that will hold all of the
   // datacard configuration and histograms etc.
@@ -96,7 +95,8 @@ int main(int argc, char **argv)
 
   //start with lnN errors
   //********************************************************************************************************************************
-
+  
+  std::cout<<"Adding lnN's..."<<std::endl;
   //What are these: Present in 18-032 Data cards.
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
@@ -154,6 +154,7 @@ int main(int argc, char **argv)
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
+      std::cout<<"Adding Shapes..."<<std::endl;
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong","CMS_ZLShape_mt_1prong1pizero"},
 			  {"ZL"},
 			  &cb,
@@ -200,7 +201,7 @@ int main(int argc, char **argv)
 
       // Jet Energy Scale Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal","CMS_JetEta3to5","CMS_JetEta0to5",
-	    "CMS_JetEta0to3","CMS_JetRelativeSample"},
+	    "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	TheFile);
