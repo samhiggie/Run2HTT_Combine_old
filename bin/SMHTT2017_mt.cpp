@@ -176,7 +176,9 @@ int main(int argc, char **argv)
 
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
-      AddShapesIfNotEmpty({"CMS_htt_boson_reso_met","CMS_htt_boson_scale_met"},
+      AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet","CMS_htt_boson_scale_met_0jet",
+	    "CMS_htt_boson_reso_met_1jet","CMS_htt_boson_scale_met_1jet",
+	    "CMS_htt_boson_reso_met_2jet","CMS_htt_boson_scale_met_2jet"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
 			  &cb,
 			  TheFile);
