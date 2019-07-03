@@ -16,6 +16,7 @@ parser.add_argument('--RunWithoutAutoMCStats',help="Run with auto mc stats comma
 parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
+parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -161,7 +162,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH):
     logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
     os.system(PerMergedBinWorkSpaceCommand)
 
-TextWorkspaceCommand = "text2workspace.py "+CombinedCardName
+TextWorkspaceCommand = "text2workspace.py "+CombinedCardName+" -m 125"
 logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
@@ -213,3 +214,26 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
+
+#run impact fitting
+if args.ComputeImpacts:
+    print("\nCalculating Impacts, this may take a while...\n")
+    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 --doInitialFit --robustFit 1 --expectSignal=1 -t -1 --parallel 8"
+    logging.info("Initial Fit Impact Command:")
+    logging.info('\n\n'+ImpactCommand+'\n')
+    os.system(ImpactCommand)
+    
+    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 --robustFit 1 --doFits --expectSignal=1 -t -1 --parallel 8 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP"
+    logging.info("Full Fit Impact Command:")
+    logging.info('\n\n'+ImpactCommand+'\n')
+    os.system(ImpactCommand)
+
+    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 -o impacts_final.json"
+    logging.info("JSON Output Impact Command:")
+    logging.info('\n\n'+ImpactCommand+'\n')
+    os.system(ImpactCommand)
+
+    ImpactCommand = "plotImpacts.py -i impacts_final.json -o impacts_final"
+    logging.info("Plotting Impact Command:")
+    logging.info('\n\n'+ImpactCommand+'\n')
+    os.system(ImpactCommand)
