@@ -2,6 +2,7 @@ import os
 import argparse
 import ROOT
 import logging
+import datetime
 
 logging.basicConfig(filename="CombineHistory.log",filemode="w",level=logging.INFO,format='%(asctime)s %(message)s')
 
@@ -64,31 +65,34 @@ for year in args.years:
 CardCombiningCommand = "combineCards.py"
 for CombinedChannelCard in ChannelCards:
     CardCombiningCommand+=" "+CombinedChannelCard[:6]+"="+CombinedChannelCard
-CombinedCardName = "FinalCard.txt"
+DateTag = datetime.datetime.now().strftime("_%d%m%y_%H%M")
+CombinedCardName = "FinalCard"+DateTag+".txt"
 CardCombiningCommand += ("> "+CombinedCardName)
 logging.info("Final Card Combining Command:")
 logging.info('\n\n'+CardCombiningCommand+'\n')
 os.system(CardCombiningCommand)
 
 #per signal card workspace set up
+PerSignalName = "Workspace_per_signal_breakdown_cmb"+DateTag+".root"
 PerSignalWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/ggH.*:r_ggH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/qqH.*:r_qqH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/WH.*:r_WH[1,-25,25]' "
 PerSignalWorkspaceCommand+= "--PO 'map=.*/ZH.*:r_ZH[1,-25,25]' "
-PerSignalWorkspaceCommand+= CombinedCardName +" -o workspace_per_signal_breakdown_cmb.root -m 125"
+PerSignalWorkspaceCommand+= CombinedCardName +" -o "+PerSignalName+" -m 125"
 
 logging.info("Per Signal Workspace Command:")
 logging.info('\n\n'+PerSignalWorkspaceCommand+'\n')
 os.system(PerSignalWorkspaceCommand)
 
 #per category
+PerCategoryName = "workspace_per_cat_breakdown_cmb"+DateTag+".root"
 PerCategoryWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
 CategorySignalNames=[]
 for Directory in TheFile.GetListOfKeys():
     CategorySignalNames.append("r"+Directory.GetName()[2:])
     PerCategoryWorkspaceCommand += "--PO 'map=.*"+Directory.GetName()+".*/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
-PerCategoryWorkspaceCommand+=CombinedCardName+" -o workspace_per_cat_breakdown_cmb.root -m 125"
+PerCategoryWorkspaceCommand+=CombinedCardName+" -o "+PerCategoryName+" -m 125"
 
 logging.info("Per Category Workspace Command: ")
 logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
@@ -119,18 +123,20 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH):
                 "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_0_25_htt125",
                 "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
                 "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"]
+    PerSTXSName = "workspace_per_STXS_breakdown_cmb"+DateTag+".root"
     PerSTXSBinsWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
     STXSSignalNames=[]
     for Bin in STXSBins:
         STXSSignalNames.append("r_"+Bin)
         PerSTXSBinsWorkSpaceCommand += "--PO 'map=.*/"+Bin+":"+"r_"+Bin+"[1,-25,25]' "
-    PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o workspace_per_STXS_breakdown_cmb.root -m 125"
+    PerSTXSBinsWorkSpaceCommand += CombinedCardName+" -o "+PerSTXSName+" -m 125"
 
     logging.info("Per STXS Bins Work Space Command")
     logging.info('\n\n'+PerSTXSBinsWorkSpaceCommand+'\n')
     os.system(PerSTXSBinsWorkSpaceCommand)
 
     #add in the merged ones
+    PerMergedBinName = "workspace_per_Merged_breakdown_cmb.root"+DateTag
     PerMergedBinWorkSpaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
     MergedSignalNames=[]
     #qqH, less than 2 Jets
@@ -156,7 +162,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH):
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_350_700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' "
     PerMergedBinWorkSpaceCommand += "--PO 'map=.*/ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_GE25_htt125:r_ggH_PTH_0_200_GE2J_MJJ_GE350[1,-25,25]' " 
-    PerMergedBinWorkSpaceCommand += CombinedCardName+" -o workspace_per_Merged_breakdown_cmb.root -m 125"
+    PerMergedBinWorkSpaceCommand += CombinedCardName+" -o "+PerMergedBinName+" -m 125"
 
     logging.info("Per Meged Bin Work Space Command")
     logging.info('\n\n'+PerMergedBinWorkSpaceCommand+'\n')
@@ -183,14 +189,14 @@ os.system(InclusiveCommand)
 if not args.ComputeSignificance:
     #run the signal samples
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
-        CombineCommand = "combine -M "+PhysModel+" workspace_per_signal_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
+        CombineCommand = "combine -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
 
     #run the per categories
     for SignalName in CategorySignalNames:
-        CombineCommand = "combine -M "+PhysModel+" workspace_per_cat_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+        CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
         logging.info("Category Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
@@ -198,7 +204,7 @@ if not args.ComputeSignificance:
 # run the STXS bins
 if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
     for STXSBin in STXSBins:
-        CombineCommand = "combine -M "+PhysModel+" workspace_per_STXS_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combine -M "+PhysModel+" "+PerSTXSName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in STXSBins:
             CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
@@ -207,7 +213,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         os.system(CombineCommand)
     #run the merged bins
     for MergedBin in MergedSignalNames:
-        CombineCommand = "combine -M "+PhysModel+" workspace_per_Merged_breakdown_cmb.root "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combine -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in MergedSignalNames:
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
@@ -218,22 +224,24 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
 #run impact fitting
 if args.ComputeImpacts:
     print("\nCalculating Impacts, this may take a while...\n")
-    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 --doInitialFit --robustFit 1 --expectSignal=1 -t -1 --parallel 8"
+    ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 --doInitialFit --robustFit 1 --expectSignal=1 -t -1 --parallel 8"
     logging.info("Initial Fit Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
     
-    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 --robustFit 1 --doFits --expectSignal=1 -t -1 --parallel 8 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP"
+    ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 --robustFit 1 --doFits --expectSignal=1 -t -1 --parallel 8 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP"
     logging.info("Full Fit Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
 
-    ImpactCommand = "combineTool.py -M Impacts -d FinalCard.root -m 125 -o impacts_final.json"
+    ImpactJsonName = "impacts_final"+DateTag+".json"
+    ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 -o "+ImpactJsonName
     logging.info("JSON Output Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
 
-    ImpactCommand = "plotImpacts.py -i impacts_final.json -o impacts_final"
+    FinalImpactName = "impacts_final"+DateTag
+    ImpactCommand = "plotImpacts.py -i impacts_final.json -o "+FinalImpactName
     logging.info("Plotting Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
