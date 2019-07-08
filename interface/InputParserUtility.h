@@ -9,4 +9,5 @@ class InputParserUtility
  public: 
   InputParserUtility(int &argc, char **argv);
   bool OptionExists(const std::string &Option);
+  std::string ReturnToken(int TokenNum);
 };

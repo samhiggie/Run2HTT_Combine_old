@@ -18,3 +18,8 @@ bool InputParserUtility::OptionExists(const std::string &Option)
     }
   return false;  
 }
+
+std::string InputParserUtility::ReturnToken(int TokenNum)
+{
+  return this->tokens[TokenNum];
+}
