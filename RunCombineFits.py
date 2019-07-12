@@ -239,7 +239,6 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
 #run impact fitting
 if args.ComputeImpacts:
     os.chdir(OutputDir)
-    os.system("pwd")
     print("\nCalculating Impacts, this may take a while...\n")
     print("Initial fit")
     ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 --doInitialFit --robustFit 1 --expectSignal=1 -t -1 --parallel 8 "
@@ -248,21 +247,20 @@ if args.ComputeImpacts:
     os.system(ImpactCommand)
         
     print("Full fit")
-    os.system("pwd")
     ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 --robustFit 1 --doFits --expectSignal=1 -t -1 --parallel 8 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP "
     logging.info("Full Fit Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
 
     print("json-ifying")
-    ImpactJsonName = OutputDir+"impacts_final_"+DateTag+".json"
+    ImpactJsonName = "impacts_final_"+DateTag+".json"
     ImpactCommand = "combineTool.py -M Impacts -d "+CombinedWorkspaceName+" -m 125 -o "+ImpactJsonName
     logging.info("JSON Output Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
 
     print("final impact plot")
-    FinalImpactName = OutputDir+"impacts_final_"+DateTag
+    FinalImpactName = "impacts_final_"+DateTag
     ImpactCommand = "plotImpacts.py -i "+ImpactJsonName+" -o "+FinalImpactName
     logging.info("Plotting Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
