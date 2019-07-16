@@ -22,9 +22,10 @@ using namespace std;
 //a pointer ot the combine harvester instance
 //a pointer to the tfile that the distributions are in
 void AddShapesIfNotEmpty(std::vector<string> Shapes,
-			   std::vector<string> Distributions,
-			   ch::CombineHarvester * cb,
-			   TFile* TheFile)
+			 std::vector<string> Distributions,
+			 ch::CombineHarvester * cb,
+			 float Value,
+			 TFile* TheFile)
 {
   //loop over all of the analysis categories
   for(int i = 0; i<TheFile->GetListOfKeys()->GetEntries();++i)
@@ -56,7 +57,7 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
               if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
 		{
                   cb->cp().bin({TheDirectory->GetName()}).process({*it})
-                    .AddSyst(*cb,*Unc_it,"shape",ch::syst::SystMap<>::init(1.00));
+                    .AddSyst(*cb,*Unc_it,"shape",ch::syst::SystMap<>::init(Value));
                 }
               else
 		{

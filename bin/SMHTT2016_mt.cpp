@@ -158,6 +158,7 @@ int main(int argc, char **argv)
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong","CMS_ZLShape_mt_1prong1pizero"},
 			  {"ZL"},
 			  &cb,
+			  1.00,
 			  TheFile);
       
       //Fake factor shapes: taken from 18-032 data cards.      
@@ -166,39 +167,45 @@ int main(int argc, char **argv)
 	    "CMS_ff_w_syst"},
 	{"jetFakes"},
 	&cb,
+	1.00,
 	TheFile);
       
       //MET Unclustered Energy Scale      
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered"},
 			  {"TTT","TTL","VVT","VVL"},
 			  &cb,
+			  1.00,
 			  TheFile);
-
+      
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet","CMS_htt_boson_scale_met_0jet",
 	    "CMS_htt_boson_reso_met_1jet","CMS_htt_boson_scale_met_1jet",
 	    "CMS_htt_boson_reso_met_2jet","CMS_htt_boson_scale_met_2jet"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
-			  &cb,
-			  TheFile);
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
+	&cb,
+	1.00,
+	TheFile);
 
       //ZPT Reweighting Shapes:      
       AddShapesIfNotEmpty({"CMS_htt_dyShape"},
 			  {"ZT","ZL"},
 			  &cb,
+			  1.00,
 			  TheFile);
 
       //Top Pt Reweighting      
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
 			  {"TTL","TTT"},
 			  &cb,
+			  1.00,
 			  TheFile);
   
       //TES Uncertainty                  
       AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
+			  1.00,
 			  TheFile);
 
       // Jet Energy Scale Uncertainties            
@@ -206,6 +213,7 @@ int main(int argc, char **argv)
 	    "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
+	1.00,
 	TheFile);
 
       //ggH Theory Uncertainties
@@ -213,6 +221,7 @@ int main(int argc, char **argv)
 	    "THU_ggH_VBF3j","THU_ggH_qmtop","THU_ggH_PT60","THU_ggH_PT120"},
 	ggH_STXS,
 	&cb,
+	1.00,
 	TheFile);            
 
       //Muon Energy scale uncertainties
@@ -220,6 +229,7 @@ int main(int argc, char **argv)
 	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
+	1.00,
 	TheFile);
     }
   //********************************************************************************************************************************
