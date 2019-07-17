@@ -155,23 +155,23 @@ int main(int argc, char **argv)
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
       std::cout<<"Adding Shapes..."<<std::endl;
-      AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong","CMS_ZLShape_mt_1prong1pizero"},
+      AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong_2017","CMS_ZLShape_mt_1prong1pizero_2017"},
 			  {"ZL"},
 			  &cb,
 			  1.00,
 			  TheFile);
       
       //Fake factor shapes: taken from 18-032 data cards.      
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst", "CMS_ff_qcd_njet0_mt_stat", "CMS_ff_qcd_njet1_mt_stat",
-	    "CMS_ff_tt_njet1_stat", "CMS_ff_tt_syst", "CMS_ff_w_njet0_mt_stat", "CMS_ff_w_njet1_mt_stat", 
-	    "CMS_ff_w_syst"},
+      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2017", "CMS_ff_qcd_njet0_mt_stat_2017", "CMS_ff_qcd_njet1_mt_stat_2017",
+	    "CMS_ff_tt_njet1_stat_2017", "CMS_ff_tt_syst_2017", "CMS_ff_w_njet0_mt_stat_2017", "CMS_ff_w_njet1_mt_stat_2017", 
+	    "CMS_ff_w_syst_2017"},
 	{"jetFakes"},
 	&cb,
 	1.00,
 	TheFile);
       
       //MET Unclustered Energy Scale      
-      AddShapesIfNotEmpty({"CMS_scale_met_unclustered"},
+      AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2017"},
 			  {"TTT","TTL","VVT","VVL"},
 			  &cb,
 			  1.00,
@@ -179,54 +179,54 @@ int main(int argc, char **argv)
 
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
-      AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet","CMS_htt_boson_scale_met_0jet",
-	    "CMS_htt_boson_reso_met_1jet","CMS_htt_boson_scale_met_1jet",
-	    "CMS_htt_boson_reso_met_2jet","CMS_htt_boson_scale_met_2jet"},
+      AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2017","CMS_htt_boson_scale_met_0jet_2017",
+	    "CMS_htt_boson_reso_met_1jet_2017","CMS_htt_boson_scale_met_1jet_2017",
+	    "CMS_htt_boson_reso_met_2jet_2017","CMS_htt_boson_scale_met_2jet_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
 	&cb,
 	1.00,
 	TheFile);
 
       //ZPT Reweighting Shapes:      
-      AddShapesIfNotEmpty({"CMS_htt_dyShape"},
+      AddShapesIfNotEmpty({"CMS_htt_dyShape_2017"},
 			  {"ZT","ZL"},
 			  &cb,
 			  1.00,
 			  TheFile);
 
       //Top Pt Reweighting      
-      AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
+      AddShapesIfNotEmpty({"CMS_htt_ttbarShape_2017"},
 			  {"TTL","TTT"},
 			  &cb,
 			  1.00,
 			  TheFile);
   
       //TES Uncertainty                  
-      AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
+      AddShapesIfNotEmpty({"CMS_scale_t_1prong_2017","CMS_scale_t_3prong_2017","CMS_scale_t_1prong1pizero_2017"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
 			  1.00,
 			  TheFile);
 
       // Jet Energy Scale Uncertainties            
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal","CMS_JetEta3to5","CMS_JetEta0to5",
-	    "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017","CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
+	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
 	TheFile);
 
       //ggH Theory Uncertainties
-      AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
-	    "THU_ggH_VBF3j","THU_ggH_qmtop","THU_ggH_PT60","THU_ggH_PT120"},
+      AddShapesIfNotEmpty({"THU_ggH_Mu_2017","THU_ggH_Res_2017","THU_ggH_Mig01_2017","THU_ggH_Mig12_2017","THU_ggH_VBF2j_2017",
+	    "THU_ggH_VBF3j_2017","THU_ggH_qmtop_2017","THU_ggH_PT60_2017","THU_ggH_PT120_2017"},
 	ggH_STXS,
 	&cb,
 	1.00,
 	TheFile);            
 
       //Muon Energy scale uncertainties
-      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
-	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2017","CMS_scale_m_etam2p1tom1p2_2017",
+	    "CMS_scale_m_etam1p2to1p2_2017","CMS_scale_m_eta1p2to2p1_2017","CMS_scale_m_eta2p1to2p4_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
