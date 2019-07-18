@@ -188,14 +188,14 @@ int main(int argc, char **argv) {
 	TheFile);
 
       //ZPT Reweighting Shapes:      
-      AddShapesIfNotEmpty({"CMS_htt_dyShape_2018"},
+      AddShapesIfNotEmpty({"CMS_htt_dyShape"},
 			  {"ZT","ZL"},
 			  &cb,
 			  1.00,
 			  TheFile);
 
       //Top Pt Reweighting      
-      AddShapesIfNotEmpty({"CMS_htt_ttbarShape_2018"},
+      AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
 			  {"TTL","TTT"},
 			  &cb,
 			  1.00,
@@ -208,17 +208,27 @@ int main(int argc, char **argv) {
 			  1.00,
 			  TheFile);
 
-      // Jet Energy Scale Uncertainties            
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018","CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
+      // Jet Energy Correction Uncertainties            
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	&cb,
+	0.707,
+	TheFile);
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	&cb,
+	0.707,
+	TheFile);
+      AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile);            
 
       //ggH Theory Uncertainties
-      AddShapesIfNotEmpty({"THU_ggH_Mu_2018","THU_ggH_Res_2018","THU_ggH_Mig01_2018","THU_ggH_Mig12_2018","THU_ggH_VBF2j_2018",
-	    "THU_ggH_VBF3j_2018","THU_ggH_qmtop_2018","THU_ggH_PT60_2018","THU_ggH_PT120_2018"},
+      AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
+	    "THU_ggH_VBF3j","THU_ggH_qmtop","THU_ggH_PT60","THU_ggH_PT120"},
 	ggH_STXS,
 	&cb,
 	1.00,
