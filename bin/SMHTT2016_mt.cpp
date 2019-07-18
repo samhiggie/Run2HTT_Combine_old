@@ -98,42 +98,31 @@ int main(int argc, char **argv)
   //start with lnN errors
   //********************************************************************************************************************************
   
-  //What are these: Present in 18-032 Data cards.
+  //Theory uncerts: Present in 18-032 Data cards.
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
   //Tau ID uncertainty: applied to genuine tau contributions.
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff_2016","lnN",SystMap<>::init(1.02));
 
   //Muon ID efficiency: Decorollated in 18-032 datacards.  
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.02));
 
-  //lnN Fake Factor Uncertainties: Values from 18-032 data cards.
-  // 28/5/19 Update: Decision is to pull all FF lnN uncertainties and simply proceed with un-renormalized shapes for now
-  // so to avoid artificial reduction of errors.
-  // Left commented out
-  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_stat_mt_mt_qqh_unrolled_Run2016","lnN",SystMap<>::init(1.048));
-  //Quadrature addition of CMS_ff_norm_syst_mt and CMS_ff_norm_syst_mt_Run2016
-  //cb.cp().process({"jetFakes"}).AddSyst(cb, "CMS_ff_norm_syst_mt","lnN",SystMap<>::init(1.058));
-  //Quadrature addition of CMS_ff_sub_syst_mt_mt_qqh_unrolled and CMS_ff_sub_syst_mt_mt_qqh_unrolled_Run2016
-  //cb.cp().process({"jetFakes"}).AddSyst(cb,"CMS_ff_sub_syst_mt_mt_qqh_unrolled", "lnN",SystMap<>::init(1.04));
-
-  // b-tagging efficiency: Changed into lnN.
-  //5% in ttbar and 0.5% otherwise.
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
-  cb.cp().process(JoinStr({{"ZT","VVT","ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
+  // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
+  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2016","lnN",SystMap<>::init(1.05));
+  cb.cp().process(JoinStr({{"ZT","VVT","ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b_2016","lnN",SystMap<>::init(1.005));
 
   // TTbar XSection Uncertainty
   cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
-
   // Diboson XSection Uncertainty
   cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
   cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));    
+  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau_2016 ", "lnN",SystMap<>::init(1.26));    
   
+  //theory uncerts present in HIG-18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
@@ -141,7 +130,7 @@ int main(int argc, char **argv)
   //Luminosity Uncertainty
   cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2016", "lnN", SystMap<>::init(1.023));
 
-  //??? present in HIG 18-032
+  //theory uncerts present in HIG 18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
   cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
@@ -153,7 +142,7 @@ int main(int argc, char **argv)
   if(not Input.OptionExists("-s"))
     {
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
-      
+
       //Mu to tau fake energy scale and e to tau energy fake scale            
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong_2016","CMS_ZLShape_mt_1prong1pizero_2016"},
 			  {"ZL"},
@@ -273,8 +262,7 @@ int main(int argc, char **argv)
   //! [part7]
 
   //! [part8]
-
-  //TODO: Ongoing effort to move to autoMCstats instead of combineharvester bin-by-bin.
+  
   if (not Input.OptionExists("-b"))
     {
       auto bbb = ch::BinByBinFactory()
