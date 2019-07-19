@@ -141,9 +141,11 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+      std::cout<<"Adding Shapes..."<<std::endl;
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
 
       //Mu to tau fake energy scale and e to tau energy fake scale            
+      std::cout<<"ZLShapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong_2016","CMS_ZLShape_mt_1prong1pizero_2016"},
 			  {"ZL"},
 			  &cb,
@@ -151,6 +153,7 @@ int main(int argc, char **argv)
 			  TheFile);
       
       //Fake Factor Stat uncertainties: Fully decorrelated
+      std::cout<<"Fake Factors"<<std::endl;
       AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_mt_stat_2016", "CMS_ff_qcd_njet1_mt_stat_2016",
 	    "CMS_ff_tt_njet1_stat_2016", "CMS_ff_w_njet0_mt_stat_2016", "CMS_ff_w_njet1_mt_stat_2016"},
 	{"jetFakes"},
@@ -164,13 +167,14 @@ int main(int argc, char **argv)
 	&cb,
 	0.707,
 	TheFile);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w"},
+      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
 	TheFile);
       
       //MET Unclustered Energy Scale      
+      std::cout<<"MET UES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2016"},
 			  {"TTT","TTL","VVT","VVL"},
 			  &cb,
@@ -179,6 +183,7 @@ int main(int argc, char **argv)
       
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
+      std::cout<<"Recoil shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2016","CMS_htt_boson_scale_met_0jet_2016",
 	    "CMS_htt_boson_reso_met_1jet_2016","CMS_htt_boson_scale_met_1jet_2016",
 	    "CMS_htt_boson_reso_met_2jet_2016","CMS_htt_boson_scale_met_2jet_2016"},
@@ -188,6 +193,7 @@ int main(int argc, char **argv)
 	TheFile);
 
       //ZPT Reweighting Shapes:      
+      std::cout<<"ZPT Reweighting"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_dyShape_2016"},
 			  {"ZT","ZL"},
 			  &cb,
@@ -195,6 +201,7 @@ int main(int argc, char **argv)
 			  TheFile);
 
       //Top Pt Reweighting      
+      std::cout<<"ttbar shape"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
 			  {"TTL","TTT"},
 			  &cb,
@@ -202,12 +209,14 @@ int main(int argc, char **argv)
 			  TheFile);
   
       //TES Uncertainty                  
+      std::cout<<"TES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2016","CMS_scale_t_3prong_2016","CMS_scale_t_1prong1pizero_2016"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
 			  1.00,
 			  TheFile);
 
+      std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
@@ -226,6 +235,7 @@ int main(int argc, char **argv)
 	TheFile);            
 
       //ggH Theory Uncertainties
+      std::cout<<"ggH Theory"<<std::endl;
       AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
 	    "THU_ggH_VBF3j","THU_ggH_qmtop","THU_ggH_PT60","THU_ggH_PT120"},
 	ggH_STXS,

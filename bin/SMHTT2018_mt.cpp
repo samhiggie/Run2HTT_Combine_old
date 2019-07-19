@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
 	&cb,
 	0.707,
 	TheFile);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w"},
+      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
