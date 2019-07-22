@@ -11,7 +11,7 @@ def RandomStringTag(size=6,chars=string.ascii_uppercase+string.ascii_lowercase+s
 
 parser = argparse.ArgumentParser(description="Centralized script for running combine fits on dynamically changing analysis categories.")
 parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Specify the year(s) to run the fit for",required=True)
-parser.add_argument('--channels',nargs="+",choices=['mt','et','tt'],help="specify the channels to create data cards for",required=True)
+parser.add_argument('--channels',nargs="+",choices=['mt','et','tt','em'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
 parser.add_argument('--RunWithBinByBin',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
 parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
