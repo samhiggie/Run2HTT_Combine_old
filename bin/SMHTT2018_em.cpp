@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   //! [part3]
   cb.AddObservations({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"DYT","VVT","STT","TTT","jetFakes","DYL","VVL","STL","TTL"};
+  vector<string> bkg_procs = {"DYT","VVT","STT","TTT","QCD","DYL","VVL","STL","TTL"};
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
