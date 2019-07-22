@@ -155,19 +155,19 @@ int main(int argc, char **argv)
       //Fake Factor Stat uncertainties: Fully decorrelated
       std::cout<<"Fake Factors"<<std::endl;
       AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_mt_stat_2016", "CMS_ff_qcd_njet1_mt_stat_2016",
-	    "CMS_ff_tt_njet1_stat_2016", "CMS_ff_w_njet0_mt_stat_2016", "CMS_ff_w_njet1_mt_stat_2016"},
+	    "CMS_ff_tt_njet1_mt_stat_2016", "CMS_ff_w_njet0_mt_stat_2016", "CMS_ff_w_njet1_mt_stat_2016"},
 	{"jetFakes"},
 	&cb,
 	1.00,
 	TheFile);
 
       //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2016","CMS_ff_tt_syst_2016","CMS_ff_w_syst_2016"},
+      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2016","CMS_ff_tt_mt_syst_2016","CMS_ff_w_mt_syst_2016"},
 	{"jetFakes"},
 	&cb,
 	0.707,
 	TheFile);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w_syst"},
+      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_mt_syst","CMS_ff_w_mt_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
