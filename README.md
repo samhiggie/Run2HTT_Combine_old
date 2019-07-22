@@ -78,7 +78,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
 - Main Options
   - `--years` accepts 2016, 2017 and or 2018. Lists all years and models to be run as a part of this fit. Will attempt to make data cards 
   for all of these years.
-  - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) (needs updating for em channel) and defines the channels to make datacards
+  - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
   - `--RunShapeless` Disables shape uncertainties in all models.
