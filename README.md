@@ -40,12 +40,9 @@ Each model tries to be as robust as possible about the number and names of categ
 Contains the definitions of some helper classes and functions:
 
 - `InputParserUtility.h`: contains the definition for a simple option parsing utility I found online. Use this to read options for models in /bin/
-
 - `UtilityFunctions.h`: contains code for the helper function `AddShapeIfNotEmpty()`. Combine will throw errors if empty signal processes and shapes
 are added (which can happen with low stats STXS bins in certain categories) so `AddShapeIfNotEmpty()` attempts to only add shapes if to 
-processes if it can demonstrate at least one of distributions, up, down, or nominal is not empty. (`AddShapeIfNotEmpty()` currently segfaults if it
-does not find any histograms with the name provided in the file due to typos or something. Error handling for this could be made more graceful
-and useful.)
+processes if it can demonstrate at least one of distributions, up, down, or nominal is not empty.
 
 ### src
 
@@ -64,8 +61,7 @@ too much and so is no longer used, but contains some useful code.
 shapes in combine harvester models.
 
 - `SimpleMergeStats.py`: The now in use merging algorithm. It uses regexes to match categories and distributions, and simply halves the number
-of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last slice of the VBF PTH GE 200 Category. (Needs updating for 
-tt channel's one Zero Jet category?)
+of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last slice of the VBF PTH GE 200 Category
 
 - `Smooth.py`: A simple shape smoothing tool used for smoothing out bad statistics in shape uncertainties. If it finds more than half the bins
 of a slice are the same between up and nominal or down and nominal shapes, it smooths out the ncertaintiy over all bins. It takes a large number of 
@@ -94,7 +90,6 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
   
-  (per category fits are currently a little too hard coded, perhaps this should be fixed for tt channel's one zero jet category?)
 ## Usage
 
 My typical workflow looks something like this: 
