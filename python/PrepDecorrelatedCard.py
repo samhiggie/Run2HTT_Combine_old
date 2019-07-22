@@ -7,6 +7,7 @@ if __name__ == "__main__":
     parser.add_argument('year',nargs="?",choices={"2016","2017","2018"},help="data card year.")
     parser.add_argument('DataCard',help="Specify the data card")
     parser.add_argument('--OutputFileName',nargs="?",help="Name of the result data card.")
+    parser.add_argument('--TrimYears',action="store_true",help="Instead of adding years to histogram names, trim them off instead")
 
     args = parser.parse_args()        
 
@@ -26,13 +27,19 @@ if __name__ == "__main__":
         for Histogram in TheDirectory.GetListOfKeys():
             TheDirectory.Get(Histogram.GetName()).Write()
             #if a shape, add it and a copy to the new file
-            if re.search("(Up|Down)$",Histogram.GetName()):                
+            if re.search("(Up|Down)",Histogram.GetName()):                
                 CopyHisto = TheDirectory.Get(Histogram.GetName()).Clone()
                 #we need to add a way to add in the year before the "up/down"
-                if re.search("Up$",CopyHisto.GetName()):
-                    NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
-                elif re.search("Down$",CopyHisto.GetName()):
-                    NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
+                if re.search("Up",CopyHisto.GetName()):
+                    if args.TrimYears:
+                        NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-7]+"Up"
+                    else:
+                        NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
+                elif re.search("Down",CopyHisto.GetName()):
+                    if args.TrimYears:
+                        NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-9]+"Down"
+                    else:
+                        NewNameTitle = CopyHisto.GetName()[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
                 else:
                     raise RuntimeError("Something fell through the RE")
                 CopyHisto.SetNameTitle(NewNameTitle,NewNameTitle)
