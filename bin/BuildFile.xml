@@ -1,8 +1,13 @@
 <bin file="SMHTT2018_mt.cpp" name="SMHTT2018_mt"></bin>
 <bin file="SMHTT2017_mt.cpp" name="SMHTT2017_mt"></bin>
-<bin file="SMHTT2018_et.cpp" name="SMHTT2018_et"></bin>
 <bin file="SMHTT2018_tt.cpp" name="SMHTT2018_tt"></bin>
 <bin file="SMHTT2016_mt.cpp" name="SMHTT2016_mt"></bin>
+<bin file="SMHTT2016_et.cpp" name="SMHTT2016_et"></bin>
+<bin file="SMHTT2017_et.cpp" name="SMHTT2017_et"></bin>
+<bin file="SMHTT2018_et.cpp" name="SMHTT2018_et"></bin>
+<bin file="SMHTT2016_em.cpp" name="SMHTT2016_em"></bin>
+<bin file="SMHTT2017_em.cpp" name="SMHTT2017_em"></bin>
+<bin file="SMHTT2018_em.cpp" name="SMHTT2018_em"></bin>
 <use name="root"/>
 <use name="rootmath"/>
 <use name="roofit"/>
