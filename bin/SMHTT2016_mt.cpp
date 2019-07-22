@@ -218,18 +218,18 @@ int main(int argc, char **argv)
 
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
 	TheFile);            

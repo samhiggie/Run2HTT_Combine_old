@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff_2017","lnN",SystMap<>::init(1.02));
 
   //Muon ID efficiency: Decorollated in 18-032 datacards.  
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.02));
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.02));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2017","lnN",SystMap<>::init(1.05));
@@ -209,18 +209,18 @@ int main(int argc, char **argv)
 
       // Jet Energy Scale Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
 	TheFile);            

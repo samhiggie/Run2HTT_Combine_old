@@ -210,18 +210,18 @@ int main(int argc, char **argv) {
 
       // Jet Energy Correction Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
 	TheFile);            
