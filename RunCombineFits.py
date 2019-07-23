@@ -5,6 +5,7 @@ import logging
 import datetime
 import string
 import random
+import CategoryConfigurations as cfg
 
 def RandomStringTag(size=6,chars=string.ascii_uppercase+string.ascii_lowercase+string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -56,6 +57,9 @@ for year in args.years:
             DataCardCreationCommand+=" -g"
         if args.RunInclusiveqqH:
             DataCardCreationCommand+=" -q"
+        DataCardCreationCommand+=" --Categories"
+        for Category in cfg.Categories[channel]:
+            DataCardCreationCommand+=" "+cfg.Categories[channel][Category]
         print("Creating data cards")
         logging.info("Data Card Creation Command:")
         logging.info('\n\n'+DataCardCreationCommand+'\n')
@@ -65,7 +69,7 @@ for year in args.years:
 #cobmine all cards together
 #we can't do this the old way of first mashing all channels together and then mashing those into a final card
 #messes with paths somewhere
-#we have to do this in one fall swoop.
+#we have to do this in one fell swoop.
 CombinedCardName = OutputDir+"FinalCard_"+DateTag+".txt"
 CardCombiningCommand = "combineCards.py"
 for year in args.years:

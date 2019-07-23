@@ -25,12 +25,13 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
 			 std::vector<string> Distributions,
 			 ch::CombineHarvester * cb,
 			 float Value,
-			 TFile* TheFile)
+			 TFile* TheFile,
+			 std::vector<std::string> Categories)
 {
   //loop over all of the analysis categories
-  for(int i = 0; i<TheFile->GetListOfKeys()->GetEntries();++i)
+  for(auto CategoryIt = Categories.begin(); CategoryIt != Categories.end(); ++CategoryIt)
     {
-      string DirectoryName = TheFile->GetListOfKeys()->At(i)->GetName();
+      string DirectoryName = *CategoryIt;
       TDirectory* TheDirectory = (TDirectory*) TheFile->Get(DirectoryName.c_str());
       for(std::vector<string>::iterator it = Distributions.begin(); it != Distributions.end(); ++it)
 	{

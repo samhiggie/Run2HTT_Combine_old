@@ -32,13 +32,18 @@ int main(int argc, char **argv) {
   cout<<"test"<<endl;
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
   
-  //Dynamic Category Loading
-  TFile* TheFile = new TFile((aux_shapes+"smh2018et.root").c_str());
+  //keep a handle on the file, we need it to check if shapes are empty.
+  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());  
+  
+  //categories loaded from configurations
   std::vector<std::pair<int,std::string>> cats = {};
-  for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries(); ++i)
-    {
-      std::cout<<"Making category for: "<<i<<" "<<TheFile->GetListOfKeys()->At(i)->GetName()<<std::endl;
-      cats.push_back({i+1,TheFile->GetListOfKeys()->At(i)->GetName()});
+  std::vector<std::string> CategoryArgs = Input.GetAllArguments("--Categories");
+  int CatNum=1;
+  for (auto it = CategoryArgs.begin(); it != CategoryArgs.end(); ++it)
+    {					       
+      std::cout<<"Making category for: "<<CatNum<<" "<<*it<<std::endl;
+      cats.push_back({CatNum,(std::string)*it});
+      CatNum++;
     }  
 
   // Create an empty CombineHarvester instance that will hold all of the
@@ -148,7 +153,7 @@ int main(int argc, char **argv) {
 			  {"DYL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
       
       //Fake Factor Stat uncertainties: Fully decorrelated
       AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat_2018", "CMS_ff_qcd_njet1_et_stat_2018",
@@ -156,26 +161,26 @@ int main(int argc, char **argv) {
 	{"jetFakes"},
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //Fake Factor Systematic Uncerts, 50% correlation, between all years.
       AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2018","CMS_ff_tt_et_syst_2018","CMS_ff_w_et_syst_2018"},
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       /*AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst","CMS_ff_tt_syst","CMS_ff_w_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile);*/
+	TheFile,CategoryArgs);*/
       
       //MET Unclustered Energy Scale      
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2018"},
 			  {"TTT","TTL","VVT","STT","VVL","STL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
       
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
@@ -185,46 +190,46 @@ int main(int argc, char **argv) {
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","DYL"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //ZPT Reweighting Shapes:      
       AddShapesIfNotEmpty({"CMS_htt_dyShape"},
 			  {"DYT","DYL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
 
       //Top Pt Reweighting      
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
 			  {"TTL","TTT"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
   
       //TES Uncertainty                  
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2018","CMS_scale_t_3prong_2018","CMS_scale_t_1prong1pizero_2018"},
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
 
       // Jet Energy Correction Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
 	&cb,
 	0.707,
-	TheFile);*/
+	TheFile,CategoryArgs);*/
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //ggH Theory Uncertainties
       AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
@@ -232,14 +237,14 @@ int main(int argc, char **argv) {
 	ggH_STXS,
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //Electron Energy scale uncertainties      
       AddShapesIfNotEmpty({"CMS_smear_e_2018","CMS_scale_e_2018"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
     }
   //********************************************************************************************************************************
 

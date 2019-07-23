@@ -32,13 +32,18 @@ int main(int argc, char **argv)
   cout<<"test"<<endl;
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
   
-  //Dynamic Category Loading
-  TFile* TheFile = new TFile((aux_shapes+"smh2016mt.root").c_str());
+  //keep a handle on the file, we need it to check if shapes are empty.
+  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());  
+    
+  //categories loaded from configurations
   std::vector<std::pair<int,std::string>> cats = {};
-  for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries(); ++i)
-    {
-      std::cout<<"Making category for: "<<i<<" "<<TheFile->GetListOfKeys()->At(i)->GetName()<<std::endl;
-      cats.push_back({i+1,TheFile->GetListOfKeys()->At(i)->GetName()});
+  std::vector<std::string> CategoryArgs = Input.GetAllArguments("--Categories");
+  int CatNum=1;
+  for (auto it = CategoryArgs.begin(); it != CategoryArgs.end(); ++it)
+    {					       
+      std::cout<<"Making category for: "<<CatNum<<" "<<*it<<std::endl;
+      cats.push_back({CatNum,(std::string)*it});
+      CatNum++;
     }  
 
   // Create an empty CombineHarvester instance that will hold all of the
@@ -150,7 +155,7 @@ int main(int argc, char **argv)
 			  {"ZL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
       
       //Fake Factor Stat uncertainties: Fully decorrelated
       std::cout<<"Fake Factors"<<std::endl;
@@ -159,19 +164,19 @@ int main(int argc, char **argv)
 	{"jetFakes"},
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //Fake Factor Systematic Uncerts, 50% correlation, between all years.
       AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2016","CMS_ff_tt_syst_2016","CMS_ff_w_syst_2016"},
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_syst","CMS_ff_w_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
@@ -179,7 +184,7 @@ int main(int argc, char **argv)
 			  {"TTT","TTL","VVT","VVL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
       
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
@@ -190,7 +195,7 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //ZPT Reweighting Shapes:      
       std::cout<<"ZPT Reweighting"<<std::endl;
@@ -198,7 +203,7 @@ int main(int argc, char **argv)
 			  {"ZT","ZL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
 
       //Top Pt Reweighting      
       std::cout<<"ttbar shape"<<std::endl;
@@ -206,7 +211,7 @@ int main(int argc, char **argv)
 			  {"TTL","TTT"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
   
       //TES Uncertainty                  
       std::cout<<"TES"<<std::endl;
@@ -214,25 +219,25 @@ int main(int argc, char **argv)
 			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
 
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //ggH Theory Uncertainties
       std::cout<<"ggH Theory"<<std::endl;
@@ -241,7 +246,7 @@ int main(int argc, char **argv)
 	ggH_STXS,
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties
       AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2016","CMS_scale_m_etam2p1tom1p2_2016",
@@ -249,7 +254,7 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
     }
   //********************************************************************************************************************************
 

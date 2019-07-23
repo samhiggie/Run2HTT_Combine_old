@@ -32,13 +32,18 @@ int main(int argc, char **argv)
   cout<<"test"<<endl;
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
   
-  //Dynamic Category Loading
-  TFile* TheFile = new TFile((aux_shapes+"smh2016em.root").c_str());
+  //keep a handle on the file, we need it to check if shapes are empty.
+  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());  
+    
+  //categories loaded from configurations
   std::vector<std::pair<int,std::string>> cats = {};
-  for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries(); ++i)
-    {
-      std::cout<<"Making category for: "<<i<<" "<<TheFile->GetListOfKeys()->At(i)->GetName()<<std::endl;
-      cats.push_back({i+1,TheFile->GetListOfKeys()->At(i)->GetName()});
+  std::vector<std::string> CategoryArgs = Input.GetAllArguments("--Categories");
+  int CatNum=1;
+  for (auto it = CategoryArgs.begin(); it != CategoryArgs.end(); ++it)
+    {					       
+      std::cout<<"Making category for: "<<CatNum<<" "<<*it<<std::endl;
+      cats.push_back({CatNum,(std::string)*it});
+      CatNum++;
     }  
 
   // Create an empty CombineHarvester instance that will hold all of the
@@ -150,7 +155,7 @@ int main(int argc, char **argv)
                           {"QCD"},
                           &cb,
                           1.00,
-                          TheFile);
+                          TheFile,CategoryArgs);
 
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
@@ -158,7 +163,7 @@ int main(int argc, char **argv)
 			  {"TTT","TTL","VVT","VVL","STT","STL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
       
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
@@ -169,7 +174,7 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","DYL"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //ZPT Reweighting Shapes:      
       std::cout<<"ZPT Reweighting"<<std::endl;
@@ -177,7 +182,7 @@ int main(int argc, char **argv)
 			  {"DYT","DYL"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
 
       //Top Pt Reweighting      
       std::cout<<"ttbar shape"<<std::endl;
@@ -185,7 +190,7 @@ int main(int argc, char **argv)
 			  {"TTL","TTT"},
 			  &cb,
 			  1.00,
-			  TheFile);
+			  TheFile,CategoryArgs);
   
 
       //JES Uncertainties
@@ -194,18 +199,18 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
 	&cb,
 	0.707,
-	TheFile);
+	TheFile,CategoryArgs);
       /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
 	&cb,
 	0.707,
-	TheFile);*/
+	TheFile,CategoryArgs);*/
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //ggH Theory Uncertainties
       std::cout<<"ggH Theory"<<std::endl;
@@ -214,7 +219,7 @@ int main(int argc, char **argv)
 	ggH_STXS,
 	&cb,
 	1.00,
-	TheFile);            
+	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties
       AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2016","CMS_scale_m_etam2p1tom1p2_2016",
@@ -222,14 +227,14 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","TTT","DYL","VVL","TTL","STT","STL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
-	TheFile);
+	TheFile,CategoryArgs);
 
       //Electron Energy scale uncertainties
       AddShapesIfNotEmpty({"CMS_scale_e_2016","CMS_smear_e_2016"},
         JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","TTT","DYL","VVL","TTL","STT","STL","WH_htt125","ZH_htt125"}}),
         &cb,
         1.00,
-        TheFile);
+        TheFile,CategoryArgs);
     }
   //********************************************************************************************************************************
 
