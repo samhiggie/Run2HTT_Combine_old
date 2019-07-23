@@ -33,28 +33,41 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
     {
       string DirectoryName = *CategoryIt;
       TDirectory* TheDirectory = (TDirectory*) TheFile->Get(DirectoryName.c_str());
+      if(TheDirectory == NULL)
+	{
+	  std::cout<<"Bad Directory: "+DirectoryName<<std::endl;
+	  throw;
+	}
       for(std::vector<string>::iterator it = Distributions.begin(); it != Distributions.end(); ++it)
 	{
           TH1F* NominalHisto = (TH1F*) TheDirectory->Get((*it).c_str());
           Float_t NominalIntegral = NominalHisto->Integral();
           TH1F* UpHisto;
           TH1F* DownHisto;
+	  if (NominalHisto==NULL)
+	    {
+	      std::cout<<"Bad Histogram: "+*it<<std::endl;
+	      throw;
+	    }
           //now loop over all the uncertainties
           for(std::vector<string>::iterator Unc_it = Shapes.begin();Unc_it != Shapes.end(); ++Unc_it)
 	    {
               UpHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Up").c_str());
               DownHisto = (TH1F*) TheDirectory->Get((*it+"_"+*Unc_it+"Down").c_str());
-	      Float_t UpIntegral;
-	      Float_t DownIntegral;
-	      try
+	      Float_t UpIntegral = 0.0;
+	      Float_t DownIntegral = 0.0;	     
+	      if(UpHisto==NULL)
 		{
-		  UpIntegral = UpHisto->Integral();
-		  DownIntegral = DownHisto->Integral();
+		  std::cout<<"Bad Up Histogram: "+(string)(*it+"_"+*Unc_it+"Up")<<std::endl;
+		  throw;
 		}
-	      catch (const char* msg)
+	      if(DownHisto==NULL)
 		{
-		  throw "Error reading Histograms for shape: "+(string)(*Unc_it)+" on distribution "+(string)(*it);
+		  std::cout<<"Bad Down Histogram: "+(string)(*it+"_"+*Unc_it+"Down")<<std::endl;
+		  throw;
 		}
+	      UpIntegral = UpHisto->Integral();
+	      DownIntegral = DownHisto->Integral();
               if(NominalIntegral != 0.0 and UpIntegral != 0.0 and DownIntegral != 0.0)
 		{
                   cb->cp().bin({TheDirectory->GetName()}).process({*it})
