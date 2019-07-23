@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
   
   //keep a handle on the file, we need it to check if shapes are empty.
-  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());  
+  TFile* TheFile = new TFile((aux_shapes+"smh2016em.root").c_str());  
     
   //categories loaded from configurations
   std::vector<std::pair<int,std::string>> cats = {};
@@ -191,7 +191,6 @@ int main(int argc, char **argv)
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
-  
 
       //JES Uncertainties
       std::cout<<"JES"<<std::endl;
@@ -200,11 +199,11 @@ int main(int argc, char **argv)
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
-      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);*/
+	TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),

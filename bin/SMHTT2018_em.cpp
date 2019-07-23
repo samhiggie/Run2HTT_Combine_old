@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
   
   //keep a handle on the file, we need it to check if shapes are empty.
-  TFile* TheFile = new TFile((aux_shapes+"smh2018mt.root").c_str());  
+  TFile* TheFile = new TFile((aux_shapes+"smh2018em.root").c_str());  
     
   //categories loaded from configurations
   std::vector<std::pair<int,std::string>> cats = {};
@@ -102,6 +102,8 @@ int main(int argc, char **argv) {
 
   //start with lnN errors
   //********************************************************************************************************************************
+
+  std::cout<<"lnN errors"<<std::endl;
   
   //Theory uncerts: Present in 18-032 Data cards.
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
@@ -149,6 +151,7 @@ int main(int argc, char **argv) {
   if(not Input.OptionExists("-s"))
     {
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
+      std::cout<<"Shape Errors"<<std::endl;
 
       // QCD shape      
       AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2018","CMS_QCD_njet0_slope_2018","CMS_QCD_njet1_intercept_2018","CMS_QCD_njet1_slope_2018","CMS_QCD_antiiso_2018"},
@@ -194,11 +197,11 @@ int main(int argc, char **argv) {
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
-      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);*/
+	TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
