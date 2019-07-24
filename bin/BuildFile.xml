@@ -1,6 +1,7 @@
 <bin file="SMHTT2018_mt.cpp" name="SMHTT2018_mt"></bin>
 <bin file="SMHTT2017_mt.cpp" name="SMHTT2017_mt"></bin>
 <bin file="SMHTT2018_tt.cpp" name="SMHTT2018_tt"></bin>
+<bin file="SMHTT2017_tt.cpp" name="SMHTT2017_tt"></bin>
 <bin file="SMHTT2016_mt.cpp" name="SMHTT2016_mt"></bin>
 <bin file="SMHTT2016_et.cpp" name="SMHTT2016_et"></bin>
 <bin file="SMHTT2017_et.cpp" name="SMHTT2017_et"></bin>
