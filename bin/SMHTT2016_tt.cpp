@@ -32,7 +32,7 @@ int main(int argc, char **argv)
   string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/auxiliaries/shapes/";
 
   //Dynamic Category Loading
-  TFile* TheFile = new TFile((aux_shapes+"smh2017tt.root").c_str());
+  TFile* TheFile = new TFile((aux_shapes+"smh2016tt.root").c_str());
   std::vector<std::pair<int,std::string>> cats = {};
   for(int i = 0; i < TheFile->GetListOfKeys()->GetEntries(); ++i)
     {
@@ -48,10 +48,10 @@ int main(int argc, char **argv)
 
   vector<string> masses = {""};;
   //! [part3]
-  cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"tt"}, cats);
+  cb.AddObservations({"*"}, {"smh2016"}, {"13TeV"}, {"tt"}, cats);
 
   vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
-  cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"tt"}, bkg_procs, cats, false);
+  cb.AddProcesses({"*"}, {"smh2016"}, {"13TeV"}, {"tt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
   if (Input.OptionExists("-g")) ggH_STXS = {"ggH_htt125"};
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
   vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}});
-  cb.AddProcesses(masses, {"smh2017"}, {"13TeV"}, {"tt"}, sig_procs, cats, true);
+  cb.AddProcesses(masses, {"smh2016"}, {"13TeV"}, {"tt"}, sig_procs, cats, true);
 
   //! [part4]
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
 
   //Luminosity Uncertainty
-  cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2017", "lnN", SystMap<>::init(1.023));
+  cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2016", "lnN", SystMap<>::init(1.023));
 
   //??? present in HIG 18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
@@ -161,8 +161,10 @@ int main(int argc, char **argv)
       */
 
       //Fake factor shapes: 
-      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauJet2TauFakes#2017_Uncertainties_for_tau_tau_c
-      AddShapesIfNotEmpty({"CMS_htt_ff_qcd_syst", "CMS_htt_ff_qcd_dm0_njet0_stat", "CMS_htt_ff_qcd_dm0_njet1_stat",
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauJet2TauFakes#2016_Uncertainties_for_tau_tau_c
+      AddShapesIfNotEmpty({"CMS_htt_ff_qcd_syst", 
+	    "CMS_htt_ff_qcd_dm0_njet0_stat", "CMS_htt_ff_qcd_dm0_njet1_stat",
+	    "CMS_htt_ff_qcd_dm1_njet0_stat", "CMS_htt_ff_qcd_dm1_njet1_stat",
 	    "CMS_htt_ff_w_syst", "CMS_htt_ff_w_frac_syst",
 	    "CMS_htt_ff_tt_syst","CMS_htt_ff_tt_frac_syst"},
 	{"jetFakes"},
@@ -220,15 +222,15 @@ int main(int argc, char **argv)
 
   //********************************************************************************************************************************
 
-  //embedded uncertainties. No embedded avaialable for 2017 yet.
+  //embedded uncertainties. No embedded avaialable for 2016 yet.
   //********************************************************************************************************************************
   if(not Input.OptionExists("-e"))
     {      
       
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2017
+      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2016
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t","lnN",SystMap<>::init(1.019));
 
-      //Quadrature addition of CMS_eff_emb_t_mt and CMS_eff_emt_t_mt_Run2017
+      //Quadrature addition of CMS_eff_emb_t_mt and CMS_eff_emt_t_mt_Run2016
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_tt","lnN",SystMap<>::init(1.0084));
 
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
@@ -249,11 +251,11 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************                          
 
   cb.cp().backgrounds().ExtractShapes(
-      aux_shapes + "smh2017tt.root",
+      aux_shapes + "smh2016tt.root",
       "$BIN/$PROCESS",
       "$BIN/$PROCESS_$SYSTEMATIC");
   cb.cp().signals().ExtractShapes(
-      aux_shapes + "smh2017tt.root",
+      aux_shapes + "smh2016tt.root",
       "$BIN/$PROCESS$MASS",
       "$BIN/$PROCESS$MASS_$SYSTEMATIC");
   //! [part7]
@@ -299,9 +301,9 @@ int main(int argc, char **argv)
   // instance.
 
   // We create the output root file that will contain all the shapes.
-  //TFile output("smh2017_tt.input.root", "RECREATE");
+  //TFile output("smh2016_tt.input.root", "RECREATE");
   TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2017_tt.input.root").c_str(), "RECREATE");
+		+Input.ReturnToken(0)+"/"+"smh2016_tt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
