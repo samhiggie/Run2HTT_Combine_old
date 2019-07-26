@@ -43,9 +43,9 @@ DataCardCreationCommand = ""
 
 ChannelCards = []
 
-for year in args.years:
-    DataCardCreationCommand="SMHTT"+year
+for year in args.years:    
     for channel in args.channels:
+        DataCardCreationCommand="SMHTT"+year
         DataCardCreationCommand+="_"+channel+" "+DateTag
         if args.RunShapeless:
             DataCardCreationCommand+=" -s"
