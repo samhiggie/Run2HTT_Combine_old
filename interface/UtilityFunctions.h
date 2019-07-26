@@ -59,11 +59,14 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
 	      if(UpHisto==NULL)
 		{
 		  std::cout<<"Bad Up Histogram: "+(string)(*it+"_"+*Unc_it+"Up")<<std::endl;
+		  std::cout<<"Directory: "+DirectoryName<<std::endl;
+
 		  throw;
 		}
 	      if(DownHisto==NULL)
 		{
 		  std::cout<<"Bad Down Histogram: "+(string)(*it+"_"+*Unc_it+"Down")<<std::endl;
+		  std::cout<<"Directory: "+DirectoryName<<std::endl;
 		  throw;
 		}
 	      UpIntegral = UpHisto->Integral();
