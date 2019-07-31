@@ -21,6 +21,7 @@ parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distrib
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
+parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -77,11 +78,12 @@ for year in args.years:
         CardNum = 1
         TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
         for Directory in TheFile.GetListOfKeys():
-            if not args.RunWithoutAutoMCStats:
+            if not args.RunWithoutAutoMCStats and Directory.GetName() in cfg.Categories[channel].values():
                 CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
                 CardFile.write("* autoMCStats 0.0")
-            CardCombiningCommand += " "+Directory.GetName()+"_"+year+"="+OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
-            CardNum+=1
+            if Directory.GetName() in cfg.Categories[channel].values():
+                CardCombiningCommand += " "+Directory.GetName()+"_"+year+"="+OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
+                CardNum+=1
 CardCombiningCommand+= " > "+CombinedCardName
 logging.info("Final Card Combining Command:")
 logging.info('\n\n'+CardCombiningCommand+'\n')
@@ -103,18 +105,19 @@ logging.info('\n\n'+PerSignalWorkspaceCommand+'\n')
 os.system(PerSignalWorkspaceCommand)
 
 #per category
-print("Setting up per category command.")
-PerCategoryName = OutputDir+"workspace_per_cat_breakdown_cmb_"+DateTag+".root"
-PerCategoryWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
-CategorySignalNames=[]
-for Directory in TheFile.GetListOfKeys():
-    CategorySignalNames.append("r"+Directory.GetName()[2:])
-    PerCategoryWorkspaceCommand += "--PO 'map=.*"+Directory.GetName()+".*/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
-PerCategoryWorkspaceCommand+=CombinedCardName+" -o "+PerCategoryName+" -m 125"
+if not args.DisableCategoryFits:
+    print("Setting up per category command.")
+    PerCategoryName = OutputDir+"workspace_per_cat_breakdown_cmb_"+DateTag+".root"
+    PerCategoryWorkspaceCommand = "text2workspace.py -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel "
+    CategorySignalNames=[]
+    for Directory in TheFile.GetListOfKeys():
+        CategorySignalNames.append("r"+Directory.GetName()[2:])
+        PerCategoryWorkspaceCommand += "--PO 'map=.*"+Directory.GetName()+".*/.*_htt.*:"+"r"+Directory.GetName()[2:]+"[1,-25,25]' "
+    PerCategoryWorkspaceCommand+=CombinedCardName+" -o "+PerCategoryName+" -m 125"
 
-logging.info("Per Category Workspace Command: ")
-logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
-os.system(PerCategoryWorkspaceCommand)
+    logging.info("Per Category Workspace Command: ")
+    logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
+    os.system(PerCategoryWorkspaceCommand)
 
 #Set up the possible STXS bins list
 if not (args.RunInclusiveggH or args.RunInclusiveqqH):
@@ -214,11 +217,12 @@ if not args.ComputeSignificance:
         os.system(CombineCommand)
 
     #run the per categories
-    for SignalName in CategorySignalNames:
-        CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
-        logging.info("Category Signal Command: ")
-        logging.info('\n\n'+CombineCommand+'\n')    
-        os.system(CombineCommand)
+    if not args.DisableCategoryFits:
+        for SignalName in CategorySignalNames:
+            CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+            logging.info("Category Signal Command: ")
+            logging.info('\n\n'+CombineCommand+'\n')    
+            os.system(CombineCommand)
 
 # run the STXS bins
 if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
