@@ -32,8 +32,8 @@ Each of these models must be built before running, and all should have several c
 passing -s will disable all shape uncertainties in the model for debugging, -e will disable the use of the embedded distribution and related uncertainties
 , 0b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
 -g will disable STXS split ggH processes and only use an inclusive ggH distribution, and -q will disable STXS split qqh processes and 
-will only use inclusive qqH processes. Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
-Each model tries to be as robust as possible about the number and names of categories included in the analysis.
+will only use inclusive qqH processes. There is also an option called `--Categories` which takes any number of options
+after it, and it will attempt to load these categories from the file. Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
  
 ### interface
 
@@ -58,7 +58,8 @@ This directory largely contains one off scripts used for preparing certain aspec
 too much and so is no longer used, but contains some useful code.
 
 - `PrepDecorrelatedCard.py`: A simple macro using regexes to try and make copies of distributions with year tags attached for use in correllating/decorrellating
-shapes in combine harvester models.
+shapes in combine harvester models. Has a `--TrimYears` option for removing the years from histograms, instead of 
+adding them if necessary
 
 - `SimpleMergeStats.py`: The now in use merging algorithm. It uses regexes to match categories and distributions, and simply halves the number
 of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last slice of the VBF PTH GE 200 Category
@@ -77,6 +78,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
+  -g `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
   - `--RunShapeless` Disables shape uncertainties in all models.
   - `--RunWithBinByBin` Reenables bin by bin uncertainties in the code. This should be run with `--RunWithoutAutoMCStats`
   - `--RunWithoutAutoMCStats` Disables autoMCStats in the data cards.
@@ -87,6 +89,8 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
   
+  Reads categories from a seperate python file to feed category options into the various combine models.
+
   To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
