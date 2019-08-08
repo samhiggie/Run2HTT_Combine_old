@@ -95,6 +95,20 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
   
+### sortingSTXS.py
+
+This is kind of plug-in of RunCombineFits.py. 
+
+If you save printed output of RunCombineFits.py as a file, `sortingSTXS.py` help you to print out limits in orgarnized table form.
+
+For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
+
+- How to run
+  - Run `RunCombineFits.py` as usual but add `> outputTxtFile.txt` to save print. 
+  - Extract limits lines only. `awk '/%/' outputTxtFile.txt > limitExtracted.txt`
+  - To run the script, `python sortingSTXS.py limitExtracted.txt`
+
+
 ## Usage
 
 My typical workflow looks something like this: 
