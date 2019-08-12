@@ -55,7 +55,15 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, cats);
 
-  vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
+  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL"};
+  if(Input.OptionExists("-e")) 
+    {
+      bkg_procs.push_back("ZT");
+      bkg_procs.push_back("VVT");
+      bkg_procs.push_back("TTT");
+    }
+  else bkg_procs.push_back("embedded");
+
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -144,6 +152,36 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+      //define vectors for the inputs of each shape. 
+      //these change depending on whether or not we are using embedded distributions or not
+      vector<string> METUESVector;
+      vector<string> RecoilVector;
+      vector<string> ZPTVector;
+      vector<string> TopVector;
+      vector<string> TESVector;
+      vector<string> JESVector;
+      vector<string> MuESVector;
+      if(Input.OptionExists("-e"))
+	{
+	  METUESVector = {"TTT","TTL","VVT","VVL"};
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
+	  ZPTVector = {"ZT","ZL"};
+	  TopVector = {"TTL","TTT"};
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	}
+      else
+	{
+	  METUESVector = {"TTL","VVL"};
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
+	  ZPTVector = {"ZL"};
+	  TopVector = {"TTL"};
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	}
+
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
@@ -155,6 +193,7 @@ int main(int argc, char **argv)
 			  TheFile,CategoryArgs);
       
       //Fake Factor Stat uncertainties: Fully decorrelated
+      std::cout<<"fake factors"<<std::endl;
       AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_mt_stat_2017", "CMS_ff_qcd_njet1_mt_stat_2017",
 	    "CMS_ff_tt_njet1_mt_stat_2017", "CMS_ff_w_njet0_mt_stat_2017", "CMS_ff_w_njet1_mt_stat_2017"},
 	{"jetFakes"},
@@ -176,62 +215,69 @@ int main(int argc, char **argv)
 			  TheFile,CategoryArgs);
       
       //MET Unclustered Energy Scale      
+      std::cout<<"MET UES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2017"},
-			  {"TTT","TTL","VVT","VVL"},
+			  METUESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
 
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
+      std::cout<<"Recoil shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2017","CMS_htt_boson_scale_met_0jet_2017",
 	    "CMS_htt_boson_reso_met_1jet_2017","CMS_htt_boson_scale_met_1jet_2017",
 	    "CMS_htt_boson_reso_met_2jet_2017","CMS_htt_boson_scale_met_2jet_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
+	RecoilVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
 
       //ZPT Reweighting Shapes:      
+      std::cout<<"ZPT shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_dyShape"},
-			  {"ZT","ZL"},
+			  ZPTVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
 
-      //Top Pt Reweighting      
+      //Top Pt Reweighting     
+      std::cout<<"TT shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
-			  {"TTL","TTT"},
+			  TopVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
   
-      //TES Uncertainty                  
+      //TES Uncertainty                 
+      std::cout<<"TES shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2017","CMS_scale_t_3prong_2017","CMS_scale_t_1prong1pizero_2017"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+			  TESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
 
-      // Jet Energy Scale Uncertainties            
+      // Jet Energy Scale Uncertainties  
+      std::cout<<"Jet Shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);
+			  JESVector,
+			  &cb,
+			  0.707,
+			  TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);
+			  JESVector,
+			  &cb,
+			  0.707,
+			  TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JESVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);            
 
       //ggH Theory Uncertainties
+      std::cout<<"ggH theory uncerts"<<std::endl;
       AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
 	    "THU_ggH_VBF3j","THU_ggH_qmtop","THU_ggH_PT60","THU_ggH_PT120"},
 	ggH_STXS,
@@ -240,9 +286,10 @@ int main(int argc, char **argv)
 	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties
+      std::cout<<"Muon Energy Scale"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2017","CMS_scale_m_etam2p1tom1p2_2017",
 	    "CMS_scale_m_etam1p2to1p2_2017","CMS_scale_m_eta1p2to2p1_2017","CMS_scale_m_eta2p1to2p4_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
+	MuESVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
