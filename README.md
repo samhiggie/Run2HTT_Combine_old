@@ -88,7 +88,8 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--ComputeSignificance` less used option, disables a large number of fits, and just attempts to compute the significance of the main
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
-  
+  - `--Timeout` Terminate combine commands after 3 minutes
+
   Reads categories from a seperate python file to feed category options into the various combine models.
 
   To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
