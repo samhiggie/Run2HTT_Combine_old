@@ -22,6 +22,7 @@ parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distrib
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
+parser.add_argument('--Timeout', help="Timeout after 3min", action="store_true")
 
 print("Parsing command line arguments.")
 args = parser.parse_args() 
@@ -204,6 +205,8 @@ if args.ComputeSignificance:
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
 InclusiveCommand="combine -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
+if args.Timeout is True:
+    InclusiveCommand = "timeout 180s " + InclusiveCommand
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 os.system(InclusiveCommand)
@@ -212,6 +215,8 @@ if not args.ComputeSignificance:
     #run the signal samples
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
         CombineCommand = "combine -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
+        if args.Timeout is True:
+            CombineCommand = "timeout 180s " + CombineCommand
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
@@ -220,6 +225,8 @@ if not args.ComputeSignificance:
     if not args.DisableCategoryFits:
         for SignalName in CategorySignalNames:
             CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+            if args.Timeout is True:
+                CombineCommand = "timeout 180s " + CombineCommand
             logging.info("Category Signal Command: ")
             logging.info('\n\n'+CombineCommand+'\n')    
             os.system(CombineCommand)
@@ -231,6 +238,8 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         for BinName in STXSBins:
             CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
+        if args.Timeout is True:
+            CombineCommand = "timeout 180s " + CombineCommand
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
@@ -240,6 +249,8 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         for BinName in MergedSignalNames:
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
+        if args.Timeout is True:
+            CombineCommand = "timeout 180s " + CombineCommand
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
