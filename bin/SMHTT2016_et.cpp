@@ -167,15 +167,15 @@ int main(int argc, char **argv)
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat", "CMS_ff_qcd_njet1_et_stat",
+      /*AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat", "CMS_ff_qcd_njet1_et_stat",
             "CMS_ff_tt_njet1_et_stat", "CMS_ff_w_njet0_et_stat", "CMS_ff_w_njet1_et_stat"},
         {"jetFakes"},
         &cb,
         1.00,
-        TheFile,CategoryArgs);
+        TheFile,CategoryArgs);*/
 
       //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2016","CMS_ff_tt_et_syst_2016","CMS_ff_w_et_syst_2016"},
+      /*AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2016","CMS_ff_tt_et_syst_2016","CMS_ff_w_et_syst_2016"},
 	{"jetFakes"},
 	&cb,
 	0.707,
@@ -184,7 +184,12 @@ int main(int argc, char **argv)
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
+	TheFile,CategoryArgs);*/
+ 	AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2016","CMS_ff_tt_et_syst_2016","CMS_ff_w_et_syst_2016"},
+        {"jetFakes"},
+        &cb,
+        1.000,
+        TheFile,CategoryArgs);
       
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
@@ -230,7 +235,7 @@ int main(int argc, char **argv)
 			  TheFile,CategoryArgs);
 
       std::cout<<"JES"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
+      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
 	&cb,
 	0.707,
@@ -239,7 +244,12 @@ int main(int argc, char **argv)
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
+	TheFile,CategoryArgs);*/
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2016"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
+        &cb,
+        1.000,
+        TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
