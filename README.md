@@ -78,7 +78,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
-  -g `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
+  - `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
   - `--RunShapeless` Disables shape uncertainties in all models.
   - `--RunWithBinByBin` Reenables bin by bin uncertainties in the code. This should be run with `--RunWithoutAutoMCStats`
   - `--RunWithoutAutoMCStats` Disables autoMCStats in the data cards.
@@ -89,12 +89,14 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
   - `--Timeout` Terminate combine commands after 3 minutes
-
-  Reads categories from a seperate python file to feed category options into the various combine models.
-
-  To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
+  
+   To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
+
+  #### CategoryConfigurations.py
+  This contains a few dictionaries in {"Category_Name":"Directory_Loaded_From_File"} format to define what categories the script will 
+  look to try to load from the files. Please edit this if you are changing how the channels will run.
   
 ### sortingSTXS.py
 
