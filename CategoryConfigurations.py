@@ -6,7 +6,7 @@ tt_Categories = {'cat0':'cat0',
                  'cat1':'cat1',
                  'cat2':'cat2',
                  'cat3':'cat3',
-                 'cat4':'cat5'}
+                 'cat4':'cat4'}
 mt_Categories = {'mt_0jet_PTH_0_10':'mt_0jet_PTH_0_10',
                  'mt_0jet_PTH_GE10':'mt_0jet_PTH_GE10',
                  'mt_vbf_PTH_0_200':'mt_vbf_PTH_0_200',
