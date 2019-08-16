@@ -105,6 +105,7 @@ This is kind of plug-in of RunCombineFits.py.
 If you save printed output of RunCombineFits.py as a file, `sortingSTXS.py` help you to print out limits in orgarnized table form.
 
 For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
+![Sorted Output](https://uc03705369d941b8be9ad8746975.previews.dropboxusercontent.com/p/thumb/AAiP7SZTAmvW78Q9dNI7eBXOna9PpyCUpbTNmbUI27dDqQ4lxVYskbGCerIpmAbxv1a9WN8faqJd-At1NqhdH4jojTSRlskCOqcwFwu7v8cKS7bu-CMtUGLcQHsYk7z18V45hunHQr8-3gKca0ffNTvDkJOUEQdHSXUdeuu6rs4cxXiLUOodf3ScDe2LRLTqvDyJWbsHSFo4dWG4Nb3MzsU8Ww8mEXDGI8UTGH267my_TBwBDzFG-KlPDRcEMSy2X9LmXv_fLlDf15zKYkISCW-DL1e8fxKqyNHGd_24nURQcG1E97shhowMOvQVHDyb4ZikSyA3O4tgM1tq6qgH7brQDTq5BmGeTnwljUF7F_OKJzl_prni9SE5-xSWEL2YNpE1YFYklfxO60MwU8-mNFWB4KuvKBt6xEhbXboIurs6M4putqAfDKGOGDwaj81hOj06r55yfSGpffE2zbraH9E0esYRM2Lf7hko-O6sfrOqkw/p.png?fv_content=true&size_mode=5)
 
 - How to run
   - Run `RunCombineFits.py` as usual but add `> outputTxtFile.txt` to save print. 
