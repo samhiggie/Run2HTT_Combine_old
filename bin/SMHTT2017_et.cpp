@@ -55,7 +55,12 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"et"}, cats);
 
-  vector<string> bkg_procs = {"DYT","VVT","STT","TTT","jetFakes","DYL","VVL","STL","TTL"};
+  vector<string> bkg_procs = {"VVT","STT","TTT","jetFakes","DYL","VVL","STL","TTL"};
+  if(Input.OptionExists("-e")) 
+    {
+      bkg_procs.push_back("DYT");
+    }
+  else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"et"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -170,11 +175,11 @@ int main(int argc, char **argv)
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst","CMS_ff_tt_et_syst","CMS_ff_w_et_syst"},
+      /*AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst","CMS_ff_tt_et_syst","CMS_ff_w_et_syst"},
 	{"jetFakes"},
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
+	TheFile,CategoryArgs);*/
       
       //MET Unclustered Energy Scale      
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2017"},
@@ -220,11 +225,11 @@ int main(int argc, char **argv)
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
+      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","VVT","STT"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
+	TheFile,CategoryArgs);*/
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","VVT","STT"}}),
@@ -267,12 +272,12 @@ int main(int argc, char **argv)
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
       
       //ttbar contamination in embedded
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));    
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2017", "shape", SystMap<>::init(1.00));    
 
       //TES uncertainty
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong_2017", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero_2017", "shape", SystMap<>::init(1.00));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong_2017", "shape", SystMap<>::init(1.00));
     }
 
   //********************************************************************************************************************************                          

@@ -151,7 +151,7 @@ int main(int argc, char **argv)
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
 
       // QCD shape      
-      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016","CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016","CMS_QCD_antiiso_2016"},
+      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016","CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016","CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016","CMS_QCD_antiiso_2016"},
                           {"QCD"},
                           &cb,
                           1.00,

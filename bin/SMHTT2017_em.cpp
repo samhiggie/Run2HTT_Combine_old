@@ -55,7 +55,12 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"DYT","VVT","STT","TTT","QCD","DYL","VVL","STL","TTL"};
+  vector<string> bkg_procs = {"W","VVT","STT","TTT","QCD","DYL","VVL","STL","TTL"};
+  if(Input.OptionExists("-e")) 
+    {
+      bkg_procs.push_back("DYT");
+    }
+  else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -148,7 +153,7 @@ int main(int argc, char **argv)
       
       // QCD shape      
       std::cout<<"QCD shapes"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2017","CMS_QCD_njet0_slope_2017","CMS_QCD_njet1_intercept_2017","CMS_QCD_njet1_slope_2017","CMS_QCD_antiiso_2017"},
+      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2017","CMS_QCD_njet0_slope_2017","CMS_QCD_njet1_intercept_2017","CMS_QCD_njet1_slope_2017","CMS_QCD_njet2_intercept_2017","CMS_QCD_njet2_slope_2017","CMS_QCD_antiiso_2017"},
                           {"QCD"},
                           &cb,
                           1.00,
@@ -196,11 +201,11 @@ int main(int argc, char **argv)
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
+      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
+	TheFile,CategoryArgs);*/
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
@@ -254,12 +259,8 @@ int main(int argc, char **argv)
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
       
       //ttbar contamination in embedded
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));    
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2017", "shape", SystMap<>::init(1.00));    
 
-      //TES uncertainty
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong", "shape", SystMap<>::init(1.00));
     }
 
   //********************************************************************************************************************************                          
