@@ -175,13 +175,13 @@ int main(int argc, char **argv)
 			      TheFile);
 			      
 	  //TES uncertainty
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong", "shape", SystMap<>::init(1.00));
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero", "shape", SystMap<>::init(1.00));
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
 
 	  //TES Uncertainty                  
 	  AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
-			      JoinStr({ggH_STXS,qqH_STXS,{"embedded","WH_htt125","ZH_htt125"}}),
+			      JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}}),
 			      &cb,
 			      TheFile);
 	  
@@ -198,7 +198,8 @@ int main(int argc, char **argv)
 			      TheFile);
 	  // Jet Energy Scale Uncertainties            
 	  AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
-		"CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
+		//"CMS_scale_jet_EC2", 
+		"CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
 	    JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	    &cb,
 	    TheFile);
