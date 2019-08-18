@@ -35,6 +35,7 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
       TDirectory* TheDirectory = (TDirectory*) TheFile->Get(DirectoryName.c_str());
       if(TheDirectory == NULL)
 	{
+	  std::cout<<"\033[1;31mError!\033[0m"<<std::endl;
 	  std::cout<<"Bad Directory: "+DirectoryName<<std::endl;
 	  throw;
 	}
@@ -46,6 +47,7 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
           TH1F* DownHisto;
 	  if (NominalHisto==NULL)
 	    {
+	      std::cout<<"\033[1;31mError!\033[0m"<<std::endl;
 	      std::cout<<"Bad Histogram: "+*it<<std::endl;
 	      throw;
 	    }
@@ -58,6 +60,7 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
 	      Float_t DownIntegral = 0.0;	     
 	      if(UpHisto==NULL)
 		{
+		  std::cout<<"\033[1;31mError!\033[0m"<<std::endl;
 		  std::cout<<"Bad Up Histogram: "+(string)(*it+"_"+*Unc_it+"Up")<<std::endl;
 		  std::cout<<"Directory: "+DirectoryName<<std::endl;
 
@@ -65,6 +68,7 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
 		}
 	      if(DownHisto==NULL)
 		{
+		  std::cout<<"\033[1;31mError!\033[0m"<<std::endl;
 		  std::cout<<"Bad Down Histogram: "+(string)(*it+"_"+*Unc_it+"Down")<<std::endl;
 		  std::cout<<"Directory: "+DirectoryName<<std::endl;
 		  throw;
