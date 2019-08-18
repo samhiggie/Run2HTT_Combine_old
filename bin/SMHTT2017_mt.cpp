@@ -55,13 +55,8 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, cats);
 
-  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL"};
-  if(Input.OptionExists("-e")) 
-    {
-      bkg_procs.push_back("ZT");
-      bkg_procs.push_back("VVT");
-      bkg_procs.push_back("TTT");
-    }
+  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL","VVT","TTT"};
+  if(Input.OptionExists("-e")) {bkg_procs.push_back("ZT");}
   else bkg_procs.push_back("embedded");
 
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
@@ -161,25 +156,23 @@ int main(int argc, char **argv)
       vector<string> TESVector;
       vector<string> JESVector;
       vector<string> MuESVector;
+      METUESVector = {"TTT","TTL","VVT","VVL"};
+      TopVector = {"TTL","TTT"};
       if(Input.OptionExists("-e"))
-	{
-	  METUESVector = {"TTT","TTL","VVT","VVL"};
+	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
-	  ZPTVector = {"ZT","ZL"};
-	  TopVector = {"TTL","TTT"};
+	  ZPTVector = {"ZT","ZL"};	  
 	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
 	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
 	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
 	}
       else
-	{
-	  METUESVector = {"TTL","VVL"};
+	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
-	  ZPTVector = {"ZL"};
-	  TopVector = {"TTL"};
-	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}});
-	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
-	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  ZPTVector = {"ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
 	}
 
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
