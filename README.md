@@ -78,7 +78,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
-  -g `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
+  - `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
   - `--RunShapeless` Disables shape uncertainties in all models.
   - `--RunWithBinByBin` Reenables bin by bin uncertainties in the code. This should be run with `--RunWithoutAutoMCStats`
   - `--RunWithoutAutoMCStats` Disables autoMCStats in the data cards.
@@ -89,12 +89,14 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
   - `--Timeout` Terminate combine commands after 3 minutes
-
-  Reads categories from a seperate python file to feed category options into the various combine models.
-
-  To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
+  
+   To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
+
+  #### CategoryConfigurations.py
+  This contains a few dictionaries in {"Category_Name":"Directory_Loaded_From_File"} format to define what categories the script will 
+  look to try to load from the files. Please edit this if you are changing how the channels will run.
   
 ### sortingSTXS.py
 
@@ -103,6 +105,7 @@ This is kind of plug-in of RunCombineFits.py.
 If you save printed output of RunCombineFits.py as a file, `sortingSTXS.py` help you to print out limits in orgarnized table form.
 
 For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
+![Sorted Output](https://uc03705369d941b8be9ad8746975.previews.dropboxusercontent.com/p/thumb/AAiP7SZTAmvW78Q9dNI7eBXOna9PpyCUpbTNmbUI27dDqQ4lxVYskbGCerIpmAbxv1a9WN8faqJd-At1NqhdH4jojTSRlskCOqcwFwu7v8cKS7bu-CMtUGLcQHsYk7z18V45hunHQr8-3gKca0ffNTvDkJOUEQdHSXUdeuu6rs4cxXiLUOodf3ScDe2LRLTqvDyJWbsHSFo4dWG4Nb3MzsU8Ww8mEXDGI8UTGH267my_TBwBDzFG-KlPDRcEMSy2X9LmXv_fLlDf15zKYkISCW-DL1e8fxKqyNHGd_24nURQcG1E97shhowMOvQVHDyb4ZikSyA3O4tgM1tq6qgH7brQDTq5BmGeTnwljUF7F_OKJzl_prni9SE5-xSWEL2YNpE1YFYklfxO60MwU8-mNFWB4KuvKBt6xEhbXboIurs6M4putqAfDKGOGDwaj81hOj06r55yfSGpffE2zbraH9E0esYRM2Lf7hko-O6sfrOqkw/p.png?fv_content=true&size_mode=5)
 
 - How to run
   - Run `RunCombineFits.py` as usual but add `> outputTxtFile.txt` to save print. 
