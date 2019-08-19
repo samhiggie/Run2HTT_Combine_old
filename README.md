@@ -122,7 +122,7 @@ My typical workflow looks something like this:
 
 1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
 or STXS split distributions for any reason.
-2. Before they can be run on, these files must be Smoothed, Merged, and Decorrellated (using appropriate python macros, in any order).
+2. Before they can be run on, these files must be Decorrellated.
 3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
 4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
 
