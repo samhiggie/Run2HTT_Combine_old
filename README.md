@@ -97,6 +97,10 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   #### CategoryConfigurations.py
   This contains a few dictionaries in {"Category_Name":"Directory_Loaded_From_File"} format to define what categories the script will 
   look to try to load from the files. Please edit this if you are changing how the channels will run.
+
+  #### EmbeddedConfiguration.py
+  This contains year and channel combinations and whether the model will attempt to run using embedded distributions and uncertainties
+  or not. Please modify this if your year and channel has embedded distributions available.
   
 ### sortingSTXS.py
 
