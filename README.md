@@ -82,7 +82,6 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--RunShapeless` Disables shape uncertainties in all models.
   - `--RunWithBinByBin` Reenables bin by bin uncertainties in the code. This should be run with `--RunWithoutAutoMCStats`
   - `--RunWithoutAutoMCStats` Disables autoMCStats in the data cards.
-  - `--RunEmbeddedLess` Disables embedded samples across the fit
   - `--RunInclusiveggH` Uses the inclusive ggH distribution, and does not attemp to do any STXS fitting
   - `--RunInclusiveqqH` Same as the above, but for qqH
   - `--ComputeSignificance` less used option, disables a large number of fits, and just attempts to compute the significance of the main
