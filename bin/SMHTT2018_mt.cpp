@@ -60,6 +60,8 @@ int main(int argc, char **argv) {
   if(Input.OptionExists("-e")) {bkg_procs.push_back("ZT");}
   else bkg_procs.push_back("embedded");
 
+  cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
+
   vector<string> ggH_STXS;
   if (Input.OptionExists("-g")) ggH_STXS = {"ggH_htt125"};
   else ggH_STXS = {"ggH_PTH_0_200_GE2J_MJJ_GE700_PTHJJ_0_25_htt125",
