@@ -50,7 +50,14 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2018"}, {"13TeV"}, {"tt"}, cats);
 
-  vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
+  
+  vector<string> bkg_procs = {"embedded","jetFakes","ZL","VVL","TTL"};
+  if(Input.OptionExists("-e")) { // disable embed
+    bkg_procs.erase(std::remove(bkg_procs.begin(), bkg_procs.end(), "embedded"), bkg_procs.end());
+    bkg_procs.push_back("ZT");
+    bkg_procs.push_back("VVT");
+    bkg_procs.push_back("TTT");
+  }
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"tt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -102,10 +109,11 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
   //Tau ID uncertainty: applied to genuine tau contributions.
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
+  if(Input.OptionExists("-e")) cb.cp().process(JoinStr({{"ZT","TTT","VVT"},sig_procs})).AddSyst(cb,"CMS_t_ID_eff","lnN",SystMap<>::init(1.02));
 
   //Muon ID efficiency: Decorollated in 18-032 datacards.  
-  cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
+  if(Input.OptionExists("-e")) cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
+  else cb.cp().process(JoinStr({{"ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m","lnN",SystMap<>::init(1.02));
 
   //lnN Fake Factor Uncertainties: Values from 18-032 data cards.
   // 28/5/19 Update: Decision is to pull all FF lnN uncertainties and simply proceed with un-renormalized shapes for now
@@ -119,16 +127,22 @@ int main(int argc, char **argv)
 
   // b-tagging efficiency: Changed into lnN.
   //5% in ttbar and 0.5% otherwise.
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
-  cb.cp().process(JoinStr({{"ZT","VVT","ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
+  if(Input.OptionExists("-e")) cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
+  else cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_eff_b_TTL","lnN",SystMap<>::init(1.05));
+
+  if(Input.OptionExists("-e")) cb.cp().process(JoinStr({{"ZT","VVT","ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
+  else cb.cp().process(JoinStr({{"ZL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b","lnN",SystMap<>::init(1.005));
 
   // TTbar XSection Uncertainty
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
+  if(Input.OptionExists("-e")) cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
+  else cb.cp().process({"TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
 
   // Diboson XSection Uncertainty
-  cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
+  if(Input.OptionExists("-e")) cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
+  else cb.cp().process({"VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
-  cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
+  if(Input.OptionExists("-e")) cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
+  else cb.cp().process({"ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
   cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));    
   
@@ -137,7 +151,8 @@ int main(int argc, char **argv)
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
 
   //Luminosity Uncertainty
-  cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.023));
+  if(Input.OptionExists("-e")) cb.cp().process(JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.023));
+  else cb.cp().process(JoinStr({sig_procs,{"VVL","ZL","TTL"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.023));
 
   //??? present in HIG 18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
@@ -150,6 +165,73 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+      if(not Input.OptionExists("-e"))
+	{
+	  //ttbar contamination in embedded
+	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));    	 
+	  AddShapesIfNotEmpty({"CMS_htt_emb_ttbar"},
+			      {"embedded"},
+			      &cb, 
+			      TheFile);
+			      
+	  //TES uncertainty
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
+
+	  //TES Uncertainty                  
+	  AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
+			      JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}}),
+			      &cb,
+			      TheFile);
+	  
+
+	  //MET Unclustered Energy Scale      
+	  AddShapesIfNotEmpty({"CMS_scale_met_unclustered"},
+			      {"TTL","VVL"},
+			      &cb,
+			      TheFile);
+	  //ZPT Reweighting Shapes:      
+	  AddShapesIfNotEmpty({"CMS_htt_dyShape"},
+			      {"ZL"},
+			      &cb,
+			      TheFile);
+	  // Jet Energy Scale Uncertainties            
+	  AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
+		//"CMS_scale_jet_EC2", 
+		"CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
+	    JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	    &cb,
+	    TheFile);
+	 
+	}
+      else 
+	{
+	  //MET Unclustered Energy Scale      
+	  AddShapesIfNotEmpty({"CMS_scale_met_unclustered"},
+			      {"TTT","TTL","VVT","VVL"},
+			      &cb,
+			      TheFile);
+	  //ZPT Reweighting Shapes:      
+	  AddShapesIfNotEmpty({"CMS_htt_dyShape"},
+			      {"ZT","ZL"},
+			      &cb,
+			      TheFile);
+	  //TES Uncertainty                  
+	  AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
+			      JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+			      &cb,
+			      TheFile);
+	  // Jet Energy Scale Uncertainties            
+	  AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
+		"CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
+	    JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	    &cb,
+	    TheFile);
+	  
+
+	}
+
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
@@ -169,11 +251,7 @@ int main(int argc, char **argv)
 	&cb,
 	TheFile);
       
-      //MET Unclustered Energy Scale      
-      AddShapesIfNotEmpty({"CMS_scale_met_unclustered"},
-			  {"TTT","TTL","VVT","VVL"},
-			  &cb,
-			  TheFile);
+
 
       //Recoil Shapes:                  
       //check which signal processes this should be applied to. If any.
@@ -183,11 +261,6 @@ int main(int argc, char **argv)
 			  &cb,
 			  TheFile);
       */
-      //ZPT Reweighting Shapes:      
-      AddShapesIfNotEmpty({"CMS_htt_dyShape"},
-			  {"ZT","ZL"},
-			  &cb,
-			  TheFile);
       /*
       //Top Pt Reweighting      
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
@@ -195,18 +268,6 @@ int main(int argc, char **argv)
 			  &cb,
 			  TheFile);
       */
-      //TES Uncertainty                  
-      AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
-			  &cb,
-			  TheFile);
-
-      // Jet Energy Scale Uncertainties            
-      AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
-	    "CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
-	&cb,
-	TheFile);
 
       //ggH Theory Uncertainties
       AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
@@ -237,13 +298,6 @@ int main(int argc, char **argv)
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
       
-      //ttbar contamination in embedded
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));    
-
-      //TES uncertainty
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero", "shape", SystMap<>::init(1.00));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong", "shape", SystMap<>::init(1.00));
     }
 
   //********************************************************************************************************************************                          
