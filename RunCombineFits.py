@@ -7,6 +7,7 @@ import string
 import random
 import CategoryConfigurations as cfg
 from EmbeddedConfiguration import EmbeddedConfiguration as embedded_cfg
+from CombineHarvester.Run2HTT_Combine.SplitUncertainty import UncertaintySplitter
 
 def RandomStringTag(size=6,chars=string.ascii_uppercase+string.ascii_lowercase+string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -24,9 +25,15 @@ parser.add_argument('--ComputeSignificance',help="Compute expected significances
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
 parser.add_argument('--Timeout', help="Timeout after 3min", action="store_true")
-
+parser.add_argument('--SplitUncertainties', help="Create groups for helping to split the measurements",action="store_true")
+parser.add_argument('--SplitInclusive',help="Split the inclusive measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--SplitSignals',help="Split signal measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
+
+if (args.SplitInclusive or args.SplitSignals or args.SplitSTXS) and not (args.SplitUncertainties):
+    parser.error("Tried to split a measurement without calling --SplitUncertainties!")
 
 DateTag = datetime.datetime.now().strftime("%d%m%y_")+RandomStringTag()
 print ''
@@ -76,15 +83,20 @@ for year in args.years:
 #we have to do this in one fell swoop.
 CombinedCardName = OutputDir+"FinalCard_"+DateTag+".txt"
 CardCombiningCommand = "combineCards.py"
+if args.SplitUncertainties:
+    Splitter = UncertaintySplitter()
 for year in args.years:
     for channel in args.channels:
         CardNum = 1
         TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
         for Directory in TheFile.GetListOfKeys():
-            if not args.RunWithoutAutoMCStats and Directory.GetName() in cfg.Categories[channel].values():
-                CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
-                CardFile.write("* autoMCStats 0.0")
             if Directory.GetName() in cfg.Categories[channel].values():
+                if not args.RunWithoutAutoMCStats:
+                    CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
+                    CardFile.write("* autoMCStats 0.0\n")
+                    CardFile.close()                
+                if args.SplitUncertainties:                    
+                    Splitter.FindAndTagGroups(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt")
                 CardCombiningCommand += " "+Directory.GetName()+"_"+year+"="+OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
                 CardNum+=1
 CardCombiningCommand+= " > "+CombinedCardName
@@ -212,6 +224,8 @@ if args.Timeout is True:
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 os.system(InclusiveCommand)
+if args.SplitInclusive:
+    Splitter.SplitMeasurement(InclusiveCommand,OutputDir)
 
 if not args.ComputeSignificance:
     #run the signal samples
@@ -222,6 +236,8 @@ if not args.ComputeSignificance:
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
+        if args.SplitSignals:
+            Splitter.SplitMeasurement(CombineCommand,OutputDir)
 
     #run the per categories
     if not args.DisableCategoryFits:
@@ -245,6 +261,8 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
+        if args.SplitSTXS:
+            Splitter.SplitMeasurement(CombineCommand,OutputDir)
     #run the merged bins
     for MergedBin in MergedSignalNames:
         CombineCommand = "combine -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
