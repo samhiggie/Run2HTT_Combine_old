@@ -8,7 +8,7 @@ EmbeddedConfiguration = {
     "2017mt":True,
     "2017et":True,
     "2017em":True,
-    "2018tt":False,
+    "2018tt":True,
     "2018mt":True,
     "2018et":True,
     "2018em":True,
