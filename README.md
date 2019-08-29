@@ -95,6 +95,14 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
   - `--Timeout` Terminate combine commands after 3 minutes
+  - `--SplitUncertainties` Creates and calls an uncertainty splitter to make sure data cards are grouped in such a way that they can
+   call the prototype uncertainty splits later. The splitter can try and split measurements into an `Unc=Stat+Syst+Bin-By-Bin` format.
+  - `--SplitInclusive` The inclusive signal strength measurement will attempt to split the inlusive signal strength measurement. 
+   Requires that `--SplitUncertainties` has been called.
+   - `--SplitSignals` The splitter will attemp to measure the ggH,qqH,WH and ZH measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
+   Requires that `--SplitUncertainties` has been called.
+   - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
+   Requires that `--SplitUncertainties` has been called.
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
