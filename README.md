@@ -50,6 +50,13 @@ contains some source code used by helper functions.
 
 ### python
 
+contains modules used by the master fit running script
+
+- `SplitUncertainty.py`: This modules contains a class which will mark up the datacard with groups and then calculate
+the uncertainty of a measurement split into Unc=Statistics+Systematics+Bin-By-Bin errors.
+
+### scripts
+
 This directory largely contains one off scripts used for preparing certain aspects of the data cards before any expected fits are run:
 
 (use `--help` to see options with these)
