@@ -28,9 +28,9 @@ mkdir shapes
 ### bin
 
 Contains models for individual years and channels. Each model is it's own seperate combine harvester code, named SMHTT[Year]_[Channel].cpp
-Each of these models must be built before running, and all should have several common features. Each can take 5 running options,
+Each of these models must be built before running, and all should have several common features. Each takes a number of running options, the first is the tag used by RunCombintFits.py where it will try to store output in the outputs directory,
 passing -s will disable all shape uncertainties in the model for debugging, -e will disable the use of the embedded distribution and related uncertainties
-, 0b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
+, -b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
 -g will disable STXS split ggH processes and only use an inclusive ggH distribution, and -q will disable STXS split qqh processes and 
 will only use inclusive qqH processes. There is also an option called `--Categories` which takes any number of options
 after it, and it will attempt to load these categories from the file. Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
