@@ -147,3 +147,35 @@ All added models should be added to the bin directory and added into the buildfi
 take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
 
 --Andrew Loeliger
+
+
+
+## Prefit plot code
+
+- This is contained in 2 files: plotterFinal.py and varCfgPlotter.py.
+
+- You only need to edit the FileMap in varCfgPlotter.py for running the code in your own workspaces. FileMap has the default locations where the code will look for input.
+
+How to run :
+
+ - Main Options
+  - `--years` accepts 2016, 2017 and/or 2018.
+  
+  - `--channels` currently accepts mt (mu tau), et (e tau), em (e mu) or tt (tau tau)  
+  
+  -  `--inputFile` the path to the input root file that contains the hisograms. 
+
+ 
+ - Other Options
+  - `higgsSF` provides the Scale Factor for the SM-Higgs signals.  1 is default
+  - `--prefix` provides prefix for TDirectory holding histograms such as 'prefit_' or postfin_'.  Default is ''
+  - `--isLog`  1=TRUE, 0=FALSE. Do we want a log plot?
+ 
+Example on how to run it: 
+
+python plotterFinal.py --channel mt --year 2017 
+
+(You will have to change the default address of the files stored in varCfgPlotter.py for above command to work. You may choose to provede `--inputFile` option in addition in which case you need not worry about varCfgPlotter.py)
+ 
+ 
+ 
