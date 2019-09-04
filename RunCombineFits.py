@@ -17,7 +17,6 @@ parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Spe
 parser.add_argument('--channels',nargs="+",choices=['mt','et','tt','em'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
 parser.add_argument('--RunWithBinByBin',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
-#parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 parser.add_argument('--RunWithoutAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
