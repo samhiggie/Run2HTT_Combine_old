@@ -28,9 +28,9 @@ mkdir shapes
 ### bin
 
 Contains models for individual years and channels. Each model is it's own seperate combine harvester code, named SMHTT[Year]_[Channel].cpp
-Each of these models must be built before running, and all should have several common features. Each can take 5 running options,
+Each of these models must be built before running, and all should have several common features. Each takes a number of running options, the first is the tag used by RunCombineFits.py where it will try to store output in the outputs directory,
 passing -s will disable all shape uncertainties in the model for debugging, -e will disable the use of the embedded distribution and related uncertainties
-, 0b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
+, -b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
 -g will disable STXS split ggH processes and only use an inclusive ggH distribution, and -q will disable STXS split qqh processes and 
 will only use inclusive qqH processes. There is also an option called `--Categories` which takes any number of options
 after it, and it will attempt to load these categories from the file. Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
@@ -95,6 +95,14 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
   - `--Timeout` Terminate combine commands after 3 minutes
+  - `--SplitUncertainties` Creates and calls an uncertainty splitter to make sure data cards are grouped in such a way that they can
+   call the prototype uncertainty splits later. The splitter can try and split measurements into an `Unc=Stat+Syst+Bin-By-Bin` format.
+  - `--SplitInclusive` The inclusive signal strength measurement will attempt to split the inlusive signal strength measurement. 
+   Requires that `--SplitUncertainties` has been called.
+   - `--SplitSignals` The splitter will attemp to measure the ggH,qqH,WH and ZH measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
+   Requires that `--SplitUncertainties` has been called.
+   - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
+   Requires that `--SplitUncertainties` has been called.
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
@@ -139,3 +147,35 @@ All added models should be added to the bin directory and added into the buildfi
 take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
 
 --Andrew Loeliger
+
+
+
+## Prefit plot code
+
+- This is contained in 2 files: plotterFinal.py and varCfgPlotter.py.
+
+- You only need to edit the FileMap in varCfgPlotter.py for running the code in your own workspaces. FileMap has the default locations where the code will look for input.
+
+How to run :
+
+ - Main Options
+  - `--years` accepts 2016, 2017 and/or 2018.
+  
+  - `--channels` currently accepts mt (mu tau), et (e tau), em (e mu) or tt (tau tau)  
+  
+  -  `--inputFile` the path to the input root file that contains the hisograms. 
+
+ 
+ - Other Options
+  - `higgsSF` provides the Scale Factor for the SM-Higgs signals.  1 is default
+  - `--prefix` provides prefix for TDirectory holding histograms such as 'prefit_' or postfin_'.  Default is ''
+  - `--isLog`  1=TRUE, 0=FALSE. Do we want a log plot?
+ 
+Example on how to run it: 
+
+python plotterFinal.py --channel mt --year 2017 
+
+(You will have to change the default address of the files stored in varCfgPlotter.py for above command to work. You may choose to provede `--inputFile` option in addition in which case you need not worry about varCfgPlotter.py)
+ 
+ 
+ 
