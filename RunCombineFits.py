@@ -28,6 +28,7 @@ parser.add_argument('--SplitUncertainties', help="Create groups for helping to s
 parser.add_argument('--SplitInclusive',help="Split the inclusive measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--SplitSignals',help="Split signal measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--RunParallel',help='Run all fits in parallel using condor',action="store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -217,7 +218,9 @@ if args.ComputeSignificance:
 
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
-InclusiveCommand="combine -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
+InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
+if args.RunParallel:
+    InclusiveCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4\noutput = joboutput.txt\nerror=joberror.txt\nlog=joblog.log \" --task-name htt_Fit_r_"+DateTag
 if args.Timeout is True:
     InclusiveCommand = "timeout 180s " + InclusiveCommand
 logging.info("Inclusive combine command:")
@@ -229,9 +232,11 @@ if args.SplitInclusive:
 if not args.ComputeSignificance:
     #run the signal samples
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
-        CombineCommand = "combine -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
+        if args.RunParallel:
+            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+SignalName+"_"+DateTag+" --dry-run"
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
@@ -241,9 +246,11 @@ if not args.ComputeSignificance:
     #run the per categories
     if not args.DisableCategoryFits:
         for SignalName in CategorySignalNames:
-            CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+            CombineCommand = "combineTool.py -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
             if args.Timeout is True:
                 CombineCommand = "timeout 180s " + CombineCommand
+            if args.RunParallel:
+                CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+SignalName+"_"+DateTag+" --dry-run"
             logging.info("Category Signal Command: ")
             logging.info('\n\n'+CombineCommand+'\n')    
             os.system(CombineCommand)
@@ -251,12 +258,14 @@ if not args.ComputeSignificance:
 # run the STXS bins
 if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
     for STXSBin in STXSBins:
-        CombineCommand = "combine -M "+PhysModel+" "+PerSTXSName+" "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSTXSName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in STXSBins:
             CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
+        if args.RunParallel:
+            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+STXSBin+"_"+DateTag+" --dry-run"
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
@@ -264,12 +273,14 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
             Splitter.SplitMeasurement(CombineCommand,OutputDir)
     #run the merged bins
     for MergedBin in MergedSignalNames:
-        CombineCommand = "combine -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in MergedSignalNames:
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
+        if args.RunParallel:
+            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+MergedBin+"_"+DateTag+" --dry-run"
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
