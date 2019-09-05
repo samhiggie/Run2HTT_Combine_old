@@ -42,10 +42,18 @@ print("This session is run under tag: "+DateTag)
 print "*********************************************"
 print ''
 #check if we have an output directory
-if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
-    os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
-OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
-os.mkdir(OutputDir)
+if args.RunParallel:
+    print("Running jobs on condor. Creating the ouput on hdfs instead...")
+    if not os.path.isdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_Output"):
+        os.mkdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_Output")
+    OutputDir = "/hdfs/store/user/"+os.environ['USER']+"/HTT_Output/Output_"+DateTag+"/"
+    os.mkdir(OutputDir)
+else:    
+    if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
+        os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
+    OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
+    os.mkdir(OutputDir)
+print("Output directory is: "+OutputDir)
 
 logging.basicConfig(filename=OutputDir+"CombineHistory_"+DateTag+".log",filemode="w",level=logging.INFO,format='%(asctime)s %(message)s')
 
@@ -56,7 +64,7 @@ ChannelCards = []
 for year in args.years:    
     for channel in args.channels:
         DataCardCreationCommand="SMHTT"+year
-        DataCardCreationCommand+="_"+channel+" "+DateTag
+        DataCardCreationCommand+="_"+channel+" "+OutputDir
         if args.RunShapeless:
             DataCardCreationCommand+=" -s"
         if not args.RunWithBinByBin:
@@ -220,7 +228,13 @@ if args.ComputeSignificance:
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
 InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
 if args.RunParallel:
-    InclusiveCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4\noutput = joboutput.txt\nerror=joberror.txt\nlog=joblog.log \" --task-name htt_Fit_r_"+DateTag
+    InclusiveCommand+=" --job-mode condor --sub-opts=\""
+    InclusiveCommand+="+JobFlavor = \"tomorrow\"\n"
+    InclusiveCommand+="RequestCpus = 4\n"
+    InclusiveCommand+="output = "+OutputDir+"r_joboutput.txt\n"
+    InclusiveCommand+="error="+OutputDir+"r_joberror.txt\n"
+    InclusiveCommand+="log="+OutputDir+"joblog.log \""
+    InclusiveCommand+=" --task-name htt_Fit_r_"+DateTag
 if args.Timeout is True:
     InclusiveCommand = "timeout 180s " + InclusiveCommand
 logging.info("Inclusive combine command:")
@@ -236,7 +250,15 @@ if not args.ComputeSignificance:
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
         if args.RunParallel:
-            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+SignalName+"_"+DateTag+" --dry-run"
+            if args.RunParallel:
+                CombineCommand+=" --job-mode condor --sub-opts=\""
+                CombineCommand+="+JobFlavor = \"tomorrow\"\n"
+                CombineCommand+="RequestCpus = 4\n"
+                CombineCommand+="output = "+OutputDir+SignalName+"_joboutput.txt\n"
+                CombineCommand+="error="+OutputDir+SignalName+"_joberror.txt\n"
+                CombineCommand+="log="+OutputDir+SignalName+"_joblog.log \""
+                CombineCommand+=" --task-name htt_Fit_"+SignalName+DateTag
+                CombineCommand+=" --dry-run"
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
@@ -265,7 +287,14 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
         if args.RunParallel:
-            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+STXSBin+"_"+DateTag+" --dry-run"
+            CombineCommand+=" --job-mode condor --sub-opts=\""
+            CombineCommand+="+JobFlavor = \"tomorrow\"\n"
+            CombineCommand+="RequestCpus = 4\n"
+            CombineCommand+="output = "+OutputDir+"r_"+SignalName+"_joboutput.txt\n"
+            CombineCommand+="error="+OutputDir+"r_"+SignalName+"_joberror.txt\n"
+            CombineCommand+="log="+OutputDir+"r_"+SignalName+"_joblog.log \""
+            CombineCommand+=" --task-name htt_Fit_r_"+SignalName+DateTag
+            CombineCommand+=" --dry-run"
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         os.system(CombineCommand)
@@ -280,7 +309,14 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
         if args.RunParallel:
-            CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+MergedBin+"_"+DateTag+" --dry-run"
+            CombineCommand+=" --job-mode condor --sub-opts=\""
+            CombineCommand+="+JobFlavor = \"tomorrow\"\n"
+            CombineCommand+="RequestCpus = 4\n"
+            CombineCommand+="output = "+OutputDir+"r_"+SignalName+"_joboutput.txt\n"
+            CombineCommand+="error="+OutputDir+"r_"+SignalName+"_joberror.txt\n"
+            CombineCommand+="log="+OutputDir+"r_"+SignalName+"_joblog.log \""
+            CombineCommand+=" --task-name htt_Fit_r_"+SignalName+DateTag
+            CombineCommand+=" --dry-run"
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
         os.system(CombineCommand)
