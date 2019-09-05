@@ -43,11 +43,11 @@ print "*********************************************"
 print ''
 #check if we have an output directory
 if args.RunParallel:
-    print("Running jobs on condor. Creating the ouput on hdfs instead...")
-    if not os.path.isdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_Output"):
-        os.mkdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_Output")
-    OutputDir = "/hdfs/store/user/"+os.environ['USER']+"/HTT_Output/Output_"+DateTag+"/"
-    os.mkdir(OutputDir)
+    print("Running jobs on condor. Creating the ouput on afs/work...")
+    if not os.path.isdir("/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output"):
+        os.mkdir("/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output")
+    OutputDir = "/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output/Output_"+DateTag+"/"
+    os.mkdir(OutputDir)    
 else:    
     if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
         os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
@@ -218,6 +218,15 @@ logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
 
+#if we're running in parallel, it is time to move relevant files to hdfs
+#if args.RunParallel:
+#    print("staging things to hdfs...")
+#    if not os.path.isdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_output"):
+#        os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/"+os.environ['USER']+"/HTT_Output")
+#    os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/HTT_Output/Output_"+DateTag)
+#    os.system("xrdcp "+CombinedCardName[:len(CombinedCardName)-3]+"root root://cmseos.fnal.gov//store/user"+os.environ['USER']+"HTT_Output/Output_"+DateTag)
+    
+
 PhysModel = 'MultiDimFit'
 ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --algo=singles --cl=0.68'
 if args.ComputeSignificance:
@@ -231,9 +240,13 @@ if args.RunParallel:
     InclusiveCommand+=" --job-mode condor --sub-opts=\""
     InclusiveCommand+="+JobFlavor = \"tomorrow\"\n"
     InclusiveCommand+="RequestCpus = 4\n"
-    InclusiveCommand+="output = "+OutputDir+"r_joboutput.txt\n"
-    InclusiveCommand+="error="+OutputDir+"r_joberror.txt\n"
-    InclusiveCommand+="log="+OutputDir+"joblog.log \""
+    #InclusiveCommand+="output = "+OutputDir+"r_joboutput.txt\n"
+    #InclusiveCommand+="error="+OutputDir+"r_joberror.txt\n"
+    #InclusiveCommand+="log="+OutputDir+"joblog.log \""
+    InclusiveCommand+="output = r_joboutput.txt\n"
+    InclusiveCommand+="error=r_joberror.txt\n"
+    InclusiveCommand+="log=r_joblog.log \""
+    InclusiveCommand+=" --task-name htt_Fit_r_"+DateTag
     InclusiveCommand+=" --task-name htt_Fit_r_"+DateTag
 if args.Timeout is True:
     InclusiveCommand = "timeout 180s " + InclusiveCommand
