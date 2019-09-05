@@ -302,8 +302,7 @@ int main(int argc, char **argv)
 
   // We create the output root file that will contain all the shapes.
   //TFile output("smh2016_tt.input.root", "RECREATE");
-  TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2016_tt.input.root").c_str(), "RECREATE");
+  TFile output((Input.ReturnToken(0)+"/"+"smh2016_tt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
@@ -316,9 +315,7 @@ int main(int argc, char **argv)
       // all the data and backgrounds.
       //cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(
       //    b + "_" + m + ".txt", output);
-      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(((string)std::getenv("CMSSW_BASE"))+
-						    "/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-						    +Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
+      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
     }
   }
   //! [part9]
