@@ -94,7 +94,8 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--ComputeSignificance` less used option, disables a large number of fits, and just attempts to compute the significance of the main
   inclusive workspace/fit
   - `--ComputeImpacts` Computes the impacts for the Inclusive POI
-  - `--Timeout` Terminate combine commands after 3 minutes
+  - `--Timeout` Terminate combine commands after a certain amount of time
+  - `--TimeoutTime` Sets the time for the `--Timeout` command. Default: 180s.
   - `--SplitUncertainties` Creates and calls an uncertainty splitter to make sure data cards are grouped in such a way that they can
    call the prototype uncertainty splits later. The splitter can try and split measurements into an `Unc=Stat+Syst+Bin-By-Bin` format.
   - `--SplitInclusive` The inclusive signal strength measurement will attempt to split the inlusive signal strength measurement. 
@@ -103,7 +104,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
    Requires that `--SplitUncertainties` has been called.
    - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
    Requires that `--SplitUncertainties` has been called.
-   - `--RunParallel` Experimental option to try submitting condor jobs to perform all of the designated fits. Requires to be run from an area with hdfs write access and condor access.
+   - `--RunParallel` Runs major fits in parallel by creating threads for the fits. Output is dumped to the usual output area in text files labeled by parameter.
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
