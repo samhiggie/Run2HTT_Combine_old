@@ -52,8 +52,11 @@ contains some source code used by helper functions.
 
 contains modules used by the master fit running script
 
-- `SplitUncertainty.py`: This modules contains a class which will mark up the datacard with groups and then calculate
+- `SplitUncertainty.py`: This module contains a class which will mark up the datacard with groups and then calculate
 the uncertainty of a measurement split into Unc=Statistics+Systematics+Bin-By-Bin errors.
+
+- `ThreadManager.py`: This module contains a class which will create and manage threads for combine fits. Output when using this is created in text files in 
+in the usual output directories.
 
 ### scripts
 
