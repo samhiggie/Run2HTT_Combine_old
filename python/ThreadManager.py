@@ -11,7 +11,9 @@ class ThreadManager():
         NewThread.start()
         self.Threads.append(NewThread)
     def RunCombineCommand(self,CombineCommand,Parameter,OutputDir):
-        os.system(CombineCommand+" >& "+OutputDir+"Fit_"+Parameter+".txt")
+        print("Starting fit for "+Parameter+"...")
+        FinishStatus = os.system(CombineCommand+" >& "+OutputDir+"Fit_"+Parameter+".txt")
+        print("Finished fit for: "+Parameter+" With status: "+str(FinishStatus))
     def WaitForAllThreadsToFinish(self):
         print("Waiting for threads...")
         for Process in self.Threads:

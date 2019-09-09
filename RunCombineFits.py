@@ -24,12 +24,13 @@ parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distrib
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
-parser.add_argument('--Timeout', help="Timeout after 3min", action="store_true")
+parser.add_argument('--Timeout', help="Trigger timeout as conditions on fits (prevents infinitely running fits)", action="store_true")
+parser.add_argument('--TimeoutTime',nargs='?',help="Time allotted before a timeout (linux timeout syntax)",default="180s")
 parser.add_argument('--SplitUncertainties', help="Create groups for helping to split the measurements",action="store_true")
 parser.add_argument('--SplitInclusive',help="Split the inclusive measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--SplitSignals',help="Split signal measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
-parser.add_argument('--RunParallel',help='Run all fits in parallel using condor',action="store_true")
+parser.add_argument('--RunParallel',help='Run all fits in parallel using threads',action="store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -232,7 +233,7 @@ if args.ComputeSignificance:
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
 InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
 if args.Timeout is True:
-    InclusiveCommand = "timeout 180s " + InclusiveCommand
+    InclusiveCommand = "timeout "+args.TimeoutTime+" "+InclusiveCommand
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 if args.RunParallel:
@@ -247,7 +248,7 @@ if not args.ComputeSignificance:
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
         CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand        
+            CombineCommand = "timeout "+args.TimeoutTime+" " + CombineCommand        
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         if args.RunParallel:
@@ -275,7 +276,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
             CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
+            CombineCommand = "timeout "+args.TimeoutTime+" "+ CombineCommand
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         if args.RunParallel:
