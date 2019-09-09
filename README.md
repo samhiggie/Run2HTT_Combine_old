@@ -136,25 +136,6 @@ For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
   - To run the script, `python sortingSTXS.py limitExtracted.txt`
 
 
-## Usage
-
-My typical workflow looks something like this: 
-
-1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
-or STXS split distributions for any reason.
-2. Before they can be run on, these files must be Decorrellated.
-3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
-4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
-
-## Adding your own code
-
-All added models should be added to the bin directory and added into the buildfile. `RunCombineFits.py` can be modified to then run this model too, but it should
-take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
-
---Andrew Loeliger
-
-
-
 ## Prefit plot code
 
 - This is contained in 2 files: plotterFinal.py and varCfgPlotter.py.
@@ -181,6 +162,35 @@ Example on how to run it:
 python plotterFinal.py --channel mt --year 2017 
 
 (You will have to change the default address of the files stored in varCfgPlotter.py for above command to work. You may choose to provede `--inputFile` option in addition in which case you need not worry about varCfgPlotter.py)
- 
- 
- 
+
+## Usage
+
+My typical workflow looks something like this: 
+
+1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
+or STXS split distributions for any reason.
+2. Before they can be run on, these files must be Decorrellated.
+3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
+4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
+
+## Troubleshooting
+### RunCombineFits broke and all my fits tell me that the workspace has problems and probably wasn't closed...
+
+This can happen during the stage where `Text2Workspace.py` builds the final root workspace from text based cards. Python
+is limited to a set amount of memory given to it by the system and the shell, and in very high memory required workspaces 
+(STXS on full Run 2 for example) it can exceed this, in which case python itself segfaults when the C code it is based on 
+allocates memory outside of its accepted range (With some dissapointingly un-verbose errors). At the moment, the best fix I have 
+for this is to up the memory you are allocating to your processes using the built in `ulimit -s` command. I recommend caution with this.
+I've seen this error for the default value of 8515, so I just doubled it to 17030, but I would imagine lower values work, in which case 
+I recommend using that. The general process goes like so:
+```
+ulimit -s 17030
+python RunCombineFits.py ...
+```
+
+## Adding your own code
+
+All added models should be added to the bin directory and added into the buildfile. `RunCombineFits.py` can be modified to then run this model too, but it should
+take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
+
+--Andrew Loeliger
