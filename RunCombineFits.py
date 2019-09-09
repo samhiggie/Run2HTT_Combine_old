@@ -8,6 +8,7 @@ import random
 import CategoryConfigurations as cfg
 from EmbeddedConfiguration import EmbeddedConfiguration as embedded_cfg
 from CombineHarvester.Run2HTT_Combine.SplitUncertainty import UncertaintySplitter
+from CombineHarvester.Run2HTT_Combine.ThreadManager import ThreadManager
 
 def RandomStringTag(size=6,chars=string.ascii_uppercase+string.ascii_lowercase+string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -43,17 +44,11 @@ print "*********************************************"
 print ''
 #check if we have an output directory
 if args.RunParallel:
-    print("Running jobs on condor. Creating the ouput on afs/work...")
-    if not os.path.isdir("/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output"):
-        os.mkdir("/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output")
-    OutputDir = "/afs/cern.ch/work/"+os.environ['USER'][0]+"/"+os.environ['USER']+"/HTT_Output/Output_"+DateTag+"/"
-    os.mkdir(OutputDir)    
-else:    
-    if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
-        os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
-    OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
-    os.mkdir(OutputDir)
-print("Output directory is: "+OutputDir)
+    ThreadHandler = ThreadManager()
+if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
+    os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
+OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
+os.mkdir(OutputDir)
 
 logging.basicConfig(filename=OutputDir+"CombineHistory_"+DateTag+".log",filemode="w",level=logging.INFO,format='%(asctime)s %(message)s')
 
@@ -236,23 +231,14 @@ if args.ComputeSignificance:
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
 InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
-if args.RunParallel:
-    InclusiveCommand+=" --job-mode condor --sub-opts=\""
-    InclusiveCommand+="+JobFlavor = \"tomorrow\"\n"
-    InclusiveCommand+="RequestCpus = 4\n"
-    #InclusiveCommand+="output = "+OutputDir+"r_joboutput.txt\n"
-    #InclusiveCommand+="error="+OutputDir+"r_joberror.txt\n"
-    #InclusiveCommand+="log="+OutputDir+"joblog.log \""
-    InclusiveCommand+="output = r_joboutput.txt\n"
-    InclusiveCommand+="error=r_joberror.txt\n"
-    InclusiveCommand+="log=r_joblog.log \""
-    InclusiveCommand+=" --task-name htt_Fit_r_"+DateTag
-    InclusiveCommand+=" --task-name htt_Fit_r_"+DateTag
 if args.Timeout is True:
     InclusiveCommand = "timeout 180s " + InclusiveCommand
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
-os.system(InclusiveCommand)
+if args.RunParallel:
+    ThreadHandler.StartNewFit(InclusiveCommand,"r",OutputDir)
+else:
+    os.system(InclusiveCommand)
 if args.SplitInclusive:
     Splitter.SplitMeasurement(InclusiveCommand,OutputDir)
 
@@ -261,20 +247,13 @@ if not args.ComputeSignificance:
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
         CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
-        if args.RunParallel:
-            if args.RunParallel:
-                CombineCommand+=" --job-mode condor --sub-opts=\""
-                CombineCommand+="+JobFlavor = \"tomorrow\"\n"
-                CombineCommand+="RequestCpus = 4\n"
-                CombineCommand+="output = "+OutputDir+SignalName+"_joboutput.txt\n"
-                CombineCommand+="error="+OutputDir+SignalName+"_joberror.txt\n"
-                CombineCommand+="log="+OutputDir+SignalName+"_joblog.log \""
-                CombineCommand+=" --task-name htt_Fit_"+SignalName+DateTag
-                CombineCommand+=" --dry-run"
+            CombineCommand = "timeout 180s " + CombineCommand        
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.StartNewFit(CombineCommand,SignalName,OutputDir)
+        else:            
+            os.system(CombineCommand)
         if args.SplitSignals:
             Splitter.SplitMeasurement(CombineCommand,OutputDir)
 
@@ -283,9 +262,7 @@ if not args.ComputeSignificance:
         for SignalName in CategorySignalNames:
             CombineCommand = "combineTool.py -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
             if args.Timeout is True:
-                CombineCommand = "timeout 180s " + CombineCommand
-            if args.RunParallel:
-                CombineCommand+=" --job-mode condor --sub-opts=\"+JobFlavor = \"tomorrow\"\nRequestCpus = 4 \" --task-name htt_Fit_"+SignalName+"_"+DateTag+" --dry-run"
+                CombineCommand = "timeout 180s " + CombineCommand                
             logging.info("Category Signal Command: ")
             logging.info('\n\n'+CombineCommand+'\n')    
             os.system(CombineCommand)
@@ -299,18 +276,12 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
             CombineCommand = "timeout 180s " + CombineCommand
-        if args.RunParallel:
-            CombineCommand+=" --job-mode condor --sub-opts=\""
-            CombineCommand+="+JobFlavor = \"tomorrow\"\n"
-            CombineCommand+="RequestCpus = 4\n"
-            CombineCommand+="output = "+OutputDir+"r_"+SignalName+"_joboutput.txt\n"
-            CombineCommand+="error="+OutputDir+"r_"+SignalName+"_joberror.txt\n"
-            CombineCommand+="log="+OutputDir+"r_"+SignalName+"_joblog.log \""
-            CombineCommand+=" --task-name htt_Fit_r_"+SignalName+DateTag
-            CombineCommand+=" --dry-run"
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.StartNewFit(CombineCommand,"r_"+STXSBin,OutputDir)
+        else:            
+            os.system(CombineCommand)
         if args.SplitSTXS:
             Splitter.SplitMeasurement(CombineCommand,OutputDir)
     #run the merged bins
@@ -320,19 +291,13 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
-        if args.RunParallel:
-            CombineCommand+=" --job-mode condor --sub-opts=\""
-            CombineCommand+="+JobFlavor = \"tomorrow\"\n"
-            CombineCommand+="RequestCpus = 4\n"
-            CombineCommand+="output = "+OutputDir+"r_"+SignalName+"_joboutput.txt\n"
-            CombineCommand+="error="+OutputDir+"r_"+SignalName+"_joberror.txt\n"
-            CombineCommand+="log="+OutputDir+"r_"+SignalName+"_joblog.log \""
-            CombineCommand+=" --task-name htt_Fit_r_"+SignalName+DateTag
-            CombineCommand+=" --dry-run"
+            CombineCommand = "timeout 180s " + CombineCommand        
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.StartNewFit(CombineCommand,"r_"+MergedBin,OutputDir)
+        else:            
+            os.system(CombineCommand)
 
 #run impact fitting
 if args.ComputeImpacts:
@@ -365,3 +330,5 @@ if args.ComputeImpacts:
     os.system(ImpactCommand)
 
     os.chdir("../../")
+if args.RunParallel:
+    ThreadHandler.WaitForAllThreadsToFinish()
