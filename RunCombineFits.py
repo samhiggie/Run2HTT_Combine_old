@@ -31,6 +31,7 @@ parser.add_argument('--SplitInclusive',help="Split the inclusive measurements in
 parser.add_argument('--SplitSignals',help="Split signal measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--RunParallel',help='Run all fits in parallel using threads',action="store_true")
+parser.add_argument('--numthreads',nargs='?',help='Number of threads to use to run fits in parallel',type=int,default=12)
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -45,7 +46,7 @@ print "*********************************************"
 print ''
 #check if we have an output directory
 if args.RunParallel:
-    ThreadHandler = ThreadManager()
+    ThreadHandler = ThreadManager(args.numthreads)
 if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
     os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
 OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
@@ -237,7 +238,7 @@ if args.Timeout is True:
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
 if args.RunParallel:
-    ThreadHandler.StartNewFit(InclusiveCommand,"r",OutputDir)
+    ThreadHandler.AddNewFit(InclusiveCommand,"r",OutputDir)
 else:
     os.system(InclusiveCommand)
 if args.SplitInclusive:
@@ -252,7 +253,7 @@ if not args.ComputeSignificance:
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
         if args.RunParallel:
-            ThreadHandler.StartNewFit(CombineCommand,SignalName,OutputDir)
+            ThreadHandler.AddNewFit(CombineCommand,SignalName,OutputDir)
         else:            
             os.system(CombineCommand)
         if args.SplitSignals:
@@ -280,7 +281,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
         if args.RunParallel:
-            ThreadHandler.StartNewFit(CombineCommand,"r_"+STXSBin,OutputDir)
+            ThreadHandler.AddNewFit(CombineCommand,"r_"+STXSBin,OutputDir)
         else:            
             os.system(CombineCommand)
         if args.SplitSTXS:
@@ -296,7 +297,7 @@ if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
         if args.RunParallel:
-            ThreadHandler.StartNewFit(CombineCommand,"r_"+MergedBin,OutputDir)
+            ThreadHandler.AddNewFit(CombineCommand,"r_"+MergedBin,OutputDir)
         else:            
             os.system(CombineCommand)
 
@@ -331,5 +332,7 @@ if args.ComputeImpacts:
     os.system(ImpactCommand)
 
     os.chdir("../../")
+
 if args.RunParallel:
+    ThreadHandler.BeginFits()
     ThreadHandler.WaitForAllThreadsToFinish()
