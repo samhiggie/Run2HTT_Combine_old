@@ -130,31 +130,12 @@ This is kind of plug-in of RunCombineFits.py.
 If you save printed output of RunCombineFits.py as a file, `sortingSTXS.py` help you to print out limits in orgarnized table form.
 
 For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
-![Sorted Output](https://ucf76a6715f538f46d070fb0724e.previews.dropboxusercontent.com/p/thumb/AAhEutZjb-AzZRV1QzNmqJyd3GuHoI-K7WFa0J6gvyOsuYJ0k59DHBrCgipc_zCP4u99GadXhuaMVi-swIBXpHV4Jh5bdoDo4dE5Eh_e_oIppm95DHCTrPl1hgTCX-zF6R_B3dtHElYWrxirLaJgOfMO3w2j0NFy0l0WfP8Ve6M8Ah0EJ00pRkUBd_dXYLUd6DknVM0sbzcZaMbTYQPrU-5kFDmXxoSgA931m-ZbDLD_s-wjgoknzp7e-AAloYUY-3gLNldsnnpcGQGZiQAmZVQORVf8_-lRJFw7THWIBpCubvRLw95Ig-B8_h2C9kgiX6Msoo2ownI_eB3P_16aLc-9g9I6dT3lQq_R-AuhjrRoBHI7Xjvy3iRy6FIzPktJw8GFg3vmiJL4wnEVjHgZyfWpVYXBY8Mo6civ5Os2FiASlZMDpJIO4PJ3rRNAtm482GMHRPiY0lTjBordpm1Mz0L1gFpZ65Wc51t4TIuKwRPEoA/p.png?fv_content=true&size_mode=5)
+![Sorted Output](https://uc1bd7e9de0cb96691611ad52484.previews.dropboxusercontent.com/p/thumb/AAj6sE9g34trO3k_R8BxL4G2wHhNuFXsCK_5jkCuLDKkC00lwX58Tk9oyThxUYOXZY1O11caOiiooUdczRJmXusF8mpQ1O0ID7cHk2xs6g20aBQ2igWSPDUx3gppFWnXir4m7ljVaqj82nfx0v3gCxxi5P7AhIHAt1iaYEy9yRYe6wk3u-i2LsSO5FnM2wCjlP-alhu9hOUQtx9WKAmwHLzDYdevnRz0Ow5R1kQTmOdkJgzUtzxryvkTUEqzZGfY6zAX6vU2pwMOw28FHCSQLu8ouIkKgUmuy5d1g1jmrsq4SdkAMDorpGEnOGp6bxI3tyyWAKGfF46ZRM8e1YhUR1V3pCTjJ6Z-5erbOf78EZjWE1EREt3V1oayUvLXyvRGbqiDUDWQFdGlPUuBwjlUYhn1cL8urWvyQtTuKJHdmNu9uUz-B22_ISNW1Qz07mM-6_AaJaMFTLNv5mOUpgQtq5p-PkOiOolYqqvBY9nKlLyNSw/p.png?fv_content=true&size_mode=5)
 
 - How to run
   - Run `RunCombineFits.py` as usual but add `> outputTxtFile.txt` to save print. 
   - Extract limits lines only. `awk '/%/' outputTxtFile.txt > limitExtracted.txt`
   - To run the script, `python sortingSTXS.py limitExtracted.txt`
-
-
-## Usage
-
-My typical workflow looks something like this: 
-
-1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
-or STXS split distributions for any reason.
-2. Before they can be run on, these files must be Decorrellated.
-3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
-4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
-
-## Adding your own code
-
-All added models should be added to the bin directory and added into the buildfile. `RunCombineFits.py` can be modified to then run this model too, but it should
-take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
-
---Andrew Loeliger
-
 
 
 ## Prefit plot code
@@ -183,6 +164,35 @@ Example on how to run it:
 python plotterFinal.py --channel mt --year 2017 
 
 (You will have to change the default address of the files stored in varCfgPlotter.py for above command to work. You may choose to provede `--inputFile` option in addition in which case you need not worry about varCfgPlotter.py)
- 
- 
- 
+
+## Usage
+
+My typical workflow looks something like this: 
+
+1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
+or STXS split distributions for any reason.
+2. Before they can be run on, these files must be Decorrellated.
+3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
+4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
+
+## Troubleshooting
+### RunCombineFits broke and all my fits tell me that the workspace has problems and probably wasn't closed...
+
+This can happen during the stage where `Text2Workspace.py` builds the final root workspace from text based cards. Python
+is limited to a set amount of memory given to it by the system and the shell, and in very high memory required workspaces 
+(STXS on full Run 2 for example) it can exceed this, in which case python itself segfaults when the C code it is based on 
+allocates memory outside of its accepted range (With some dissapointingly un-verbose errors). At the moment, the best fix I have 
+for this is to up the memory you are allocating to your processes using the built in `ulimit -s` command. I recommend caution with this.
+I've seen this error for the default value of 8515, so I just doubled it to 17030, but I would imagine lower values work, in which case 
+I recommend using that. The general process goes like so:
+```
+ulimit -s 17030
+python RunCombineFits.py ...
+```
+
+## Adding your own code
+
+All added models should be added to the bin directory and added into the buildfile. `RunCombineFits.py` can be modified to then run this model too, but it should
+take all standard options I have mentioned here. This repository is not an exhaustive system by any means, so any improvements are welcome.
+
+--Andrew Loeliger
