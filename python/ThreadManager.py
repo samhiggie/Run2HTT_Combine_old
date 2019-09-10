@@ -25,10 +25,10 @@ class ThreadManager():
             print("Finished fit for: "+Parameter+" With status: "+str(FinishStatus))
 
     def WaitForAllThreadsToFinish(self):
-        print("\nWaiting for threads...")
+        print("\nWaiting for threads...\n")
         for Process in self.Threads:
             Process.join()
-        print("All fits finished running!")
+        print("\nAll fits finished running!\n")
 
     def AddNewFit(self,CombineCommand,Parameter,OutputDir):
         self.queueLock.acquire()

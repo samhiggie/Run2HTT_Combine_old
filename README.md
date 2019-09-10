@@ -108,6 +108,8 @@ This is the main tool used for extracting expected fits. It takes a moderate num
    - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
    Requires that `--SplitUncertainties` has been called.
    - `--RunParallel` Runs major fits in parallel by creating threads for the fits. Output is dumped to the usual output area in text files labeled by parameter.
+   = `--numthreads` Dictates the number of threads that `--RunParallel` is allowed to use to concserve system resources.
+   Default: 12.
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
