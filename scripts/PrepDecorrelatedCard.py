@@ -28,6 +28,10 @@ if __name__ == "__main__":
             TheDirectory.Get(Histogram.GetName()).Write()
             #if a shape, add it and a copy to the new file
             if re.search("(Up|Down)",Histogram.GetName()):                
+                #if we're trimming years, but this histogram doesn't even have a year
+                #then we don't really need to do anything.
+                if args.TrimYears and not re.search(args.year+"(Up|Down)$",Histogram.GetName()):
+                    continue
                 CopyHisto = TheDirectory.Get(Histogram.GetName()).Clone()
                 #we need to add a way to add in the year before the "up/down"
                 if re.search("Up",CopyHisto.GetName()):

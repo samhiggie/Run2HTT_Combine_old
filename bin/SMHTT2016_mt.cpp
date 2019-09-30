@@ -125,7 +125,7 @@ int main(int argc, char **argv)
   //DY XSection Uncertainty
   cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau_2016 ", "lnN",SystMap<>::init(1.26));    
+  cb.cp().process({"ZL","TTL","VVL"}).AddSyst(cb, "CMS_mFakeTau_2016 ", "lnN",SystMap<>::init(1.20));    
   
   //theory uncerts present in HIG-18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
@@ -337,8 +337,7 @@ int main(int argc, char **argv)
   // instance.
 
   // We create the output root file that will contain all the shapes.
-  TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2016_mt.input.root").c_str(), "RECREATE");
+  TFile output((Input.ReturnToken(0)+"/"+"smh2016_mt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
@@ -349,9 +348,7 @@ int main(int argc, char **argv)
       // We need to filter on both the mass and the mass hypothesis,
       // where we must remember to include the "*" mass entry to get
       // all the data and backgrounds.
-      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(((string)std::getenv("CMSSW_BASE"))+
-						    "/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-						    +Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
+      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
     }
   }
   //! [part9]

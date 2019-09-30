@@ -144,7 +144,7 @@ int main(int argc, char **argv)
   if(Input.OptionExists("-e")) cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   else cb.cp().process({"ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau", "lnN",SystMap<>::init(1.26));    
+  cb.cp().process({"ZL","TTL","VVL"}).AddSyst(cb, "CMS_eFakeTau_2017", "lnN",SystMap<>::init(1.29));    
   
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
   cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
@@ -175,13 +175,13 @@ int main(int argc, char **argv)
 			      TheFile);
 			      
 	  //TES uncertainty
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong", "shape", SystMap<>::init(1.00));
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_1prong1pizero", "shape", SystMap<>::init(1.00));
-	  //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_emb_t_3prong", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_1prong1pizero", "shape", SystMap<>::init(1.00));
+	  cb.cp().process({"embedded"}).AddSyst(cb,"CMS_scale_t_3prong", "shape", SystMap<>::init(1.00));
 
 	  //TES Uncertainty                  
 	  AddShapesIfNotEmpty({"CMS_scale_t_1prong","CMS_scale_t_3prong","CMS_scale_t_1prong1pizero"},
-			      JoinStr({ggH_STXS,qqH_STXS,{"embedded","WH_htt125","ZH_htt125"}}),
+			      JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}}),
 			      &cb,
 			      TheFile);
 	  
@@ -198,7 +198,8 @@ int main(int argc, char **argv)
 			      TheFile);
 	  // Jet Energy Scale Uncertainties            
 	  AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
-		"CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
+		//"CMS_scale_jet_EC2", 
+		"CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
 	    JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	    &cb,
 	    TheFile);
@@ -353,8 +354,7 @@ int main(int argc, char **argv)
 
   // We create the output root file that will contain all the shapes.
   //TFile output("smh2017_tt.input.root", "RECREATE");
-  TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2017_tt.input.root").c_str(), "RECREATE");
+  TFile output((Input.ReturnToken(0)+"/"+"smh2017_tt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
@@ -367,9 +367,7 @@ int main(int argc, char **argv)
       // all the data and backgrounds.
       //cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(
       //    b + "_" + m + ".txt", output);
-      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(((string)std::getenv("CMSSW_BASE"))+
-						    "/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-						    +Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
+      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
     }
   }
   //! [part9]

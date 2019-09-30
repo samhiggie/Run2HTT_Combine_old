@@ -56,7 +56,10 @@ int main(int argc, char **argv) {
   //! [part3]
   cb.AddObservations({"*"}, {"smh2018"}, {"13TeV"}, {"mt"}, cats);
 
-  vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
+  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL","VVT","TTT"};
+  if(Input.OptionExists("-e")) {bkg_procs.push_back("ZT");}
+  else bkg_procs.push_back("embedded");
+
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -125,7 +128,7 @@ int main(int argc, char **argv) {
   //DY XSection Uncertainty
   cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau_2018", "lnN",SystMap<>::init(1.26));    
+  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau_2018", "lnN",SystMap<>::init(1.20));    
   
   //theory uncerts present in HIG-18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
@@ -146,6 +149,34 @@ int main(int argc, char **argv) {
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+      //define vectors for the inputs of each shape. 
+      //these change depending on whether or not we are using embedded distributions or not
+      vector<string> METUESVector;
+      vector<string> RecoilVector;
+      vector<string> ZPTVector;
+      vector<string> TopVector;
+      vector<string> TESVector;
+      vector<string> JESVector;
+      vector<string> MuESVector;
+      METUESVector = {"TTT","TTL","VVT","VVL"};
+      TopVector = {"TTL","TTT"};
+      if(Input.OptionExists("-e"))
+	{	  
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
+	  ZPTVector = {"ZT","ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	}
+      else
+	{	  
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
+	  ZPTVector = {"ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
+	}
+
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
@@ -177,7 +208,7 @@ int main(int argc, char **argv) {
       
       //MET Unclustered Energy Scale      
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2018"},
-			  {"TTT","TTL","VVT","VVL"},
+			  METUESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -187,46 +218,46 @@ int main(int argc, char **argv) {
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2018","CMS_htt_boson_scale_met_0jet_2018",
 	    "CMS_htt_boson_reso_met_1jet_2018","CMS_htt_boson_scale_met_1jet_2018",
 	    "CMS_htt_boson_reso_met_2jet_2018","CMS_htt_boson_scale_met_2jet_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
+	RecoilVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
 
       //ZPT Reweighting Shapes:      
       AddShapesIfNotEmpty({"CMS_htt_dyShape"},
-			  {"ZT","ZL"},
+			  ZPTVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
 
       //Top Pt Reweighting      
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
-			  {"TTL","TTT"},
+			  TopVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
   
       //TES Uncertainty                  
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2018","CMS_scale_t_3prong_2018","CMS_scale_t_1prong1pizero_2018"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+			  TESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
 
       // Jet Energy Correction Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+			  JESVector,
 			  &cb,
 			  0.707,
 			  TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+			  JESVector,
 			  &cb,
 			  0.707,
 			  TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JESVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);            
@@ -242,7 +273,7 @@ int main(int argc, char **argv) {
       //Muon Energy scale uncertainties      
       AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2018","CMS_scale_m_etam2p1tom1p2_2018",
 	    "CMS_scale_m_etam1p2to1p2_2018","CMS_scale_m_eta1p2to2p1_2018","CMS_scale_m_eta2p1to2p4_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
+	MuESVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
@@ -314,8 +345,7 @@ int main(int argc, char **argv) {
   // instance.
 
   // We create the output root file that will contain all the shapes.
-  TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2018_mt.input.root").c_str(), "RECREATE");
+  TFile output((Input.ReturnToken(0)+"/"+"smh2018_mt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
@@ -326,9 +356,7 @@ int main(int argc, char **argv) {
       // We need to filter on both the mass and the mass hypothesis,
       // where we must remember to include the "*" mass entry to get
       // all the data and backgrounds.
-      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(((string)std::getenv("CMSSW_BASE"))+
-						    "/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-						    +Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
+      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
     }
   }
   //! [part9]

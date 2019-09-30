@@ -55,13 +55,8 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, cats);
 
-  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL"};
-  if(Input.OptionExists("-e")) 
-    {
-      bkg_procs.push_back("ZT");
-      bkg_procs.push_back("VVT");
-      bkg_procs.push_back("TTT");
-    }
+  vector<string> bkg_procs = {"jetFakes","ZL","VVL","TTL","VVT","TTT"};
+  if(Input.OptionExists("-e")) {bkg_procs.push_back("ZT");}
   else bkg_procs.push_back("embedded");
 
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"mt"}, bkg_procs, cats, false);
@@ -131,7 +126,7 @@ int main(int argc, char **argv)
   //DY XSection Uncertainty
   cb.cp().process({"ZT","ZL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
   //Muon Fake Rate Uncertainty
-  cb.cp().process({"ZL"}).AddSyst(cb, "CMS_mFakeTau_2017", "lnN",SystMap<>::init(1.26));    
+  cb.cp().process({"ZL","TTL","VV1L"}).AddSyst(cb, "CMS_mFakeTau_2017", "lnN",SystMap<>::init(1.20));    
 
   //theory uncerts present in HIG-18-032  
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
@@ -161,25 +156,23 @@ int main(int argc, char **argv)
       vector<string> TESVector;
       vector<string> JESVector;
       vector<string> MuESVector;
+      METUESVector = {"TTT","TTL","VVT","VVL"};
+      TopVector = {"TTL","TTT"};
       if(Input.OptionExists("-e"))
-	{
-	  METUESVector = {"TTT","TTL","VVT","VVL"};
+	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
-	  ZPTVector = {"ZT","ZL"};
-	  TopVector = {"TTL","TTT"};
+	  ZPTVector = {"ZT","ZL"};	  
 	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
 	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
 	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
 	}
       else
-	{
-	  METUESVector = {"TTL","VVL"};
+	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
-	  ZPTVector = {"ZL"};
-	  TopVector = {"TTL"};
-	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}});
-	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
-	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  ZPTVector = {"ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
 	}
 
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
@@ -374,8 +367,7 @@ int main(int argc, char **argv)
   // instance.
 
   // We create the output root file that will contain all the shapes.
-  TFile output((((string)std::getenv("CMSSW_BASE"))+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-		+Input.ReturnToken(0)+"/"+"smh2017_mt.input.root").c_str(), "RECREATE");
+  TFile output((Input.ReturnToken(0)+"/"+"smh2017_mt.input.root").c_str(), "RECREATE");
 
   // Finally we iterate through each bin,mass combination and write a
   // datacard.
@@ -386,9 +378,7 @@ int main(int argc, char **argv)
       // We need to filter on both the mass and the mass hypothesis,
       // where we must remember to include the "*" mass entry to get
       // all the data and backgrounds.
-      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(((string)std::getenv("CMSSW_BASE"))+
-						    "/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"
-						    +Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
+      cb.cp().bin({b}).mass({m, "*"}).WriteDatacard(Input.ReturnToken(0)+"/"+b + "_" + m + ".txt", output);
     }
   }
   //! [part9]

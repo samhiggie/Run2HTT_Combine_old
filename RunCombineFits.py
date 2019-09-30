@@ -6,6 +6,9 @@ import datetime
 import string
 import random
 import CategoryConfigurations as cfg
+from EmbeddedConfiguration import EmbeddedConfiguration as embedded_cfg
+from CombineHarvester.Run2HTT_Combine.SplitUncertainty import UncertaintySplitter
+from CombineHarvester.Run2HTT_Combine.ThreadManager import ThreadManager
 
 def RandomStringTag(size=6,chars=string.ascii_uppercase+string.ascii_lowercase+string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -15,17 +18,25 @@ parser.add_argument('--years',nargs="+",choices=['2016','2017','2018'],help="Spe
 parser.add_argument('--channels',nargs="+",choices=['mt','et','tt','em'],help="specify the channels to create data cards for",required=True)
 parser.add_argument('--RunShapeless',help="Run combine model without using any shape uncertainties",action="store_true")
 parser.add_argument('--RunWithBinByBin',help="Run combine model without using bin-by-bin uncertainties",action="store_true")
-parser.add_argument('--RunEmbeddedLess',help="Run combine model without using the embedded distributions or their uncertainties",action="store_true")
 parser.add_argument('--RunWithoutAutoMCStats',help="Run with auto mc stats command appended to data cards",action="store_true")
 parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distribution (no STXS bins), using either this or the the inclusive qqH will cancel STXS bin measurements",action="store_true")
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
-parser.add_argument('--Timeout', help="Timeout after 3min", action="store_true")
-
+parser.add_argument('--Timeout', help="Trigger timeout as conditions on fits (prevents infinitely running fits)", action="store_true")
+parser.add_argument('--TimeoutTime',nargs='?',help="Time allotted before a timeout (linux timeout syntax)",default="180s")
+parser.add_argument('--SplitUncertainties', help="Create groups for helping to split the measurements",action="store_true")
+parser.add_argument('--SplitInclusive',help="Split the inclusive measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--SplitSignals',help="Split signal measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
+parser.add_argument('--RunParallel',help='Run all fits in parallel using threads',action="store_true")
+parser.add_argument('--numthreads',nargs='?',help='Number of threads to use to run fits in parallel',type=int,default=12)
 print("Parsing command line arguments.")
 args = parser.parse_args() 
+
+if (args.SplitInclusive or args.SplitSignals or args.SplitSTXS) and not (args.SplitUncertainties):
+    parser.error("Tried to split a measurement without calling --SplitUncertainties!")
 
 DateTag = datetime.datetime.now().strftime("%d%m%y_")+RandomStringTag()
 print ''
@@ -34,6 +45,8 @@ print("This session is run under tag: "+DateTag)
 print "*********************************************"
 print ''
 #check if we have an output directory
+if args.RunParallel:
+    ThreadHandler = ThreadManager(args.numthreads)
 if not os.path.isdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output"):
     os.mkdir(os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output")
 OutputDir = os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/HTT_Output/Output_"+DateTag+"/"
@@ -48,12 +61,13 @@ ChannelCards = []
 for year in args.years:    
     for channel in args.channels:
         DataCardCreationCommand="SMHTT"+year
-        DataCardCreationCommand+="_"+channel+" "+DateTag
+        DataCardCreationCommand+="_"+channel+" "+OutputDir
         if args.RunShapeless:
             DataCardCreationCommand+=" -s"
         if not args.RunWithBinByBin:
             DataCardCreationCommand+=" -b"
-        if args.RunEmbeddedLess:
+        #if args.RunEmbeddedLess:
+        if not embedded_cfg[str(year)+str(channel)]: #load from config. If false, run embedded less
             DataCardCreationCommand+=" -e"
         if args.RunInclusiveggH:
             DataCardCreationCommand+=" -g"
@@ -74,15 +88,20 @@ for year in args.years:
 #we have to do this in one fell swoop.
 CombinedCardName = OutputDir+"FinalCard_"+DateTag+".txt"
 CardCombiningCommand = "combineCards.py"
+if args.SplitUncertainties:
+    Splitter = UncertaintySplitter()
 for year in args.years:
     for channel in args.channels:
         CardNum = 1
         TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
         for Directory in TheFile.GetListOfKeys():
-            if not args.RunWithoutAutoMCStats and Directory.GetName() in cfg.Categories[channel].values():
-                CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
-                CardFile.write("* autoMCStats 0.0")
             if Directory.GetName() in cfg.Categories[channel].values():
+                if not args.RunWithoutAutoMCStats:
+                    CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
+                    CardFile.write("* autoMCStats 0.0\n")
+                    CardFile.close()                
+                if args.SplitUncertainties:                    
+                    Splitter.FindAndTagGroups(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt")
                 CardCombiningCommand += " "+Directory.GetName()+"_"+year+"="+OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
                 CardNum+=1
 CardCombiningCommand+= " > "+CombinedCardName
@@ -196,6 +215,15 @@ logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
 
+#if we're running in parallel, it is time to move relevant files to hdfs
+#if args.RunParallel:
+#    print("staging things to hdfs...")
+#    if not os.path.isdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_output"):
+#        os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/"+os.environ['USER']+"/HTT_Output")
+#    os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/HTT_Output/Output_"+DateTag)
+#    os.system("xrdcp "+CombinedCardName[:len(CombinedCardName)-3]+"root root://cmseos.fnal.gov//store/user"+os.environ['USER']+"HTT_Output/Output_"+DateTag)
+    
+
 PhysModel = 'MultiDimFit'
 ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --algo=singles --cl=0.68'
 if args.ComputeSignificance:
@@ -204,29 +232,39 @@ if args.ComputeSignificance:
 
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
-InclusiveCommand="combine -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
+InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
 if args.Timeout is True:
-    InclusiveCommand = "timeout 180s " + InclusiveCommand
+    InclusiveCommand = "timeout "+args.TimeoutTime+" "+InclusiveCommand
 logging.info("Inclusive combine command:")
 logging.info('\n\n'+InclusiveCommand+'\n')
-os.system(InclusiveCommand)
+if args.RunParallel:
+    ThreadHandler.AddNewFit(InclusiveCommand,"r",OutputDir)
+else:
+    os.system(InclusiveCommand)
+if args.SplitInclusive:
+    Splitter.SplitMeasurement(InclusiveCommand,OutputDir)
 
 if not args.ComputeSignificance:
     #run the signal samples
     for SignalName in ["r_ggH","r_qqH","r_WH","r_ZH"]:
-        CombineCommand = "combine -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSignalName+" "+ExtraCombineOptions+" -t -1 --setParameters r_ggH=1,r_qqH=1,r_WH=1,r_ZH=1 -P "+SignalName+" --floatOtherPOIs=1" 
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
+            CombineCommand = "timeout "+args.TimeoutTime+" " + CombineCommand        
         logging.info("Signal Sample Signal Command: ")
         logging.info('\n\n'+CombineCommand+'\n')
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.AddNewFit(CombineCommand,SignalName,OutputDir)
+        else:            
+            os.system(CombineCommand)
+        if args.SplitSignals:
+            Splitter.SplitMeasurement(CombineCommand,OutputDir)
 
     #run the per categories
     if not args.DisableCategoryFits:
         for SignalName in CategorySignalNames:
-            CombineCommand = "combine -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
+            CombineCommand = "combineTool.py -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
             if args.Timeout is True:
-                CombineCommand = "timeout 180s " + CombineCommand
+                CombineCommand = "timeout 180s " + CombineCommand                
             logging.info("Category Signal Command: ")
             logging.info('\n\n'+CombineCommand+'\n')    
             os.system(CombineCommand)
@@ -234,26 +272,34 @@ if not args.ComputeSignificance:
 # run the STXS bins
 if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
     for STXSBin in STXSBins:
-        CombineCommand = "combine -M "+PhysModel+" "+PerSTXSName+" "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerSTXSName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in STXSBins:
             CombineCommand+=("r_"+BinName+"=1,")        
         CombineCommand+=" -P r_"+STXSBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
+            CombineCommand = "timeout "+args.TimeoutTime+" "+ CombineCommand
         logging.info("STXS Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')    
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.AddNewFit(CombineCommand,"r_"+STXSBin,OutputDir)
+        else:            
+            os.system(CombineCommand)
+        if args.SplitSTXS:
+            Splitter.SplitMeasurement(CombineCommand,OutputDir)
     #run the merged bins
     for MergedBin in MergedSignalNames:
-        CombineCommand = "combine -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
+        CombineCommand = "combineTool.py -M "+PhysModel+" "+PerMergedBinName+" "+ExtraCombineOptions+" -t -1 --setParameters "
         for BinName in MergedSignalNames:
             CombineCommand+=("r_"+BinName+"=1,")
         CombineCommand+=" -P r_"+MergedBin+" --floatOtherPOIs=1"
         if args.Timeout is True:
-            CombineCommand = "timeout 180s " + CombineCommand
+            CombineCommand = "timeout 180s " + CombineCommand        
         logging.info("Merged Bin Combine Command:")
         logging.info('\n\n'+CombineCommand+'\n')
-        os.system(CombineCommand)
+        if args.RunParallel:
+            ThreadHandler.AddNewFit(CombineCommand,"r_"+MergedBin,OutputDir)
+        else:            
+            os.system(CombineCommand)
 
 #run impact fitting
 if args.ComputeImpacts:
@@ -286,3 +332,7 @@ if args.ComputeImpacts:
     os.system(ImpactCommand)
 
     os.chdir("../../")
+
+if args.RunParallel:
+    ThreadHandler.BeginFits()
+    ThreadHandler.WaitForAllThreadsToFinish()
