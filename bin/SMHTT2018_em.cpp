@@ -56,10 +56,13 @@ int main(int argc, char **argv) {
   //! [part3]
   cb.AddObservations({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"VVT","STT","TTT","QCD","DYL","VVL","STL","TTL","W"};
+  vector<string> bkg_procs = {"QCD","DYL","VVL","STL","TTL","W"};
   if(Input.OptionExists("-e")) 
     {
       bkg_procs.push_back("DYT");
+      bkg_procs.push_back("STT");
+      bkg_procs.push_back("VVT");
+      bkg_procs.push_back("TTT");
     }
   else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
@@ -244,17 +247,6 @@ int main(int argc, char **argv) {
   //********************************************************************************************************************************
   if(not Input.OptionExists("-e"))
     {
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2018
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t", "lnN", SystMap<>::init(1.019));
-  
-      //Quadrature addition of CMS_eff_emb_t_em and CMS_eff_eem_t_em_Run2018
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_em","lnN",SystMap<>::init(1.0084));
-
-      //These were changed from shapes to lnN
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
-
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
       // TTBar Contamination

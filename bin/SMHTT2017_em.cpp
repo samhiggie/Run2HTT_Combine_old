@@ -55,10 +55,13 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2017"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"W","VVT","STT","TTT","QCD","DYL","VVL","STL","TTL"};
+  vector<string> bkg_procs = {"W","QCD","DYL","VVL","STL","TTL"};
   if(Input.OptionExists("-e")) 
     {
       bkg_procs.push_back("DYT");
+      bkg_procs.push_back("STT");
+      bkg_procs.push_back("TTT");
+      bkg_procs.push_back("VVT");
     }
   else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2017"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
@@ -127,8 +130,8 @@ int main(int argc, char **argv)
   cb.cp().process({"VVT","STT","VVL","STL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
   cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
-  //Muon Fake Rate Uncertainty
-  cb.cp().process({"DYL"}).AddSyst(cb, "CMS_mFakeTau_2017", "lnN",SystMap<>::init(1.26));    
+
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_htt_jtoellFR_2017", "lnN", SystMap<>::init(1.20));
 
   //theory uncerts present in HIG-18-032  
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
@@ -246,18 +249,9 @@ int main(int argc, char **argv)
   if(not Input.OptionExists("-e"))
     {      
       
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2017
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t","lnN",SystMap<>::init(1.019));
-
-      //Quadrature addition of CMS_eff_emb_t_em and CMS_eff_eem_t_em_Run2017
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_em","lnN",SystMap<>::init(1.0084));
 
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
-      
       //ttbar contamination in embedded
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2017", "shape", SystMap<>::init(1.00));    
 
