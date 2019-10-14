@@ -208,22 +208,19 @@ int main(int argc, char **argv)
   
       // Jet Energy Scale Uncertainties            
       std::cout<<"JES"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);
-      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);*/
-      AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
+      AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017","CMS_JetRelativeBal_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
 	&cb,
-	1.00,
+	0.707,
 	TheFile,CategoryArgs);            
+
+      AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5","CMS_JetRelativeBal",
+            "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL"}}),
+        &cb,
+        0.707,
+        TheFile,CategoryArgs);
 
       //ggH Theory Uncertainties
       std::cout<<"THU"<<std::endl;

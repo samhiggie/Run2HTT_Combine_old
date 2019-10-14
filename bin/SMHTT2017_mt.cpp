@@ -266,22 +266,19 @@ int main(int argc, char **argv)
 
       // Jet Energy Scale Uncertainties  
       std::cout<<"Jet Shapes"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017"},
-			  JESVector,
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-			  JESVector,
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017","CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
 	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
 	JESVector,
 	&cb,
-	1.00,
+	0.707,
 	TheFile,CategoryArgs);            
+
+      AddShapesIfNotEmpty({"CMS_JetRelativeBal","CMS_JetEta3to5","CMS_JetEta0to5",
+            "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
+        JESVector,
+        &cb,
+        0.707,
+        TheFile,CategoryArgs);
 
       //ggH Theory Uncertainties
       std::cout<<"ggH theory uncerts"<<std::endl;
@@ -314,11 +311,12 @@ int main(int argc, char **argv)
       //Tau ID eff
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2017", "lnN", SystMap<>::init(1.020));
  
+      // Embedded normalization
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
+      // Tracking uncertainty
+      //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));
+      //cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
       
       //ttbar contamination in embedded
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));    
