@@ -113,8 +113,11 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
-  //Electron ID efficiency: Decorrelated in 18-032 datacards.  
+  //Electron ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2016","lnN",SystMap<>::init(1.02));
+
+  // Trg efficiency. Can be a single lnN because only single ele trigger
+  cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_singleeletrg_2016","lnN",SystMap<>::init(1.02));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL","STL","STT"}).AddSyst(cb,"CMS_htt_eff_b_TT_2016","lnN",SystMap<>::init(1.05));
@@ -183,31 +186,6 @@ int main(int argc, char **argv)
       
       //Fake Factor Stat uncertainties: Fully decorrelated
       std::cout<<"Fake Factors"<<std::endl;
-      /*AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat_2016", "CMS_ff_qcd_njet1_et_stat_2016",
-	    "CMS_ff_tt_njet1_et_stat_2016", "CMS_ff_w_njet0_et_stat_2016", "CMS_ff_w_njet1_et_stat_2016"},
-	{"jetFakes"},
-	&cb,
-	1.00,
-	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat", "CMS_ff_qcd_njet1_et_stat",
-            "CMS_ff_tt_njet1_et_stat", "CMS_ff_w_njet0_et_stat", "CMS_ff_w_njet1_et_stat"},
-        {"jetFakes"},
-        &cb,
-        1.00,
-        TheFile,CategoryArgs);*/
-
-      //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      /*AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2016","CMS_ff_tt_et_syst_2016","CMS_ff_w_et_syst_2016"},
-	{"jetFakes"},
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);
-      AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst","CMS_ff_tt_et_syst","CMS_ff_w_et_syst"},
-	{"jetFakes"},
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);*/
-
       AddShapesIfNotEmpty({"CMS_rawFF_et_qcd_0jet_unc1_2016","CMS_rawFF_et_qcd_0jet_unc2_2016","CMS_rawFF_et_qcd_1jet_unc1_2016","CMS_rawFF_et_qcd_1jet_unc2_2016","CMS_rawFF_et_w_0jet_unc1_2016","CMS_rawFF_et_w_0jet_unc2_2016","CMS_rawFF_et_w_1jet_unc1_2016","CMS_rawFF_et_w_1jet_unc2_2016","CMS_rawFF_et_tt_unc1_2016","CMS_rawFF_et_tt_unc2_2016","CMS_FF_closure_mvis_et_qcd_unc1_2016","CMS_FF_closure_mvis_et_qcd_unc2_2016","CMS_FF_closure_mvis_et_w_unc1_2016","CMS_FF_closure_mvis_et_w_unc2_2016","CMS_FF_closure_mvis_et_tt_unc1_2016","CMS_FF_closure_mvis_et_tt_unc2_2016","CMS_FF_closure_OSSS_mvis_et_qcd_unc1_2016","CMS_FF_closure_OSSS_mvis_et_qcd_unc2_2016","CMS_FF_closure_mt_et_w_unc1_2016","CMS_FF_closure_mt_et_w_unc2_2016"},
                           {"jetFakes"},
                           &cb,
@@ -302,11 +280,12 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-e"))
     {
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2016
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t", "lnN", SystMap<>::init(1.019));
-  
-      //Quadrature addition of CMS_eff_emb_t_et and CMS_eff_eet_t_et_Run2016
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_et","lnN",SystMap<>::init(1.0084));
+
+      // Trg efficiency. Can be a single lnN because only single ele trigger
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_singleeletrg_embedded_2016","lnN",SystMap<>::init(1.020));
+
+      //Tau ID eff
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2016", "lnN", SystMap<>::init(1.020));
 
       //These were changed from shapes to lnN
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));

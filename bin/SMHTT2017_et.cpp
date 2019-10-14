@@ -171,6 +171,14 @@ int main(int argc, char **argv)
                           1.00,
                           TheFile,CategoryArgs);
 
+      // Trg eff. It is a shape because the 2 triggers affect the ele pT spectrum differently
+      std::cout<<"Trigger eff"<<std::endl;
+      AddShapesIfNotEmpty({"CMS_singleeletrg_2017","CMS_eletautrg_2017"},
+                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ZH_htt125"}}),
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
+
       
       //Mu to tau fake energy scale and e to tau energy fake scale            
       std::cout<<"Adding Shapes..."<<std::endl;
@@ -185,26 +193,6 @@ int main(int argc, char **argv)
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
-      
-      /*//Fake Factor Stat uncertainties: Fully decorrelated
-      AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_et_stat_2017", "CMS_ff_qcd_njet1_et_stat_2017",
-	    "CMS_ff_tt_njet1_et_stat_2017", "CMS_ff_w_njet0_et_stat_2017", "CMS_ff_w_njet1_et_stat_2017"},
-	{"jetFakes"},
-	&cb,
-	1.00,
-	TheFile,CategoryArgs);
-
-      //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst_2017","CMS_ff_tt_et_syst_2017","CMS_ff_w_et_syst_2017"},
-	{"jetFakes"},
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);*/
-      /*AddShapesIfNotEmpty({"CMS_ff_qcd_et_syst","CMS_ff_tt_et_syst","CMS_ff_w_et_syst"},
-	{"jetFakes"},
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);*/
       
       //MET Unclustered Energy Scale      
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2017"},
@@ -287,6 +275,9 @@ int main(int argc, char **argv)
       //50% correlation with ID unc in MC
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_2017","lnN",SystMap<>::init(1.010));
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_embedded_2017","lnN",SystMap<>::init(1.01732));
+
+      //Tau ID eff
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2017", "lnN", SystMap<>::init(1.020));
  
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 

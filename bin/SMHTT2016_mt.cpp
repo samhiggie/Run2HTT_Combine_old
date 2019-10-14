@@ -282,11 +282,8 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-e"))
     {
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2016
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t", "lnN", SystMap<>::init(1.019));
-  
-      //Quadrature addition of CMS_eff_emb_t_mt and CMS_eff_emt_t_mt_Run2016
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_mt","lnN",SystMap<>::init(1.0084));
+      //Tau ID eff
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2016", "lnN", SystMap<>::init(1.020));
 
       //These were changed from shapes to lnN
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));

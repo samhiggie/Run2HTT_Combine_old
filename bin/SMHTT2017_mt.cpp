@@ -315,6 +315,9 @@ int main(int argc, char **argv)
       //50% correlation with ID unc in MC
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.010));
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2017","lnN",SystMap<>::init(1.01732));
+
+      //Tau ID eff
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2017", "lnN", SystMap<>::init(1.020));
  
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
