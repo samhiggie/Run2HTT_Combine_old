@@ -129,8 +129,8 @@ int main(int argc, char **argv) {
   cb.cp().process({"VVT","STT","VVL","STL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
   cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.02));
-  //Muon Fake Rate Uncertainty
-  cb.cp().process({"DYL"}).AddSyst(cb, "CMS_eFakeTau_2018", "lnN",SystMap<>::init(1.15));    
+  //Electron Fake Rate Uncertainty
+  cb.cp().process({"DYL","STL","TTL","VVL"}).AddSyst(cb, "CMS_eFakeTau_2018", "lnN",SystMap<>::init(1.15));    
   
   //theory uncerts present in HIG-18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
