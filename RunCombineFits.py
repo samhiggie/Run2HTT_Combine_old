@@ -61,6 +61,15 @@ ChannelCards = []
 
 for year in args.years:    
     for channel in args.channels:
+
+	AddShapeCommand="python scripts/PrepDecorrelatedCard.py --year "+year+" --DataCard ../../auxiliaries/shapes/smh+"year+channel+"_nocorrelation.root --OutputFileName ../../auxiliaries/shapes/smh"+year+channel+".root "
+	if channel=="et" or channel=="mt":
+	   AddShapeCommand+="--TrimYears "
+        print("Duplicating shapes for year correlations")
+        logging.info("Shape duplication command:")
+        logging.info('\n\n'+AddShapeCommand+'\n')
+        os.system(AddShapeCommand)
+
         DataCardCreationCommand="SMHTT"+year
         DataCardCreationCommand+="_"+channel+" "+OutputDir
         if args.RunShapeless:
