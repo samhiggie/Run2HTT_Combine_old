@@ -60,8 +60,8 @@ int main(int argc, char **argv) {
   if(Input.OptionExists("-e")) 
     {
       bkg_procs.push_back("DYT");
-      bkg_procs.push_back("STT");
       bkg_procs.push_back("VVT");
+      bkg_procs.push_back("STT");
       bkg_procs.push_back("TTT");
     }
   else bkg_procs.push_back("embedded");
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
   // Single top XSection Uncertainty
   cb.cp().process({"STT","STL"}).AddSyst(cb,"CMS_htt_stXsec", "lnN", SystMap<>::init(1.05));
   //DY XSection Uncertainty
-  cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
+  cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.02));
   //DY XSection Uncertainty
   cb.cp().process({"W"}).AddSyst(cb,"CMS_htt_jtoellFR_2018", "lnN", SystMap<>::init(1.20));
   
@@ -145,7 +145,10 @@ int main(int argc, char **argv) {
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
 
   //Luminosity Uncertainty
-  cb.cp().process(JoinStr({sig_procs,{"W","VVL","STL","VVT","STT","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.015));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.015));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_XYfactorization", "lnN", SystMap<>::init(1.020));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_lengthScale", "lnN", SystMap<>::init(1.002));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_beamCurrentCalibration", "lnN", SystMap<>::init(1.002));
 
   //theory uncerts present in HIG 18-032
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
@@ -201,18 +204,18 @@ int main(int argc, char **argv) {
   
       // Jet Energy Correction Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);
       /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);*/
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
 	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);            
