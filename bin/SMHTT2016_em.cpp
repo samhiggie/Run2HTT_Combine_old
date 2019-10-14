@@ -56,7 +56,15 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2016"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"DYT","VVT","TTT","QCD","W","DYL","VVL","TTL","STT","STL"};
+  vector<string> bkg_procs = {"W","QCD","DYL","VVL","STL","TTL"};
+  if(Input.OptionExists("-e"))
+    {
+      bkg_procs.push_back("DYT");
+      bkg_procs.push_back("TTT");
+      bkg_procs.push_back("VVT");
+      bkg_procs.push_back("STT");
+    }
+  else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2016"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;
@@ -109,11 +117,13 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
 
-  //Electron ID efficiency: Decorrelated in 18-032 datacards.  
+  //Electron ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","DYL","TTL","VVL","STT","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2016","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_e_2016","lnN",SystMap<>::init(1.01)); 
 
-  //Muon ID efficiency: Decorrelated in 18-032 datacards.  
+  //Muon ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","DYL","TTL","VVL","STT","STL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"STT","STL","TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2016","lnN",SystMap<>::init(1.05));
@@ -240,22 +250,26 @@ int main(int argc, char **argv)
         1.00,
         TheFile,CategoryArgs);
     }
-  //********************************************************************************************************************************
-
-
-  //embedded uncertainties. No embedded avaialable for 2016 yet.
-  //********************************************************************************************************************************
+  //**********************************************************************************************************
+  //embedded uncertainties. 
+  //**********************************************************************************************************
   if(not Input.OptionExists("-e"))
     {
 
+      //50% correlation with ID unc in MC
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_2016","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_embedded_2016","lnN",SystMap<>::init(1.01732));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2016","lnN",SystMap<>::init(1.01732));
+
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
-      // TTBar Contamination
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar", "shape", SystMap<>::init(1.00));
+      //ttbar contamination in embedded
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2016", "shape", SystMap<>::init(1.00));
 
     }
-  //********************************************************************************************************************************                          
 
+  //****************************************************************************************************
   cb.cp().backgrounds().ExtractShapes(
       aux_shapes + "smh2016em.root",
       "$BIN/$PROCESS",

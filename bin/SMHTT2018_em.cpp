@@ -113,16 +113,18 @@ int main(int argc, char **argv) {
 
   std::cout<<"lnN errors"<<std::endl;
   
-  //Theory uncerts: Present in 18-032 Data cards.
+  //Theory uncerts
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   
-  //Muon ID efficiency: Decorrelated in 18-032 datacards.  
+  //Muon ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.02));  
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.01));
 
-  //Electron ID efficiency: Decorrelated in 18-032 datacards.  
+  //Electron ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL","STT","STL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2018","lnN",SystMap<>::init(1.05));

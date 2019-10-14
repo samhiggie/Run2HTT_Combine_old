@@ -50,7 +50,13 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2016"}, {"13TeV"}, {"tt"}, cats);
 
-  vector<string> bkg_procs = {"ZT","VVT","TTT","jetFakes","ZL","VVL","TTL"};
+  vector<string> bkg_procs = {"embedded","jetFakes","ZL","VVL","TTL"};
+  if(Input.OptionExists("-e")) { // disable embed
+    bkg_procs.erase(std::remove(bkg_procs.begin(), bkg_procs.end(), "embedded"), bkg_procs.end());
+    bkg_procs.push_back("ZT");
+    bkg_procs.push_back("VVT");
+    bkg_procs.push_back("TTT");
+  }
   cb.AddProcesses({"*"}, {"smh2016"}, {"13TeV"}, {"tt"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;

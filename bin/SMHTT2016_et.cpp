@@ -56,7 +56,12 @@ int main(int argc, char **argv)
   //! [part3]
   cb.AddObservations({"*"}, {"smh2016"}, {"13TeV"}, {"et"}, cats);
 
-  vector<string> bkg_procs = {"DYT","VVT","STT","TTT","jetFakes","DYL","VVL","STL","TTL"};
+  vector<string> bkg_procs = {"VVT","STT","TTT","jetFakes","DYL","VVL","STL","TTL"};
+  if(Input.OptionExists("-e"))
+    {
+      bkg_procs.push_back("DYT");
+    }
+  else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2016"}, {"13TeV"}, {"et"}, bkg_procs, cats, false);
 
   vector<string> ggH_STXS;

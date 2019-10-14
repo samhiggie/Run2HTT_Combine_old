@@ -116,9 +116,11 @@ int main(int argc, char **argv)
   
   //Electron ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2017","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_e_2017","lnN",SystMap<>::init(1.01));
 
   //Muon ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2017","lnN",SystMap<>::init(1.05));
@@ -248,10 +250,9 @@ int main(int argc, char **argv)
         1.00,
         TheFile,CategoryArgs);
     }
-  //********************************************************************************************************************************
-
-  //embedded uncertainties. No embedded avaialable for 2017 yet.
-  //********************************************************************************************************************************
+  //**********************************************************************************************************
+  //embedded uncertainties. 
+  //************************************************************************************************************
   if(not Input.OptionExists("-e"))
     {      
       
@@ -260,7 +261,6 @@ int main(int argc, char **argv)
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_embedded_2017","lnN",SystMap<>::init(1.01732));
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.010));
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2017","lnN",SystMap<>::init(1.01732));
-
 
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
