@@ -162,13 +162,11 @@ int main(int argc, char **argv)
     {
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       
-      //Mu to tau fake energy scale and e to tau energy fake scale            
-      /*
-      AddShapesIfNotEmpty({"CMS_ZLShape_tt_1prong","CMS_ZLShape_tt_1prong1pizero"},
-			  {"ZL"},
-			  &cb,
-			  TheFile);
-      */
+      // Prefiring
+      AddShapesIfNotEmpty({"CMS_prefiring"},
+                          JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}}),
+                          &cb,
+                          TheFile);
 
       //Fake factor shapes: 
       //https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauJet2TauFakes#2016_Uncertainties_for_tau_tau_c

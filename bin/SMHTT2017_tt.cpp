@@ -170,6 +170,13 @@ int main(int argc, char **argv)
   //********************************************************************************************************************************
   if(not Input.OptionExists("-s"))
     {
+
+      // Prefiring
+      AddShapesIfNotEmpty({"CMS_prefiring"},
+                          JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}}),
+                          &cb,
+                          TheFile);
+
       if(not Input.OptionExists("-e"))
 	{
 	  //ttbar contamination in embedded

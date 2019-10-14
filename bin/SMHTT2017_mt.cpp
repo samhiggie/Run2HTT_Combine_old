@@ -178,6 +178,13 @@ int main(int argc, char **argv)
 	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
 	}
 
+      // Prefiring
+      AddShapesIfNotEmpty({"CMS_prefiring"},
+                          JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}}),
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
+
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
    
       // Tau ID eff in pt bins

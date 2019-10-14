@@ -155,6 +155,14 @@ int main(int argc, char **argv)
   if(not Input.OptionExists("-s"))
     {
       std::cout<<"Adding Shapes..."<<std::endl;
+
+      // Prefiring
+      AddShapesIfNotEmpty({"CMS_prefiring"},
+                          JoinStr({sig_procs,{"VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}}),
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
+
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;

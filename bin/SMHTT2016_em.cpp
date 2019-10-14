@@ -164,6 +164,13 @@ int main(int argc, char **argv)
     {
       std::cout<<"Adding Shapes..."<<std::endl;
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
+      
+      // Prefiring
+      AddShapesIfNotEmpty({"CMS_prefiring"},
+			  JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}}), 
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
 
       // QCD shape      
       AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016","CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016","CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016","CMS_QCD_antiiso_2016"},
