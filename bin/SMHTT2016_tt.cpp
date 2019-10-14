@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 
       // Jet Energy Scale Uncertainties            
       AddShapesIfNotEmpty({"CMS_scale_jet_Eta0to3", "CMS_scale_jet_Eta0to5", "CMS_scale_jet_Eta3to5",
-	    "CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal", "CMS_scale_jet_RelativeSample"},
+	    "CMS_scale_jet_EC2", "CMS_scale_jet_RelativeBal"},
 	JoinStr({ggH_STXS,qqH_STXS,{"ZT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	TheFile);

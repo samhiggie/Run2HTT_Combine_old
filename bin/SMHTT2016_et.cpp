@@ -266,7 +266,7 @@ int main(int argc, char **argv)
         1.000,
         TheFile,CategoryArgs);
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
-	    "CMS_JetEta0to3_2016","CMS_JetRelativeSample_2016","CMS_JetEC2_2016"},
+	    "CMS_JetEta0to3_2016","CMS_JetEC2_2016"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
 	&cb,
 	1.00,
