@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
 		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
-  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ZH_htt125"}});
+  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"WH_htt125","ggZH_htt125","qqZH_htt125"}});
   cb.AddProcesses(masses, {"smh2017"}, {"13TeV"}, {"mt"}, sig_procs, cats, true);
 
   //! [part4]
@@ -110,15 +110,18 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
   cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
   cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
   
   //Muon ID efficiency
   cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2017","lnN",SystMap<>::init(1.02));
+
+  // Against ele and against mu for real taus
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","STT"},sig_procs})).AddSyst(cb,"CMS_eff_t_againstemu_mt_2017","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2017","lnN",SystMap<>::init(1.05));
@@ -161,17 +164,17 @@ int main(int argc, char **argv)
 	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
 	  ZPTVector = {"ZT","ZL"};	  
-	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
-	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
-	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}});
 	}
       else
 	{	  
 	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
 	  ZPTVector = {"ZL"};	  
-	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
-	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
-	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}});
 	}
 
       // Prefiring
@@ -186,41 +189,36 @@ int main(int argc, char **argv)
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_tauideff_pt30to35_2017","CMS_tauideff_pt35to40_2017","CMS_tauideff_ptgt40_2017"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","DYT","TTT","WH_htt125","ZH_htt125"}}),
+                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
    
-      //Mu to tau fake energy scale and e to tau energy fake scale            
+      //Mu to tau fake energy fake scale            
       std::cout<<"Adding Shapes..."<<std::endl;
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong_2017","CMS_ZLShape_mt_1prong1pizero_2017"},
 			  {"ZL"},
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
-      
-      //Fake Factor Stat uncertainties: Fully decorrelated
-      std::cout<<"fake factors"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_mt_stat_2017", "CMS_ff_qcd_njet1_mt_stat_2017",
-	    "CMS_ff_tt_njet1_mt_stat_2017", "CMS_ff_w_njet0_mt_stat_2017", "CMS_ff_w_njet1_mt_stat_2017"},
-	{"jetFakes"},
-	&cb,
-	1.00,
-	TheFile,CategoryArgs);
 
-      //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2017","CMS_ff_tt_mt_syst_2017","CMS_ff_w_mt_syst_2017"},
-			  {"jetFakes"},
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
-
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_mt_syst","CMS_ff_w_mt_syst"},			  
-			  {"jetFakes"},
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
+      // Trg eff. It is a shape because the 2 triggers affect the mu pT spectrum differently
+      std::cout<<"Trigger eff"<<std::endl;
+      AddShapesIfNotEmpty({"CMS_singlemutrg_2017","CMS_mutautrg_2017"},
+                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
       
+      
+      //Fake factors
+      std::cout<<"Fake Factors"<<std::endl;
+      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2017","CMS_rawFF_mt_qcd_0jet_unc2_2017","CMS_rawFF_mt_qcd_1jet_unc1_2017","CMS_rawFF_mt_qcd_1jet_unc2_2017","CMS_rawFF_mt_w_0jet_unc1_2017","CMS_rawFF_mt_w_0jet_unc2_2017","CMS_rawFF_mt_w_1jet_unc1_2017","CMS_rawFF_mt_w_1jet_unc2_2017","CMS_rawFF_mt_tt_unc1_2017","CMS_rawFF_mt_tt_unc2_2017","CMS_FF_closure_mvis_mt_qcd_unc1_2017","CMS_FF_closure_mvis_mt_qcd_unc2_2017","CMS_FF_closure_mvis_mt_w_unc1_2017","CMS_FF_closure_mvis_mt_w_unc2_2017","CMS_FF_closure_mvis_mt_tt_unc1_2017","CMS_FF_closure_mvis_mt_tt_unc2_2017","CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2017","CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2017","CMS_FF_closure_mt_mt_w_unc1_2017","CMS_FF_closure_mt_mt_w_unc2_2017"},
+                          {"jetFakes"},
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
+
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2017"},
@@ -267,18 +265,25 @@ int main(int argc, char **argv)
       // Jet Energy Scale Uncertainties  
       std::cout<<"Jet Shapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetRelativeBal_2017","CMS_JetEta3to5_2017","CMS_JetEta0to5_2017",
-	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
+	    "CMS_JetEta0to3_2017"},
 	JESVector,
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
 
       AddShapesIfNotEmpty({"CMS_JetRelativeBal","CMS_JetEta3to5","CMS_JetEta0to5",
-            "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
+            "CMS_JetEta0to3"},
         JESVector,
         &cb,
         0.707,
         TheFile,CategoryArgs);
+
+      AddShapesIfNotEmpty({"CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
+        JESVector,
+        &cb,
+        1.000,
+        TheFile,CategoryArgs);
+
 
       //ggH Theory Uncertainties
       std::cout<<"ggH theory uncerts"<<std::endl;
@@ -291,8 +296,8 @@ int main(int argc, char **argv)
 
       //Muon Energy scale uncertainties
       std::cout<<"Muon Energy Scale"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2017","CMS_scale_m_etam2p1tom1p2_2017",
-	    "CMS_scale_m_etam1p2to1p2_2017","CMS_scale_m_eta1p2to2p1_2017","CMS_scale_m_eta2p1to2p4_2017"},
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
+	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
 	MuESVector,
 	&cb,
 	1.00,

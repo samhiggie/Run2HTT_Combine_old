@@ -45,21 +45,21 @@ if __name__ == "__main__":
 		    if "CMS_scale_emb_t" in CopyHisto.GetName():
 			if args.TrimYears:
 			   CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-			   NewNameTitle2 = CopyHisto.GetName().replace('_emb_','')[:len(CopyHisto.GetName())-7]+"Up"
+			   NewNameTitle2 = CopyHisto.GetName().replace('_emb','')[:len(CopyHisto.GetName())-11]+"Up"
                 	   CopyHisto2.SetNameTitle(NewNameTitle2,NewNameTitle2)
 			   CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle3 = CopyHisto.GetName().replace('_emb_','')
+                           NewNameTitle3 = CopyHisto.GetName().replace('_emb','')
                            CopyHisto3.SetNameTitle(NewNameTitle3,NewNameTitle3)
                            CopyHisto3.Write()
 			else:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle2 = CopyHisto.GetName().replace('_emb_','')[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
+                           NewNameTitle2 = CopyHisto.GetName().replace('_emb','')[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
                            CopyHisto2.SetNameTitle(NewNameTitle2,NewNameTitle2)
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle3 = CopyHisto.GetName().replace('_emb_','')
-                           CopyHisto3.SetNameTitle(NewNameTitle2,NewNameTitle3)
+                           NewNameTitle3 = CopyHisto.GetName().replace('_emb','')
+                           CopyHisto3.SetNameTitle(NewNameTitle3,NewNameTitle3)
                            CopyHisto3.Write()
 
                 elif re.search("Down",CopyHisto.GetName()):
@@ -70,17 +70,17 @@ if __name__ == "__main__":
                     if "CMS_scale_emb_t" in CopyHisto.GetName():
                         if args.TrimYears:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle2 = CopyHisto.GetName().replace("_emb_","")[:len(CopyHisto.GetName())-9]+"Down"
+                           NewNameTitle2 = CopyHisto.GetName().replace("_emb","")[:len(CopyHisto.GetName())-13]+"Down"
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle3 = CopyHisto.GetName().replace("_emb_","")
+                           NewNameTitle3 = CopyHisto.GetName().replace("_emb","")
                            CopyHisto3.Write()
                         else:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle2 = CopyHisto.GetName().replace("_emb_","")[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
+                           NewNameTitle2 = CopyHisto.GetName().replace("_emb","")[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle3 = CopyHisto.GetName().replace("_emb_","")
+                           NewNameTitle3 = CopyHisto.GetName().replace("_emb","")
                            CopyHisto3.Write()
 
                 else:

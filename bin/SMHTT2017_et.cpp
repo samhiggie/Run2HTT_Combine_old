@@ -110,6 +110,9 @@ int main(int argc, char **argv)
   //Ele ID efficiency 
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2017","lnN",SystMap<>::init(1.02));
 
+  // Against ele and against mu for real taus
+  cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT"},sig_procs})).AddSyst(cb,"CMS_eff_t_againstemu_et_2017","lnN",SystMap<>::init(1.01));
+
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL","STL","STT"}).AddSyst(cb,"CMS_htt_eff_b_TT_2017","lnN",SystMap<>::init(1.05));
   cb.cp().process(JoinStr({{"DYT","VVT","DYL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b_2017","lnN",SystMap<>::init(1.005));
@@ -175,7 +178,7 @@ int main(int argc, char **argv)
                           TheFile,CategoryArgs);
 
       
-      //Mu to tau fake energy scale and e to tau energy fake scale            
+      // e to tau energy fake scale            
       std::cout<<"Adding Shapes..."<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_efaket_1prong_2017","CMS_scale_efaket_1prong1pizero_2017"},
 			  {"DYL"},
@@ -183,6 +186,7 @@ int main(int argc, char **argv)
 			  1.00,
 			  TheFile,CategoryArgs);
 
+      // Fake factors
       AddShapesIfNotEmpty({"CMS_rawFF_et_qcd_0jet_unc1_2017","CMS_rawFF_et_qcd_0jet_unc2_2017","CMS_rawFF_et_qcd_1jet_unc1_2017","CMS_rawFF_et_qcd_1jet_unc2_2017","CMS_rawFF_et_w_0jet_unc1_2017","CMS_rawFF_et_w_0jet_unc2_2017","CMS_rawFF_et_w_1jet_unc1_2017","CMS_rawFF_et_w_1jet_unc2_2017","CMS_rawFF_et_tt_unc1_2017","CMS_rawFF_et_tt_unc2_2017","CMS_FF_closure_mvis_et_qcd_unc1_2017","CMS_FF_closure_mvis_et_qcd_unc2_2017","CMS_FF_closure_mvis_et_w_unc1_2017","CMS_FF_closure_mvis_et_w_unc2_2017","CMS_FF_closure_mvis_et_tt_unc1_2017","CMS_FF_closure_mvis_et_tt_unc2_2017","CMS_FF_closure_OSSS_mvis_et_qcd_unc1_2017","CMS_FF_closure_OSSS_mvis_et_qcd_unc2_2017","CMS_FF_closure_mt_et_w_unc1_2017","CMS_FF_closure_mt_et_w_unc2_2017"},
                           {"jetFakes"},
                           &cb,
@@ -229,17 +233,22 @@ int main(int argc, char **argv)
 
       // Jet Energy Scale Uncertainties            
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2017","CMS_JetEta0to5_2017","CMS_JetRelativeBal_2017",
-	    "CMS_JetEta0to3_2017","CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
+	    "CMS_JetEta0to3_2017"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","VVT","STT"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
 
-      AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5","CMS_JetRelativeBal",
-            "CMS_JetEta0to3","CMS_JetRelativeSample","CMS_JetEC2"},
+      AddShapesIfNotEmpty({"CMS_JetRelativeSample","CMS_JetEC2"},
         JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","VVT","STT"}}),
         &cb,
         0.707,
+        TheFile,CategoryArgs);
+
+      AddShapesIfNotEmpty({"CMS_JetRelativeSample_2017","CMS_JetEC2_2017"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","VVT","STT"}}),
+        &cb,
+        1.000,
         TheFile,CategoryArgs);
 
       //ggH Theory Uncertainties
@@ -250,17 +259,17 @@ int main(int argc, char **argv)
 	1.00,
 	TheFile,CategoryArgs);            
 
-      //Muon Energy scale uncertainties
-      AddShapesIfNotEmpty({"CMS_smear_e_2017","CMS_scale_e_2017"},
+      //Electron Energy scale uncertainties
+      AddShapesIfNotEmpty({"CMS_scale_e"},
 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
     }
-  //********************************************************************************************************************************
+  //******************************************************
 
-  //embedded uncertainties. No embedded avaialable for 2017 yet.
-  //********************************************************************************************************************************
+  //embedded uncertainties. 
+  //******************************************************
   if(not Input.OptionExists("-e"))
     {      
      

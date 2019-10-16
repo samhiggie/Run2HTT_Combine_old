@@ -52,7 +52,7 @@ int main(int argc, char **argv)
   // Uncomment this next line to see a *lot* of debug information
   // cb.SetVerbosity(3);
 
-  vector<string> masses = {""};;
+  vector<string> masses = {""};
   //! [part3]
   cb.AddObservations({"*"}, {"smh2016"}, {"13TeV"}, {"mt"}, cats);
 
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
 		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
-  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ZH_htt125","WH_htt125"}});
+  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ggZH_htt125","qqZH_htt125","WH_htt125"}});
   
   cb.AddProcesses(masses, {"smh2016"}, {"13TeV"}, {"mt"}, sig_procs, cats, true);    
 
@@ -110,15 +110,18 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
   cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
   cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
   
   //Muon ID efficiency: Decorollated in 18-032 datacards.  
   cb.cp().process(JoinStr({{"ZT","TTT","VVT","ZL","TTL","VVL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2016","lnN",SystMap<>::init(1.02));
+
+  // Against ele and against mu for real taus
+  cb.cp().process(JoinStr({{"ZT","TTT","VVT","STT"},sig_procs})).AddSyst(cb,"CMS_eff_t_againstemu_mt_2016","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2016","lnN",SystMap<>::init(1.05));
@@ -157,41 +160,36 @@ int main(int argc, char **argv)
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_tauideff_pt30to35_2016","CMS_tauideff_pt35to40_2016","CMS_tauideff_ptgt40_2016"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
 
-      //Mu to tau fake energy scale and e to tau energy fake scale            
+      //Mu to tau fake energy fake scale            
       std::cout<<"ZLShapes"<<std::endl;
       AddShapesIfNotEmpty({"CMS_ZLShape_mt_1prong_2016","CMS_ZLShape_mt_1prong1pizero_2016"},
 			  {"ZL"},
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
-      
-      //Fake Factor Stat uncertainties: Fully decorrelated
-      std::cout<<"Fake Factors"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_ff_qcd_njet0_mt_stat_2016", "CMS_ff_qcd_njet1_mt_stat_2016",
-	    "CMS_ff_tt_njet1_mt_stat_2016", "CMS_ff_w_njet0_mt_stat_2016", "CMS_ff_w_njet1_mt_stat_2016"},
-	{"jetFakes"},
-	&cb,
-	1.00,
-	TheFile,CategoryArgs);
 
-      //Fake Factor Systematic Uncerts, 50% correlation, between all years.
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst_2016","CMS_ff_tt_mt_syst_2016","CMS_ff_w_mt_syst_2016"},
-			  {"jetFakes"},
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
+      // Trg eff. It is a shape because the 2 triggers affect the ele pT spectrum differently
+      std::cout<<"Trigger eff"<<std::endl;
+      AddShapesIfNotEmpty({"CMS_singlemutrg_2016","CMS_mutautrg_2016"},
+                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
       
-      AddShapesIfNotEmpty({"CMS_ff_qcd_mt_syst","CMS_ff_tt_mt_syst","CMS_ff_w_mt_syst"},
-			  {"jetFakes"},
-			  &cb,
-			  0.707,
-			  TheFile,CategoryArgs);
       
+      //Fake factors
+      std::cout<<"Fake Factors"<<std::endl;
+      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2016","CMS_rawFF_mt_qcd_0jet_unc2_2016","CMS_rawFF_mt_qcd_1jet_unc1_2016","CMS_rawFF_mt_qcd_1jet_unc2_2016","CMS_rawFF_mt_w_0jet_unc1_2016","CMS_rawFF_mt_w_0jet_unc2_2016","CMS_rawFF_mt_w_1jet_unc1_2016","CMS_rawFF_mt_w_1jet_unc2_2016","CMS_rawFF_mt_tt_unc1_2016","CMS_rawFF_mt_tt_unc2_2016","CMS_FF_closure_mvis_mt_qcd_unc1_2016","CMS_FF_closure_mvis_mt_qcd_unc2_2016","CMS_FF_closure_mvis_mt_w_unc1_2016","CMS_FF_closure_mvis_mt_w_unc2_2016","CMS_FF_closure_mvis_mt_tt_unc1_2016","CMS_FF_closure_mvis_mt_tt_unc2_2016","CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2016","CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2016","CMS_FF_closure_mt_mt_w_unc1_2016","CMS_FF_closure_mt_mt_w_unc2_2016"},
+                          {"jetFakes"},
+                          &cb,
+                          1.00,
+                          TheFile,CategoryArgs);
+
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2016"},
@@ -230,7 +228,7 @@ int main(int argc, char **argv)
       //TES Uncertainty                  
       std::cout<<"TES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2016","CMS_scale_t_3prong_2016","CMS_scale_t_1prong1pizero_2016"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -238,17 +236,23 @@ int main(int argc, char **argv)
       // JES
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
-	    "CMS_JetEta0to3_2016","CMS_JetEC2_2016","CMS_JetRelativeBal_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	    "CMS_JetEta0to3_2016","CMS_JetRelativeBal_2016"},
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","ZL","TTL"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
 
       AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5",
-            "CMS_JetEta0to3","CMS_JetEC2","CMS_JetRelativeBal"},
-        JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+            "CMS_JetEta0to3","CMS_JetRelativeBal"},
+        JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","ZL","TTL"}}),
         &cb,
         0.707,
+        TheFile,CategoryArgs);
+
+      AddShapesIfNotEmpty({"CMS_JetEC2_2016"},
+        JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","ZL","TTL"}}),
+        &cb,
+        1.000,
         TheFile,CategoryArgs);
 
       //ggH Theory Uncertainties
@@ -261,9 +265,9 @@ int main(int argc, char **argv)
 	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties
-      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2016","CMS_scale_m_etam2p1tom1p2_2016",
-	    "CMS_scale_m_etam1p2to1p2_2016","CMS_scale_m_eta1p2to2p1_2016","CMS_scale_m_eta2p1to2p4_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
+	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
+	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
