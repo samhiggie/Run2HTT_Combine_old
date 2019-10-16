@@ -23,6 +23,7 @@ parser.add_argument('--RunInclusiveggH',help="Run using an inclusive ggH distrib
 parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distribution (no STXS bins), using either this or the inclusive ggH will cancel STXS bin measurements.",action="store_true")
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
+parser.add_argument('--ComputeGOF',help="Compute saturated GOF",action="store_true")
 parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
 parser.add_argument('--Timeout', help="Trigger timeout as conditions on fits (prevents infinitely running fits)", action="store_true")
 parser.add_argument('--TimeoutTime',nargs='?',help="Time allotted before a timeout (linux timeout syntax)",default="180s")
@@ -60,6 +61,15 @@ ChannelCards = []
 
 for year in args.years:    
     for channel in args.channels:
+
+	AddShapeCommand="python scripts/PrepDecorrelatedCard.py --year "+year+" --DataCard ../../auxiliaries/shapes/smh"+year+channel+"_nocorrelation.root --OutputFileName ../../auxiliaries/shapes/smh"+year+channel+".root "
+	if channel=="et" or channel=="mt":
+	   AddShapeCommand+="--TrimYears "
+        print("Duplicating shapes for year correlations")
+        logging.info("Shape duplication command:")
+        logging.info('\n\n'+AddShapeCommand+'\n')
+        os.system(AddShapeCommand)
+
         DataCardCreationCommand="SMHTT"+year
         DataCardCreationCommand+="_"+channel+" "+OutputDir
         if args.RunShapeless:
@@ -330,6 +340,46 @@ if args.ComputeImpacts:
     logging.info("Plotting Impact Command:")
     logging.info('\n\n'+ImpactCommand+'\n')
     os.system(ImpactCommand)
+
+    os.chdir("../../")
+
+if args.ComputeGOF:
+    os.chdir(OutputDir)
+    GOFJsonName = "gof_final_"+DateTag+".json"
+    ImpactCommand = "combineTool.py -M GoodnessOfFit --algorithm saturated -m 125 --there -d " + CombinedWorkspaceName+" -n '.saturated.toys'  -t 25 -s 0:19:1 --parallel 12"
+    os.system(ImpactCommand)
+
+    ImpactCommand = "combineTool.py -M GoodnessOfFit --algorithm saturated -m 125 --there -d " + CombinedWorkspaceName+" -n '.saturated'"
+    os.system(ImpactCommand)
+
+    ImpactCommand = "combineTool.py -M CollectGoodnessOfFit --input higgsCombine.saturated.GoodnessOfFit.mH125.root higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root -o "+GOFJsonName
+    os.system(ImpactCommand)
+
+    ImpactCommand = "python ../../../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "+GOFJsonName+" --title-right='' --output='saturated' --title-left='e#mu'"
+    os.system(ImpactCommand)
+
+    for year in args.years:
+       for channel in args.channels:
+          CardNum = 1
+          TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
+          for Directory in TheFile.GetListOfKeys():
+              if Directory.GetName() in cfg.Categories[channel].values():
+                 ImpactCommand = "text2workspace.py -m 125 smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
+                 os.system(ImpactCommand)
+                 GOFJsonName = "gof_"+channel+"_"+year+"_"+str(CardNum)+"_"+DateTag+".json"
+                 ImpactCommand = "combineTool.py -M GoodnessOfFit --algorithm saturated -m 125 --there -d smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.root -n '.saturated."+year+"_"+channel+"_"+str(CardNum)+".toys'  -t 25 -s 0:19:1 --parallel 12"
+                 os.system(ImpactCommand)
+
+                 ImpactCommand = "combineTool.py -M GoodnessOfFit --algorithm saturated -m 125 --there -d smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.root -n '.saturated."+year+"_"+channel+"_"+str(CardNum)+"'"
+                 os.system(ImpactCommand)
+
+                 ImpactCommand = "combineTool.py -M CollectGoodnessOfFit --input higgsCombine.saturated."+year+"_"+channel+"_"+str(CardNum)+".GoodnessOfFit.mH125.root higgsCombine.saturated."+year+"_"+channel+"_"+str(CardNum)+".toys.GoodnessOfFit.mH125.*.root -o "+GOFJsonName
+                 os.system(ImpactCommand)
+
+                 ImpactCommand = "python ../../../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "+GOFJsonName+" --title-right='' --output='saturated_"+year+"_"+channel+"_"+str(CardNum)+"' --title-left='e#mu'"
+                 os.system(ImpactCommand)
+
+                 CardNum+=1
 
     os.chdir("../../")
 

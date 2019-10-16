@@ -56,10 +56,13 @@ int main(int argc, char **argv) {
   //! [part3]
   cb.AddObservations({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, cats);
 
-  vector<string> bkg_procs = {"VVT","STT","TTT","QCD","DYL","VVL","STL","TTL","W"};
+  vector<string> bkg_procs = {"QCD","DYL","VVL","STL","TTL","W"};
   if(Input.OptionExists("-e")) 
     {
       bkg_procs.push_back("DYT");
+      bkg_procs.push_back("VVT");
+      bkg_procs.push_back("STT");
+      bkg_procs.push_back("TTT");
     }
   else bkg_procs.push_back("embedded");
   cb.AddProcesses({"*"}, {"smh2018"}, {"13TeV"}, {"em"}, bkg_procs, cats, false);
@@ -93,7 +96,7 @@ int main(int argc, char **argv) {
 		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
 		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
-  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ZH_htt125","WH_htt125"}});
+  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ggZH_htt125","qqZH_htt125","WH_htt125"}});
   
   cb.AddProcesses(masses, {"smh2018"}, {"13TeV"}, {"em"}, sig_procs, cats, true);    
 
@@ -105,54 +108,55 @@ int main(int argc, char **argv) {
   using ch::syst::process;
   using ch::JoinStr;
 
+  //********************************
   //start with lnN errors
-  //********************************************************************************************************************************
+  //********************************
 
   std::cout<<"lnN errors"<<std::endl;
   
-  //Theory uncerts: Present in 18-032 Data cards.
+  //Theory uncerts
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_alphas", "lnN", SystMap<>::init(1.0062));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
+  cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
+  cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
+  cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
+  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
+  cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
+  cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
   
-  //Muon ID efficiency: Decorrelated in 18-032 datacards.  
+  //Muon ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.02));  
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.01));
 
-  //Electron ID efficiency: Decorrelated in 18-032 datacards.  
+  //Electron ID efficiency
   cb.cp().process(JoinStr({{"DYT","TTT","VVT","STT","DYL","TTL","VVL","STL"},sig_procs})).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.02));
+  cb.cp().process({"W"}).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.01));
 
   // b-tagging efficiency: 5% in ttbar and 0.5% otherwise.
   cb.cp().process({"TTT","TTL","STT","STL"}).AddSyst(cb,"CMS_htt_eff_b_TT_2018","lnN",SystMap<>::init(1.05));
   cb.cp().process(JoinStr({{"DYT","VVT","DYL","VVL"},sig_procs})).AddSyst(cb,"CMS_htt_eff_b_2018","lnN",SystMap<>::init(1.005));
 
-  // TTbar XSection Uncertainty
-  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.06));
-  // Diboson XSection Uncertainty
+  // XSection Uncertainties
+  cb.cp().process({"TTT","TTL"}).AddSyst(cb,"CMS_htt_tjXsec", "lnN", SystMap<>::init(1.042));
   cb.cp().process({"VVT","VVL"}).AddSyst(cb,"CMS_htt_vvXsec", "lnN", SystMap<>::init(1.05));
-  // Single top XSection Uncertainty
   cb.cp().process({"STT","STL"}).AddSyst(cb,"CMS_htt_stXsec", "lnN", SystMap<>::init(1.05));
-  //DY XSection Uncertainty
-  cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.04));
+  cb.cp().process({"DYT","DYL"}).AddSyst(cb,"CMS_htt_zjXsec", "lnN", SystMap<>::init(1.02));
+
   //DY XSection Uncertainty
   cb.cp().process({"W"}).AddSyst(cb,"CMS_htt_jtoellFR_2018", "lnN", SystMap<>::init(1.20));
   
-  //theory uncerts present in HIG-18-032
-  cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
-  cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
-
   //Luminosity Uncertainty
-  cb.cp().process(JoinStr({sig_procs,{"W","VVL","STL","VVT","STT","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.015));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_Run2018", "lnN", SystMap<>::init(1.015));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_XYfactorization", "lnN", SystMap<>::init(1.020));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_lengthScale", "lnN", SystMap<>::init(1.002));
+  cb.cp().process(JoinStr({sig_procs,{"W","VVL","VVT","STT","STL","DYL","DYT","TTL","TTT"}})).AddSyst(cb, "lumi_beamCurrentCalibration", "lnN", SystMap<>::init(1.002));
 
-  //theory uncerts present in HIG 18-032
-  cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
-  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
-  cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
-  cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));  
-  //********************************************************************************************************************************
-
+  //*************************************************************
   //shape uncertainties
-  //********************************************************************************************************************************
+  //*************************************************************
+
   if(not Input.OptionExists("-s"))
     {
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
@@ -177,7 +181,7 @@ int main(int argc, char **argv) {
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2018","CMS_htt_boson_scale_met_0jet_2018",
 	    "CMS_htt_boson_reso_met_1jet_2018","CMS_htt_boson_scale_met_1jet_2018",
 	    "CMS_htt_boson_reso_met_2jet_2018","CMS_htt_boson_scale_met_2jet_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","DYL","WH_htt125","ZH_htt125"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","DYL","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
@@ -197,22 +201,25 @@ int main(int argc, char **argv) {
 			  TheFile,CategoryArgs);
   
       // Jet Energy Correction Uncertainties            
-      AddShapesIfNotEmpty({"CMS_JetRelativeBal_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
+      AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018","CMS_JetRelativeBal_2018",
+	    "CMS_JetEta0to3_2018"},
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
 	&cb,
 	0.707,
-	TheFile,CategoryArgs);
-      /*AddShapesIfNotEmpty({"CMS_JetRelativeBal"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
-	&cb,
-	0.707,
-	TheFile,CategoryArgs);*/
-      AddShapesIfNotEmpty({"CMS_JetEta3to5_2018","CMS_JetEta0to5_2018",
-	    "CMS_JetEta0to3_2018","CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","STT","W"}}),
-	&cb,
-	1.00,
 	TheFile,CategoryArgs);            
+
+      AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5","CMS_JetRelativeBal",
+            "CMS_JetEta0to3"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
+        &cb,
+        0.707,
+        TheFile,CategoryArgs);
+
+      AddShapesIfNotEmpty({"CMS_JetRelativeSample_2018","CMS_JetEC2_2018"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","VVT","STL","DYL","TTL","TTT","STT","W"}}),
+        &cb,
+        1.000,
+        TheFile,CategoryArgs);
 
       //ggH Theory Uncertainties
       AddShapesIfNotEmpty({"THU_ggH_Mu","THU_ggH_Res","THU_ggH_Mig01","THU_ggH_Mig12","THU_ggH_VBF2j",
@@ -223,37 +230,31 @@ int main(int argc, char **argv) {
 	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties      
-      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1_2018","CMS_scale_m_etam2p1tom1p2_2018",
-	    "CMS_scale_m_etam1p2to1p2_2018","CMS_scale_m_eta1p2to2p1_2018","CMS_scale_m_eta2p1to2p4_2018"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ZH_htt125"}}),
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
+	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
 
       //Electron Energy scale uncertainties      
-      AddShapesIfNotEmpty({"CMS_scale_e_2018","CMS_smear_e_2018"},
-        JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ZH_htt125"}}),
+      AddShapesIfNotEmpty({"CMS_scale_e"},
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
         &cb,
         1.00,
         TheFile,CategoryArgs);
     }
-  //********************************************************************************************************************************
-
-
-  //embedded uncertainties. No embedded avaialable for 2018 yet.
-  //********************************************************************************************************************************
+  //*******************************************************
+  //embedded uncertainties. 
+  //*******************************************************
   if(not Input.OptionExists("-e"))
     {
-      //Quadrature addition of CMS_eff_emb_t and CMS_eff_emb_t_Run2018
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t", "lnN", SystMap<>::init(1.019));
-  
-      //Quadrature addition of CMS_eff_emb_t_em and CMS_eff_eem_t_em_Run2018
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_t_em","lnN",SystMap<>::init(1.0084));
 
-      //These were changed from shapes to lnN
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_1ProngPi0Eff","lnN",ch::syst::SystMapAsymm<>::init(0.9934,1.011));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_3ProngEff","lnN",ch::syst::SystMapAsymm<>::init(0.969,1.005));
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_emb_m","lnN",SystMap<>::init(1.014));
+      //50% correlation with ID unc in MC
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_embedded_2018","lnN",SystMap<>::init(1.01732));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2018","lnN",SystMap<>::init(1.01732));
 
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
 
@@ -261,7 +262,7 @@ int main(int argc, char **argv) {
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2018", "shape", SystMap<>::init(1.00));
 
     }
-  //********************************************************************************************************************************                          
+  //***********************************************************                          
 
   cb.cp().backgrounds().ExtractShapes(
       aux_shapes + "smh2018em.root",
