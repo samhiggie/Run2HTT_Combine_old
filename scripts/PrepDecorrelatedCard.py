@@ -1,5 +1,4 @@
-#!/usr/env python
-
+#!/usr/bin/env python
 import ROOT
 import argparse
 import re
@@ -53,8 +52,11 @@ if __name__ == "__main__":
                            CopyHisto3.SetNameTitle(NewNameTitle3,NewNameTitle3)
                            CopyHisto3.Write()
 			else:
-                           CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle2 = CopyHisto.GetName().replace('_emb','')[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
+                           CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()                           
+                           #NewNameTitle2 = CopyHisto.GetName().replace('_emb','')[:len(CopyHisto.GetName())-2]+"_"+args.year+"Up"
+                           NewNameTitle2 = CopyHisto.GetName().replace('_emb','')
+                           NewNameTitle2 = NewNameTitle2[:len(NewNameTitle2)-2]
+                           NewNameTitle2+="_"+args.year+"Up"
                            CopyHisto2.SetNameTitle(NewNameTitle2,NewNameTitle2)
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
@@ -77,10 +79,15 @@ if __name__ == "__main__":
                            CopyHisto3.Write()
                         else:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
-                           NewNameTitle2 = CopyHisto.GetName().replace("_emb","")[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
+                           #NewNameTitle2 = CopyHisto.GetName().replace("_emb","")[:len(CopyHisto.GetName())-4]+"_"+args.year+"Down"
+                           NewNameTitle2 = CopyHisto.GetName().replace("_emb","")
+                           NewNameTitle2 = NewNameTitle2[:len(NewNameTitle2)-4 ]
+                           NewNameTitle2+="_"+args.year+"Down"
+                           CopyHisto2.SetNameTitle(NewNameTitle2,NewNameTitle2)
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
                            NewNameTitle3 = CopyHisto.GetName().replace("_emb","")
+                           CopyHisto3.SetNameTitle(NewNameTitle3,NewNameTitle3)
                            CopyHisto3.Write()
 
                 else:

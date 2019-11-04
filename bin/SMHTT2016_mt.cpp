@@ -150,9 +150,46 @@ int main(int argc, char **argv)
       std::cout<<"Adding Shapes..."<<std::endl;
       //uses custom defined utility function that only adds the shape if at least one shape inside is not empty.
 
+      vector<string> METUESVector;
+      vector<string> RecoilVector;
+      vector<string> ZPTVector;
+      vector<string> TopVector;
+      vector<string> TESVector;
+      vector<string> JESVector;
+      vector<string> MuESVector;
+      vector<string> PrefiringVector;
+      vector<string> TauIDVector;
+      vector<string> TriggerVector;
+      METUESVector = {"TTT","TTL","VVT","VVL"};
+      TopVector = {"TTL","TTT"};
+      if(Input.OptionExists("-e"))
+	{	  
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}});
+	  ZPTVector = {"ZT","ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  PrefiringVector = JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}});
+	  TauIDVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	  TriggerVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	}
+      else
+	{	  
+	  RecoilVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL"}});
+	  ZPTVector = {"ZL"};	  
+	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
+	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});	  
+	  PrefiringVector = JoinStr({sig_procs,{"VVL","VVT","ZL","TTL","TTT"}});
+	  TauIDVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  TriggerVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	}
+      
+
       // Prefiring
+      std::cout<<"Prefiring..."<<std::endl;
       AddShapesIfNotEmpty({"CMS_prefiring"},
-                          JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}}),
+                          PrefiringVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -160,7 +197,7 @@ int main(int argc, char **argv)
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_tauideff_pt30to35_2016","CMS_tauideff_pt35to40_2016","CMS_tauideff_ptgt40_2016"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+                          TauIDVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -176,7 +213,7 @@ int main(int argc, char **argv)
       // Trg eff. It is a shape because the 2 triggers affect the ele pT spectrum differently
       std::cout<<"Trigger eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_singlemutrg_2016","CMS_mutautrg_2016"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+                          TriggerVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -184,7 +221,27 @@ int main(int argc, char **argv)
       
       //Fake factors
       std::cout<<"Fake Factors"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2016","CMS_rawFF_mt_qcd_0jet_unc2_2016","CMS_rawFF_mt_qcd_1jet_unc1_2016","CMS_rawFF_mt_qcd_1jet_unc2_2016","CMS_rawFF_mt_w_0jet_unc1_2016","CMS_rawFF_mt_w_0jet_unc2_2016","CMS_rawFF_mt_w_1jet_unc1_2016","CMS_rawFF_mt_w_1jet_unc2_2016","CMS_rawFF_mt_tt_unc1_2016","CMS_rawFF_mt_tt_unc2_2016","CMS_FF_closure_mvis_mt_qcd_unc1_2016","CMS_FF_closure_mvis_mt_qcd_unc2_2016","CMS_FF_closure_mvis_mt_w_unc1_2016","CMS_FF_closure_mvis_mt_w_unc2_2016","CMS_FF_closure_mvis_mt_tt_unc1_2016","CMS_FF_closure_mvis_mt_tt_unc2_2016","CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2016","CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2016","CMS_FF_closure_mt_mt_w_unc1_2016","CMS_FF_closure_mt_mt_w_unc2_2016"},
+      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2016",
+	    "CMS_rawFF_mt_qcd_0jet_unc2_2016",
+	    "CMS_rawFF_mt_qcd_1jet_unc1_2016",
+	    "CMS_rawFF_mt_qcd_1jet_unc2_2016",
+	    "CMS_rawFF_mt_w_0jet_unc1_2016",
+	    "CMS_rawFF_mt_w_0jet_unc2_2016",
+	    "CMS_rawFF_mt_w_1jet_unc1_2016",
+	    "CMS_rawFF_mt_w_1jet_unc2_2016",
+	    "CMS_rawFF_mt_tt_unc1_2016",
+	    "CMS_rawFF_mt_tt_unc2_2016",
+	    "CMS_FF_closure_mvis_mt_qcd_unc1_2016",
+	    "CMS_FF_closure_mvis_mt_qcd_unc2_2016",
+	    "CMS_FF_closure_mvis_mt_w_unc1_2016",
+	    //"CMS_FF_closure_mvis_mt_w_unc2_2016",
+	    "CMS_FF_closure_mvis_mt_tt_unc1_2016",
+	    "CMS_FF_closure_mvis_mt_tt_unc2_2016",
+	    "CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2016",
+	    //"CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2016",
+	    "CMS_FF_closure_mt_mt_w_unc1_2016",
+	    "CMS_FF_closure_mt_mt_w_unc2_2016"
+	    },
                           {"jetFakes"},
                           &cb,
                           1.00,
@@ -193,7 +250,7 @@ int main(int argc, char **argv)
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_met_unclustered_2016"},
-			  {"TTT","TTL","VVT","VVL"},
+			  METUESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -204,7 +261,7 @@ int main(int argc, char **argv)
       AddShapesIfNotEmpty({"CMS_htt_boson_reso_met_0jet_2016","CMS_htt_boson_scale_met_0jet_2016",
 	    "CMS_htt_boson_reso_met_1jet_2016","CMS_htt_boson_scale_met_1jet_2016",
 	    "CMS_htt_boson_reso_met_2jet_2016","CMS_htt_boson_scale_met_2jet_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","ZL"}}),
+	RecoilVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
@@ -212,7 +269,7 @@ int main(int argc, char **argv)
       //ZPT Reweighting Shapes:      
       std::cout<<"ZPT Reweighting"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_dyShape_2016"},
-			  {"ZT","ZL"},
+			  ZPTVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -220,7 +277,7 @@ int main(int argc, char **argv)
       //Top Pt Reweighting      
       std::cout<<"ttbar shape"<<std::endl;
       AddShapesIfNotEmpty({"CMS_htt_ttbarShape"},
-			  {"TTL","TTT"},
+			  TopVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -228,7 +285,7 @@ int main(int argc, char **argv)
       //TES Uncertainty                  
       std::cout<<"TES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2016","CMS_scale_t_3prong_2016","CMS_scale_t_1prong1pizero_2016"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+			  TESVector,
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -237,20 +294,20 @@ int main(int argc, char **argv)
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016",
 	    "CMS_JetEta0to3_2016","CMS_JetRelativeBal_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+	JESVector,
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
 
       AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5",
             "CMS_JetEta0to3","CMS_JetRelativeBal"},
-        JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+        JESVector,
         &cb,
         0.707,
         TheFile,CategoryArgs);
 
       AddShapesIfNotEmpty({"CMS_JetEC2_2016"},
-        JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}}),
+        JESVector,
         &cb,
         1.000,
         TheFile,CategoryArgs);
@@ -267,7 +324,7 @@ int main(int argc, char **argv)
       //Muon Energy scale uncertainties
       AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
 	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
-	JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}}),
+	MuESVector,
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
