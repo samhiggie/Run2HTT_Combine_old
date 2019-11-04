@@ -42,15 +42,17 @@ void AddShapesIfNotEmpty(std::vector<string> Shapes,
       for(std::vector<string>::iterator it = Distributions.begin(); it != Distributions.end(); ++it)
 	{
           TH1F* NominalHisto = (TH1F*) TheDirectory->Get((*it).c_str());
-          Float_t NominalIntegral = NominalHisto->Integral();
-          TH1F* UpHisto;
-          TH1F* DownHisto;
+	  Float_t NominalIntegral = 0.0;
 	  if (NominalHisto==NULL)
 	    {
 	      std::cout<<"\033[1;31mError!\033[0m"<<std::endl;
 	      std::cout<<"Bad Histogram: "+*it<<std::endl;
+	      std::cout<<"Directory: "<<DirectoryName<<std::endl;
 	      throw;
-	    }
+	    }          
+	  NominalIntegral = NominalHisto->Integral();
+          TH1F* UpHisto;
+          TH1F* DownHisto;	  
           //now loop over all the uncertainties
           for(std::vector<string>::iterator Unc_it = Shapes.begin();Unc_it != Shapes.end(); ++Unc_it)
 	    {
