@@ -158,6 +158,9 @@ int main(int argc, char **argv)
       vector<string> TESVector;
       vector<string> JESVector;
       vector<string> MuESVector;
+      vector<string> PrefiringVector;
+      vector<string> TauIDVector;
+      vector<string> TriggerVector;
       METUESVector = {"TTT","TTL","VVT","VVL"};
       TopVector = {"TTL","TTT"};
       if(Input.OptionExists("-e"))
@@ -167,6 +170,9 @@ int main(int argc, char **argv)
 	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
 	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
 	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZT","VVT","TTT","ZL","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  PrefiringVector = JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}});
+	  TauIDVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
+	  TriggerVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}});
 	}
       else
 	{	  
@@ -175,11 +181,14 @@ int main(int argc, char **argv)
 	  TESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
 	  JESVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125","VVL","ZL","TTL"}});
 	  MuESVector = JoinStr({ggH_STXS,qqH_STXS,{"ZL","VVT","TTT","VVL","TTL","WH_htt125","ZH_htt125"}});
+	  PrefiringVector = JoinStr({sig_procs,{"VVL","VVT","ZL","TTL","TTT"}});
+	  TauIDVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
+	  TriggerVector = JoinStr({ggH_STXS,qqH_STXS,{"VVT","TTT","WH_htt125","ZH_htt125"}});
 	}
 
       // Prefiring
       AddShapesIfNotEmpty({"CMS_prefiring"},
-                          JoinStr({sig_procs,{"VVL","VVT","ZL","ZT","TTL","TTT"}}),
+                          PrefiringVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -189,7 +198,7 @@ int main(int argc, char **argv)
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_tauideff_pt30to35_2017","CMS_tauideff_pt35to40_2017","CMS_tauideff_ptgt40_2017"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+                          TauIDVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -205,7 +214,7 @@ int main(int argc, char **argv)
       // Trg eff. It is a shape because the 2 triggers affect the mu pT spectrum differently
       std::cout<<"Trigger eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_singlemutrg_2017","CMS_mutautrg_2017"},
-                          JoinStr({ggH_STXS,qqH_STXS,{"VVT","ZT","TTT","WH_htt125","ZH_htt125"}}),
+                          TriggerVector,
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -213,7 +222,26 @@ int main(int argc, char **argv)
       
       //Fake factors
       std::cout<<"Fake Factors"<<std::endl;
-      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2017","CMS_rawFF_mt_qcd_0jet_unc2_2017","CMS_rawFF_mt_qcd_1jet_unc1_2017","CMS_rawFF_mt_qcd_1jet_unc2_2017","CMS_rawFF_mt_w_0jet_unc1_2017","CMS_rawFF_mt_w_0jet_unc2_2017","CMS_rawFF_mt_w_1jet_unc1_2017","CMS_rawFF_mt_w_1jet_unc2_2017","CMS_rawFF_mt_tt_unc1_2017","CMS_rawFF_mt_tt_unc2_2017","CMS_FF_closure_mvis_mt_qcd_unc1_2017","CMS_FF_closure_mvis_mt_qcd_unc2_2017","CMS_FF_closure_mvis_mt_w_unc1_2017","CMS_FF_closure_mvis_mt_w_unc2_2017","CMS_FF_closure_mvis_mt_tt_unc1_2017","CMS_FF_closure_mvis_mt_tt_unc2_2017","CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2017","CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2017","CMS_FF_closure_mt_mt_w_unc1_2017","CMS_FF_closure_mt_mt_w_unc2_2017"},
+      AddShapesIfNotEmpty({"CMS_rawFF_mt_qcd_0jet_unc1_2017",
+	    "CMS_rawFF_mt_qcd_0jet_unc2_2017",
+	    "CMS_rawFF_mt_qcd_1jet_unc1_2017",
+	    "CMS_rawFF_mt_qcd_1jet_unc2_2017",
+	    "CMS_rawFF_mt_w_0jet_unc1_2017",
+	    "CMS_rawFF_mt_w_0jet_unc2_2017",
+	    "CMS_rawFF_mt_w_1jet_unc1_2017",
+	    "CMS_rawFF_mt_w_1jet_unc2_2017",
+	    "CMS_rawFF_mt_tt_unc1_2017",
+	    "CMS_rawFF_mt_tt_unc2_2017",
+	    "CMS_FF_closure_mvis_mt_qcd_unc1_2017",
+	    "CMS_FF_closure_mvis_mt_qcd_unc2_2017",
+	    "CMS_FF_closure_mvis_mt_w_unc1_2017",
+	    //"CMS_FF_closure_mvis_mt_w_unc2_2017",
+	    "CMS_FF_closure_mvis_mt_tt_unc1_2017",
+	    "CMS_FF_closure_mvis_mt_tt_unc2_2017",
+	    "CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2017",
+	    //"CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2017",
+	    "CMS_FF_closure_mt_mt_w_unc1_2017",
+	    "CMS_FF_closure_mt_mt_w_unc2_2017"},
                           {"jetFakes"},
                           &cb,
                           1.00,
