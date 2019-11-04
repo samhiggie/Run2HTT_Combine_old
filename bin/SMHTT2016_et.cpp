@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 		   "qqH_GE2J_MJJ_GE350_PTH_0_200_MJJ_GE700_PTHJJ_GE25_htt125",
 		   "qqH_GE2J_MJJ_GE350_PTH_GE200_htt125"};
 
-  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ggZH_htt125","qqZH_htt125","WH_htt125"}});
+  vector<string> sig_procs = ch::JoinStr({ggH_STXS,qqH_STXS,{"ZH_htt125","WH_htt125"}});
   
   cb.AddProcesses(masses, {"smh2016"}, {"13TeV"}, {"et"}, sig_procs, cats, true);    
 
@@ -114,10 +114,10 @@ int main(int argc, char **argv)
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));
   cb.cp().process(sig_procs).AddSyst(cb, "BR_htt_THU", "lnN", SystMap<>::init(1.017));  
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.008));
-  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
+  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "QCDScale_VH", "lnN", SystMap<>::init(1.009));
   cb.cp().process(qqH_STXS).AddSyst(cb, "QCDScale_qqH", "lnN", SystMap<>::init(1.005));
   cb.cp().process({"WH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.018));
-  cb.cp().process({"ggZH_htt125","qqZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
+  cb.cp().process({"ZH_htt125"}).AddSyst(cb, "pdf_Higgs_VH", "lnN", SystMap<>::init(1.013));
   cb.cp().process(ggH_STXS).AddSyst(cb, "pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
   cb.cp().process(qqH_STXS).AddSyst(cb, "pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
   
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
       // Tau ID eff in pt bins
       std::cout<<"Tau ID eff"<<std::endl;
       AddShapesIfNotEmpty({"CMS_tauideff_pt30to35_2016","CMS_tauideff_pt35to40_2016","CMS_tauideff_ptgt40_2016"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
+			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ZH_htt125"}}),
                           &cb,
                           1.00,
                           TheFile,CategoryArgs);
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
       //TES Uncertainty                  
       std::cout<<"TES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_scale_t_1prong_2016","CMS_scale_t_3prong_2016","CMS_scale_t_1prong1pizero_2016"},
-			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
+			  JoinStr({ggH_STXS,qqH_STXS,{"VVT","STT","DYT","TTT","WH_htt125","ZH_htt125"}}),
 			  &cb,
 			  1.00,
 			  TheFile,CategoryArgs);
@@ -236,21 +236,21 @@ int main(int argc, char **argv)
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016","CMS_JetRelativeBal_2016",
 	    "CMS_JetEta0to3_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
 
       AddShapesIfNotEmpty({"CMS_JetEta3to5","CMS_JetEta0to5","CMS_JetRelativeBal",
             "CMS_JetEta0to3"},
-        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
         &cb,
         0.707,
         TheFile,CategoryArgs);
 
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetEC2_2016"},
-        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ggZH_htt125","qqZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
+        JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","STL","DYL","TTL","TTT","VVT","STT"}}),
         &cb,
         1.000,
         TheFile,CategoryArgs);
@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 
       //Electron Energy scale uncertainties
       AddShapesIfNotEmpty({"CMS_scale_e"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ggZH_htt125","qqZH_htt125"}}),
+	JoinStr({ggH_STXS,qqH_STXS,{"DYT","VVT","STT","TTT","DYL","VVL","STL","TTL","WH_htt125","ZH_htt125"}}),
 	&cb,
 	1.00,
 	TheFile,CategoryArgs);
