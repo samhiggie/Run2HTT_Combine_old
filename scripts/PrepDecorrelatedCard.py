@@ -73,9 +73,11 @@ if __name__ == "__main__":
                         if args.TrimYears:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
                            NewNameTitle2 = CopyHisto.GetName().replace("_emb","")[:len(CopyHisto.GetName())-13]+"Down"
+                           CopyHisto2.SetNameTitle(NewNameTitle2,NewNameTitle2)
                            CopyHisto2.Write()
                            CopyHisto3 = TheDirectory.Get(Histogram.GetName()).Clone()
                            NewNameTitle3 = CopyHisto.GetName().replace("_emb","")
+                           CopyHisto3.SetNameTitle(NewNameTitle3,NewNameTitle3)
                            CopyHisto3.Write()
                         else:
                            CopyHisto2 = TheDirectory.Get(Histogram.GetName()).Clone()
