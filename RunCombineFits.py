@@ -63,7 +63,7 @@ for year in args.years:
     for channel in args.channels:
 
 	AddShapeCommand="python scripts/PrepDecorrelatedCard.py --year "+year+" --DataCard ../../auxiliaries/shapes/smh"+year+channel+"_nocorrelation.root --OutputFileName ../../auxiliaries/shapes/smh"+year+channel+".root "
-	if channel=="et" or channel=="mt":
+	if channel=="et" or channel=="em":
 	   AddShapeCommand+="--TrimYears "
         print("Duplicating shapes for year correlations")
         logging.info("Shape duplication command:")
