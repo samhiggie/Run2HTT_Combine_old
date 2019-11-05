@@ -212,7 +212,7 @@ int main(int argc, char **argv)
       std::cout<<"JES"<<std::endl;
       AddShapesIfNotEmpty({"CMS_JetEta3to5_2016","CMS_JetEta0to5_2016","CMS_JetRelativeBal_2016",
 	    "CMS_JetEta0to3_2016"},
-	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
+ 	JoinStr({ggH_STXS,qqH_STXS,{"DYT","WH_htt125","ZH_htt125","VVL","DYL","TTL","VVT","STL","STT","TTT","W"}}),
 	&cb,
 	0.707,
 	TheFile,CategoryArgs);            
