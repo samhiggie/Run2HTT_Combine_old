@@ -33,6 +33,7 @@ parser.add_argument('--SplitSignals',help="Split signal measurements into compon
 parser.add_argument('--SplitSTXS',help="Split STXS measurements into component pieces. REQUIRES --SplitUncertainties",action="store_true")
 parser.add_argument('--RunParallel',help='Run all fits in parallel using threads',action="store_true")
 parser.add_argument('--numthreads',nargs='?',help='Number of threads to use to run fits in parallel',type=int,default=12)
+parser.add_argument('--DecorrelateForMe',help="Run the decorrelator as part of the overall run. Looks for a datacard named smh<year><channel>_nocorrelation.root",action="store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -62,13 +63,14 @@ ChannelCards = []
 for year in args.years:    
     for channel in args.channels:
 
-	AddShapeCommand="python scripts/PrepDecorrelatedCard.py --year "+year+" --DataCard ../../auxiliaries/shapes/smh"+year+channel+"_nocorrelation.root --OutputFileName ../../auxiliaries/shapes/smh"+year+channel+".root "
-	if channel=="et" or channel=="em":
-	   AddShapeCommand+="--TrimYears "
-        print("Duplicating shapes for year correlations")
-        logging.info("Shape duplication command:")
-        logging.info('\n\n'+AddShapeCommand+'\n')
-        os.system(AddShapeCommand)
+        if args.DecorrelateForMe:
+            AddShapeCommand="python scripts/PrepDecorrelatedCard.py --year "+year+" --DataCard ../../auxiliaries/shapes/smh"+year+channel+"_nocorrelation.root --OutputFileName ../../auxiliaries/shapes/smh"+year+channel+".root "
+            if channel=="et" or channel=="em":
+                AddShapeCommand+="--TrimYears "
+            print("Duplicating shapes for year correlations")
+            logging.info("Shape duplication command:")
+            logging.info('\n\n'+AddShapeCommand+'\n')
+            os.system(AddShapeCommand)
 
         DataCardCreationCommand="SMHTT"+year
         DataCardCreationCommand+="_"+channel+" "+OutputDir
