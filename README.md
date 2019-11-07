@@ -28,12 +28,16 @@ mkdir shapes
 ### bin
 
 Contains models for individual years and channels. Each model is it's own seperate combine harvester code, named SMHTT[Year]_[Channel].cpp
-Each of these models must be built before running, and all should have several common features. Each takes a number of running options, the first is the Output directorty to place the created card in,
-passing -s will disable all shape uncertainties in the model for debugging, -e will disable the use of the embedded distribution and related uncertainties
-, -b will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py),
--g will disable STXS split ggH processes and only use an inclusive ggH distribution, and -q will disable STXS split qqh processes and 
-will only use inclusive qqH processes. There is also an option called `--Categories` which takes any number of options
-after it, and it will attempt to load these categories from the file. Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
+Each of these models must be built before running, and all should have several common features. Each takes a number of running options:
+- the first is the Output directorty to place the created card in. Non-optional for proper function of the model.
+- `-s` will disable all shape uncertainties in the model for debugging, 
+- `-e` will disable the use of the embedded distribution and related uncertainties
+- `-b` will disable the use of CombineHarvester's Bin-By-Bin uncertainties (please note, this option is default in RunCombineFits.py, and has been replaced with autoMCStats)
+- `-g` will disable STXS split ggH processes and only use an inclusive ggH distribution 
+- `-q` will disable STXS split qqh processes and will only use inclusive qqH processes. 
+- There is also an option called `--Categories` which takes any number of options after it, and it will attempt to load these categories from the file. Non-optional for proper function of the model.
+
+Each looks for a file named "smh[year][channel(mt,tt,etc.)].root" in the shapes folder to run on.
  
 ### interface
 
@@ -67,7 +71,7 @@ in the usual output directories.
 ### scripts
 
 This directory contains one off scripts used for preparing certain aspects of the data cards before any expected fits are run. As well, it now contains the 
-overall running/main script of the repository `RunCombineFits.py`. See it's section for more details.:
+overall running/main script of the repository `RunCombineFits.py` and the sorted output script `sortingSTXS.py`. See their sections for more details.:
 
 (use `--help` to see options with these)
 
@@ -84,7 +88,7 @@ of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last
 of a slice are the same between up and nominal or down and nominal shapes, it smooths out the ncertaintiy over all bins. It takes a large number of 
 arguments to make sure it has all the right bins and slices, please run with `--help` to see all required options. NO LONGER USED.
 
-- `RunCombineFits.pu`: This is the 'main' script of the repository and handles creating expected fits. See it's section for more details.
+- `RunCombineFits.py`: This is the 'main' script of the repository and handles creating expected fits. See it's section for more details.
 
 ### RunCombineFits.py
 
@@ -121,7 +125,9 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
-  if it is not already present) in a directory called Output_[Date]_[String Tag].
+  if it is not already present) in a directory called Output_[Date]_[String Tag]. This string tag will be printed at the top of the output whenever the script is run.
+
+  The way RunCombineFits.py handles categories, or Monte Carlo vs Embedded distributions is handled by python configuration files described in the python section.
 
   The "typical" way to begin extracting expected results using this goes like so:
   - Make your data cards (it is probably best to have both STX-split and non-STXS-split ggH and qqH in it)
@@ -143,7 +149,7 @@ For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
   - To run the script, `python sortingSTXS.py limitExtracted.txt`
 
 
-## Prefit plot code
+### Prefit plot code (now no longer-used?)
 
 - This is contained in 2 files: plotterFinal.py and varCfgPlotter.py.
 
@@ -182,7 +188,7 @@ I've seen this error for the default value of 8515, so I just doubled it to 1703
 I recommend using that. The general process goes like so:
 ```
 ulimit -s 17030
-python RunCombineFits.py ...
+RunCombineFits.py ...
 ```
 
 ## Adding your own code
