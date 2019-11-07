@@ -50,7 +50,7 @@ contains some source code used by helper functions.
 
 ### python
 
-contains modules used by the master fit running script
+contains modules used by the master fit running script.
 
 - `SplitUncertainty.py`: This module contains a class which will mark up the datacard with groups and then calculate
 the uncertainty of a measurement split into Unc=Statistics+Systematics+Bin-By-Bin errors.
@@ -58,9 +58,16 @@ the uncertainty of a measurement split into Unc=Statistics+Systematics+Bin-By-Bi
 - `ThreadManager.py`: This module contains a class which will create and manage threads for combine fits. Output when using this is created in text files in 
 in the usual output directories.
 
+- `CategoryConfigurations.py`: This contains a few dictionaries in {"Category_Name":"Directory_Loaded_From_File"} format to define what categories the script will 
+  			       look to try to load from the files. Please edit this if you are changing how the channels will run.
+
+- `EmbeddedConfiguration.py`:   This contains year and channel combinations and whether the model will attempt to run using embedded distributions and uncertainties
+  				or not. Please modify this if your year and channel has embedded distributions available.
+
 ### scripts
 
-This directory largely contains one off scripts used for preparing certain aspects of the data cards before any expected fits are run:
+This directory contains one off scripts used for preparing certain aspects of the data cards before any expected fits are run. As well, it now contains the 
+overall running/main script of the repository `RunCombineFits.py`. See it's section for more details.:
 
 (use `--help` to see options with these)
 
@@ -76,6 +83,8 @@ of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last
 - `Smooth.py`: A simple shape smoothing tool used for smoothing out bad statistics in shape uncertainties. If it finds more than half the bins
 of a slice are the same between up and nominal or down and nominal shapes, it smooths out the ncertaintiy over all bins. It takes a large number of 
 arguments to make sure it has all the right bins and slices, please run with `--help` to see all required options. NO LONGER USED.
+
+- `RunCombineFits.pu`: This is the 'main' script of the repository and handles creating expected fits. See it's section for more details.
 
 ### RunCombineFits.py
 
@@ -101,7 +110,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
    call the prototype uncertainty splits later. The splitter can try and split measurements into an `Unc=Stat+Syst+Bin-By-Bin` format.
   - `--SplitInclusive` The inclusive signal strength measurement will attempt to split the inlusive signal strength measurement. 
    Requires that `--SplitUncertainties` has been called.
-   - `--SplitSignals` The splitter will attemp to measure the ggH,qqH,WH and ZH measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
+   - `--SplitSignals` The splitter will attempt to measure the ggH,qqH,WH and ZH measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
    Requires that `--SplitUncertainties` has been called.
    - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
    Requires that `--SplitUncertainties` has been called.
@@ -114,13 +123,10 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
   if it is not already present) in a directory called Output_[Date]_[String Tag].
 
-  #### CategoryConfigurations.py
-  This contains a few dictionaries in {"Category_Name":"Directory_Loaded_From_File"} format to define what categories the script will 
-  look to try to load from the files. Please edit this if you are changing how the channels will run.
-
-  #### EmbeddedConfiguration.py
-  This contains year and channel combinations and whether the model will attempt to run using embedded distributions and uncertainties
-  or not. Please modify this if your year and channel has embedded distributions available.
+  The "typical" way to begin extracting expected results using this goes like so:
+  - Make your data cards (it is probably best to have both STX-split and non-STXS-split ggH and qqH in it)
+  - move them to `auxiliaries/shapes`. Remember to put them as '_nocorrelation' as desicribed for `--DecorrelateForMe` if you have not decorrelated the shapes yourself.
+  - Run the fits with `RunCombineFits.py --years <the years> --channels <the channels>`. Typical options for simple runs also include `--RunInclusiveggH`, `--RunInclusiveqqH` and `--DecorrelateForMe`
   
 ### sortingSTXS.py
 
