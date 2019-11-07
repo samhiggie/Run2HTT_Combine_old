@@ -97,7 +97,7 @@ This is the main tool used for extracting expected fits. It takes a moderate num
 - Main Options
   - `--years` accepts 2016, 2017 and or 2018. Lists all years and models to be run as a part of this fit. Will attempt to make data cards 
   for all of these years.
-  - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
+  - `--channels` currently accepts mt (mu tau), et (e tau), em (e mu) or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
   - `--RunShapeless` Disables shape uncertainties in all models.
@@ -140,8 +140,8 @@ This is kind of plug-in of RunCombineFits.py.
 
 If you save printed output of RunCombineFits.py as a file, `sortingSTXS.py` help you to print out limits in orgarnized table form.
 
-For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
-![Sorted Output](https://uc1bd7e9de0cb96691611ad52484.previews.dropboxusercontent.com/p/thumb/AAj6sE9g34trO3k_R8BxL4G2wHhNuFXsCK_5jkCuLDKkC00lwX58Tk9oyThxUYOXZY1O11caOiiooUdczRJmXusF8mpQ1O0ID7cHk2xs6g20aBQ2igWSPDUx3gppFWnXir4m7ljVaqj82nfx0v3gCxxi5P7AhIHAt1iaYEy9yRYe6wk3u-i2LsSO5FnM2wCjlP-alhu9hOUQtx9WKAmwHLzDYdevnRz0Ow5R1kQTmOdkJgzUtzxryvkTUEqzZGfY6zAX6vU2pwMOw28FHCSQLu8ouIkKgUmuy5d1g1jmrsq4SdkAMDorpGEnOGp6bxI3tyyWAKGfF46ZRM8e1YhUR1V3pCTjJ6Z-5erbOf78EZjWE1EREt3V1oayUvLXyvRGbqiDUDWQFdGlPUuBwjlUYhn1cL8urWvyQtTuKJHdmNu9uUz-B22_ISNW1Qz07mM-6_AaJaMFTLNv5mOUpgQtq5p-PkOiOolYqqvBY9nKlLyNSw/p.png?fv_content=true&size_mode=5)
+For example, https://github.com/aloeliger/Run2HTT_Combine/blob/master/images/SortedOutput.png
+![Sorted Output](https://github.com/aloeliger/Run2HTT_Combine/blob/master/images/SortedOutput.png)
 
 - How to run
   - Run `RunCombineFits.py` as usual but add `> outputTxtFile.txt` to save print. 
@@ -149,7 +149,7 @@ For example, https://www.dropbox.com/s/a0ra91pwzol2pw5/2017.png?dl=0
   - To run the script, `python sortingSTXS.py limitExtracted.txt`
 
 
-### Prefit plot code (now no longer-used?)
+### Prefit plot code (now no longer used?)
 
 - This is contained in 2 files: plotterFinal.py and varCfgPlotter.py.
 
