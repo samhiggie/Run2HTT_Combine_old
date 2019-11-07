@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 
 limits = open(sys.argv[1], "r")
