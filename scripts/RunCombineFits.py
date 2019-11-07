@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import argparse
 import ROOT
@@ -5,8 +6,8 @@ import logging
 import datetime
 import string
 import random
-import CategoryConfigurations as cfg
-from EmbeddedConfiguration import EmbeddedConfiguration as embedded_cfg
+import CombineHarvester.Run2HTT_Combine.CategoryConfigurations as cfg
+from CombineHarvester.Run2HTT_Combine.EmbeddedConfiguration import EmbeddedConfiguration as embedded_cfg
 from CombineHarvester.Run2HTT_Combine.SplitUncertainty import UncertaintySplitter
 from CombineHarvester.Run2HTT_Combine.ThreadManager import ThreadManager
 
