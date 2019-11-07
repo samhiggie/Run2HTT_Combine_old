@@ -25,7 +25,7 @@ parser.add_argument('--RunInclusiveqqH',help="Run using an inclusive qqH distrib
 parser.add_argument('--ComputeSignificance',help="Compute expected significances instead of expected POIs",action="store_true")
 parser.add_argument('--ComputeImpacts',help="Compute expected impacts on Inclusive POI",action="store_true")
 parser.add_argument('--ComputeGOF',help="Compute saturated GOF",action="store_true")
-parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
+#parser.add_argument('--DisableCategoryFits',help="Disable category card creation and fits",action="store_true")
 parser.add_argument('--Timeout', help="Trigger timeout as conditions on fits (prevents infinitely running fits)", action="store_true")
 parser.add_argument('--TimeoutTime',nargs='?',help="Time allotted before a timeout (linux timeout syntax)",default="180s")
 parser.add_argument('--SplitUncertainties', help="Create groups for helping to split the measurements",action="store_true")
@@ -138,6 +138,7 @@ logging.info('\n\n'+PerSignalWorkspaceCommand+'\n')
 os.system(PerSignalWorkspaceCommand)
 
 #per category
+"""
 if not args.DisableCategoryFits:
     print("Setting up per category command.")
     PerCategoryName = OutputDir+"workspace_per_cat_breakdown_cmb_"+DateTag+".root"
@@ -151,6 +152,7 @@ if not args.DisableCategoryFits:
     logging.info("Per Category Workspace Command: ")
     logging.info('\n\n'+PerCategoryWorkspaceCommand+'\n')
     os.system(PerCategoryWorkspaceCommand)
+"""
 
 #Set up the possible STXS bins list
 if not (args.RunInclusiveggH or args.RunInclusiveqqH):
@@ -228,15 +230,6 @@ logging.info("Text 2 Worskpace Command:")
 logging.info('\n\n'+TextWorkspaceCommand+'\n')
 os.system(TextWorkspaceCommand)
 
-#if we're running in parallel, it is time to move relevant files to hdfs
-#if args.RunParallel:
-#    print("staging things to hdfs...")
-#    if not os.path.isdir("/hdfs/store/user/"+os.environ['USER']+"/HTT_output"):
-#        os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/"+os.environ['USER']+"/HTT_Output")
-#    os.system("xrdfs root://cmseos.fnal.gov mkdir /store/user/HTT_Output/Output_"+DateTag)
-#    os.system("xrdcp "+CombinedCardName[:len(CombinedCardName)-3]+"root root://cmseos.fnal.gov//store/user"+os.environ['USER']+"HTT_Output/Output_"+DateTag)
-    
-
 PhysModel = 'MultiDimFit'
 ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --algo=singles --cl=0.68'
 if args.ComputeSignificance:
@@ -273,6 +266,7 @@ if not args.ComputeSignificance:
             Splitter.SplitMeasurement(CombineCommand,OutputDir)
 
     #run the per categories
+    """
     if not args.DisableCategoryFits:
         for SignalName in CategorySignalNames:
             CombineCommand = "combineTool.py -M "+PhysModel+" "+PerCategoryName+" "+ExtraCombineOptions+" -t -1 --setParameters r_0jet_PTH_0_10=1,r_0jet_PTH_GE10=1,r_boosted_1J=1,r_boosted_GE2J=1,r_vbf_PTH_0_200=1,r_vbf_PTH_GE_200=1 -P "+SignalName+" --floatOtherPOIs=1"
@@ -281,6 +275,7 @@ if not args.ComputeSignificance:
             logging.info("Category Signal Command: ")
             logging.info('\n\n'+CombineCommand+'\n')    
             os.system(CombineCommand)
+    """
 
 # run the STXS bins
 if not (args.RunInclusiveggH or args.RunInclusiveqqH or args.ComputeSignificance):
