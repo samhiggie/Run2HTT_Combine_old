@@ -65,18 +65,17 @@ This directory largely contains one off scripts used for preparing certain aspec
 (use `--help` to see options with these)
 
 - `MergeStats.py`: A complicated algorithm I wrote to try merging low stats bins to end up with all bin uncertainties < 30%. It affects sensitivities
-too much and so is no longer used, but contains some useful code.
+too much and so is no longer used, but contains some useful code. NO LONGER USED.
 
 - `PrepDecorrelatedCard.py`: A simple macro using regexes to try and make copies of distributions with year tags attached for use in correllating/decorrellating
-shapes in combine harvester models. Has a `--TrimYears` option for removing the years from histograms, instead of 
-adding them if necessary
+shapes in combine harvester models. Has a `--TrimYears` option for removing the years from histograms, instead of adding them if necessary
 
-- `SimpleMergeStats.py`: The now in use merging algorithm. It uses regexes to match categories and distributions, and simply halves the number
-of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last slice of the VBF PTH GE 200 Category
+- `SimpleMergeStats.py`: A seperate simpler merging algorithm. It uses regexes to match categories and distributions, and simply halves the number
+of bins the last three slices of the Zero Jet PTH 0-10 category, and in the last slice of the VBF PTH GE 200 Category. NO LONGER USED.
 
 - `Smooth.py`: A simple shape smoothing tool used for smoothing out bad statistics in shape uncertainties. If it finds more than half the bins
 of a slice are the same between up and nominal or down and nominal shapes, it smooths out the ncertaintiy over all bins. It takes a large number of 
-arguments to make sure it has all the right bins and slices, please run with `--help` to see all required options.
+arguments to make sure it has all the right bins and slices, please run with `--help` to see all required options. NO LONGER USED.
 
 ### RunCombineFits.py
 
@@ -88,11 +87,10 @@ This is the main tool used for extracting expected fits. It takes a moderate num
   - `--channels` currently accepts mt (mu tau), et (e tau), or tt (tau tau) and defines the channels to make datacards
   and run models for
 - Other Options
-  - `--DisableCategoryFits` Disables fits done based on analysis categories, currently recommended for any measurement which goes across channels, or where the cards fed to combine don't contain similarly named directories.
   - `--RunShapeless` Disables shape uncertainties in all models.
   - `--RunWithBinByBin` Reenables bin by bin uncertainties in the code. This should be run with `--RunWithoutAutoMCStats`
   - `--RunWithoutAutoMCStats` Disables autoMCStats in the data cards.
-  - `--RunInclusiveggH` Uses the inclusive ggH distribution, and does not attemp to do any STXS fitting
+  - `--RunInclusiveggH` Uses the inclusive ggH distribution, and does not attempt to do any STXS fitting
   - `--RunInclusiveqqH` Same as the above, but for qqH
   - `--ComputeSignificance` less used option, disables a large number of fits, and just attempts to compute the significance of the main
   inclusive workspace/fit
@@ -108,8 +106,9 @@ This is the main tool used for extracting expected fits. It takes a moderate num
    - `--SplitSTXS` The splitter will attemp to measure the ggH and qqH STXS bin measurements split into `Unc=Stat+Syst+Bin-By-Bin`. 
    Requires that `--SplitUncertainties` has been called.
    - `--RunParallel` Runs major fits in parallel by creating threads for the fits. Output is dumped to the usual output area in text files labeled by parameter.
-   = `--numthreads` Dictates the number of threads that `--RunParallel` is allowed to use to concserve system resources.
-   Default: 12.
+   - `--numthreads` Dictates the number of threads that `--RunParallel` is allowed to use to conserve system resources. Default: 12.
+   - `--DecorrelateForMe` Calls the decorrelation script on any input before trying to run. The card it searches for to do this is smh<year><channel>_nocorrelation.root.
+     			  This is the new recommended default way of decorrelating files when starting from new cards. Output will be saved so this option does not need to be used twice.
   
    To try and keep output seperate, and archived, and the main directory clean, each time this script is run, it will generate 
   a tag with the date, and a random string assigned to it. All output of the script can be found in HTT_Output (it will make this directory
@@ -164,16 +163,6 @@ Example on how to run it:
 python plotterFinal.py --channel mt --year 2017 
 
 (You will have to change the default address of the files stored in varCfgPlotter.py for above command to work. You may choose to provede `--inputFile` option in addition in which case you need not worry about varCfgPlotter.py)
-
-## Usage
-
-My typical workflow looks something like this: 
-
-1. I make root files with distributions, that include STXS split and inclusive ggH and qqH distributions in them in case I want to run on inclusive 
-or STXS split distributions for any reason.
-2. Before they can be run on, these files must be Decorrellated.
-3. Once the root files are properly prepared, they can be put in the auxiliaries/shapes/ directory.
-4. Once all root files have been prepared this way, `RunCombineFits.py` can be used to extract expected uncertainties across all parameters
 
 ## Troubleshooting
 ### RunCombineFits broke and all my fits tell me that the workspace has problems and probably wasn't closed...
