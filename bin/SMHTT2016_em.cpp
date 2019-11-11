@@ -167,11 +167,14 @@ int main(int argc, char **argv)
                           TheFile,CategoryArgs);
 
       // QCD shape      
-      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016","CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016","CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016","CMS_QCD_antiiso_2016"},
-                          {"QCD"},
-                          &cb,
-                          1.00,
-                          TheFile,CategoryArgs);
+      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016",
+	    "CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016",
+	    "CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016",
+	    "CMS_QCD_antiiso_2016"},
+	{"QCD"},
+	&cb,
+	1.00,
+	TheFile,CategoryArgs);
 
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;

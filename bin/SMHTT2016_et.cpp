@@ -275,6 +275,10 @@ int main(int argc, char **argv)
   //*********************************************************
   if(not Input.OptionExists("-e"))
     {
+      //50% correlation with ID unc in MC
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_2018","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_e_embedded_2018","lnN",SystMap<>::init(1.01732));
+
       // Trg efficiency. Can be a single lnN because only single ele trigger
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_singleeletrg_embedded_2016","lnN",SystMap<>::init(1.020));
 

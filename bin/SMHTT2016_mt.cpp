@@ -234,19 +234,17 @@ int main(int argc, char **argv)
 	    "CMS_rawFF_mt_tt_unc2_2016",
 	    "CMS_FF_closure_mvis_mt_qcd_unc1_2016",
 	    "CMS_FF_closure_mvis_mt_qcd_unc2_2016",
-	    "CMS_FF_closure_mvis_mt_w_unc1_2016",
-	    //"CMS_FF_closure_mvis_mt_w_unc2_2016",
+	    "CMS_FF_closure_mvis_mt_w_unc1_2016",	    
 	    "CMS_FF_closure_mvis_mt_tt_unc1_2016",
 	    "CMS_FF_closure_mvis_mt_tt_unc2_2016",
 	    "CMS_FF_closure_OSSS_mvis_mt_qcd_unc1_2016",
-	    //"CMS_FF_closure_OSSS_mvis_mt_qcd_unc2_2016",
 	    "CMS_FF_closure_mt_mt_w_unc1_2016",
 	    "CMS_FF_closure_mt_mt_w_unc2_2016"
 	    },
-                          {"jetFakes"},
-                          &cb,
-                          1.00,
-                          TheFile,CategoryArgs);
+	{"jetFakes"},
+	&cb,
+	1.00,
+	TheFile,CategoryArgs);
 
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
@@ -323,8 +321,11 @@ int main(int argc, char **argv)
 	TheFile,CategoryArgs);            
 
       //Muon Energy scale uncertainties
-      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1","CMS_scale_m_etam2p1tom1p2",
-	    "CMS_scale_m_etam1p2to1p2","CMS_scale_m_eta1p2to2p1","CMS_scale_m_eta2p1to2p4"},
+      AddShapesIfNotEmpty({"CMS_scale_m_etam2p4tom2p1",
+	    "CMS_scale_m_etam2p1tom1p2",
+	    "CMS_scale_m_etam1p2to1p2",
+	    "CMS_scale_m_eta1p2to2p1",
+	    "CMS_scale_m_eta2p1to2p4"},
 	MuESVector,
 	&cb,
 	1.00,
@@ -335,6 +336,10 @@ int main(int argc, char **argv)
   //**************************************
   if(not Input.OptionExists("-e"))
     {
+      //50% correlation with ID unc in MC
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_2018","lnN",SystMap<>::init(1.010));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2018","lnN",SystMap<>::init(1.01732));
+
       //Tau ID eff
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_t_embedded_2016", "lnN", SystMap<>::init(1.020));
 
