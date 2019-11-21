@@ -35,6 +35,7 @@ parser.add_argument('--SplitSTXS',help="Split STXS measurements into component p
 parser.add_argument('--RunParallel',help='Run all fits in parallel using threads',action="store_true")
 parser.add_argument('--numthreads',nargs='?',help='Number of threads to use to run fits in parallel',type=int,default=12)
 parser.add_argument('--DecorrelateForMe',help="Run the decorrelator as part of the overall run. Looks for a datacard named smh<year><channel>_nocorrelation.root",action="store_true")
+parser.add_argument('--StoreShapes', help = "Store pre and post-fit shapes for use later",action = "store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -235,7 +236,10 @@ ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSIN
 if args.ComputeSignificance:
     PhysModel = 'Significance'
     ExtraCombineOptions = '--X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --cl=0.68'
-
+if args.StoreShapes:
+    PhysModel = 'FitDiagnostics'
+    ExtraCombineOptions = '--robustFit=1 --preFitValue=1. --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --cl=0.68 --saveShapes'
+    
 #run the inclusive
 CombinedWorkspaceName = CombinedCardName[:len(CombinedCardName)-3]+"root"
 InclusiveCommand="combineTool.py -M "+PhysModel+" "+CombinedWorkspaceName+" "+ExtraCombineOptions+" --expectSignal=1 -t -1"
@@ -384,3 +388,6 @@ if args.ComputeGOF:
 if args.RunParallel:
     ThreadHandler.BeginFits()
     ThreadHandler.WaitForAllThreadsToFinish()
+
+if args.StoreShapes:
+    os.system('mv '+os.environ['CMSSW_BASE']+"/src/CombineHarvester/Run2HTT_Combine/fitDiagnostics.Test.root "+OutputDir)
