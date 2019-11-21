@@ -19,11 +19,23 @@ def MakePrefitPlots(tag,years,channels):
     plotFile = ROOT.TFile(fileName)
     prefitDirectory = plotFile.shapes_prefit
     histograms = prefitSettings.RetrievePlots.RetrievePlotsFromAllDirectories(channels,prefitDirectory,years)
-    
+
     for channel in channels:
         for year in years:
             for category in histograms[channel][year]:
+                #retrieve original data
+                print("Retrieving data")
+                dataCard = ROOT.TFile(prefitSettings.RetrievePlots.RetrieveOriginalDatacardPath(channel,year))
+                dataHistogram = dataCard.Get(category).Get("data_obs")
+                histograms[channel][year][category]['Data']={'data_obs':dataHistogram}
                 theCanvas = ROOT.TCanvas("Prefit_"+category,"Prefit_"+category)
+                print("blinding...")
+                prefitSettings.blinding.BlindDataPoints(
+                    histograms[channel][year][category]['Signals'],
+                    histograms[channel][year][category]['Full'],
+                    histograms[channel][year][category]['Data']
+                )
+                
                 print("Performing pad set-up...")
                 prefitSettings.plotPad.SetupPad(theCanvas)
                 print("Creating colors...")
@@ -42,6 +54,7 @@ def MakePrefitPlots(tag,years,channels):
                 backgroundStack.Draw()
                 backgroundStackErrors.Draw("SAME e2")
                 histograms[channel][year][category]['Signals']['Higgs'].Draw("SAME")
+                histograms[channel][year][category]['Data']['data_obs'].Draw("SAME E1")
                 theLegend.Draw()                
                 
                 raw_input("Press enter to continue...")

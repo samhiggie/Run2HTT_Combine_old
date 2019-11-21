@@ -1,4 +1,5 @@
 import ROOT
+import os
 import CombineHarvester.Run2HTT_Combine.CategoryConfigurations as CategoryConfigurations
 
 #given the exact directory path we can try to retrive all plots we know and care about.
@@ -126,6 +127,11 @@ def RetrievePlotsFromDirectory(directory):
     #create the slimmed histogram list with the plots common to most plotting schemes
     return {'Full':fullDictionary,'Slimmed':slimmedDictionary,'Signals':signalDictionary}
 
+def RetrieveOriginalDatacardPath(channel,year):
+    datacardPath = os.environ['CMSSW_BASE']+'/src/auxiliaries/shapes/'
+    datacardName = 'smh'+year+channel+'.root'
+    return datacardPath+datacardName
+
 #retrieve all plots conforming to current category configuration specs.
 #takes as arguments a list of channels from ['tt','mt','et','em']
 #and a TFile or TDirectory.
@@ -143,6 +149,7 @@ def RetrievePlotsFromAllDirectories(channels,location,years,withYears = True):
                     print("Could not load all histograms from the files because it was missing a directory: "+directoryName)
                     continue
                 else:
+                    print("loading plots from : "+candidateDirectory)
                     histograms[channel][year][categoryName] = RetrievePlotsFromDirectory(candidateDirectory)                    
 
     #retrieve data directly from the datacard.
