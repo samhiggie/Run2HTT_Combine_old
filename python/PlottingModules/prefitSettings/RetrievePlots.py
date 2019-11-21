@@ -7,7 +7,7 @@ import CombineHarvester.Run2HTT_Combine.CategoryConfigurations as CategoryConfig
 def RetrievePlotsFromDirectory(directory):
     jetFakes = directory.Get("jetFakes")
     ZT = directory.Get("embedded")
-    ZL = directory.Get("DYL")
+    ZL = directory.Get("ZL")
     TTL = directory.Get("TTL")
     TTT = directory.Get("TTT")
     VVL = directory.Get("VVL")
@@ -149,7 +149,7 @@ def RetrievePlotsFromAllDirectories(channels,location,years,withYears = True):
                     print("Could not load all histograms from the files because it was missing a directory: "+directoryName)
                     continue
                 else:
-                    print("loading plots from : "+candidateDirectory)
+                    print("loading plots from : "+directoryName)
                     histograms[channel][year][categoryName] = RetrievePlotsFromDirectory(candidateDirectory)                    
 
     #retrieve data directly from the datacard.
