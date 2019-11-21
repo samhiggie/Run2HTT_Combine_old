@@ -75,6 +75,7 @@ def RetrievePlotsFromDirectory(directory):
         'TTL':TTL,
         'TTT':TTT,
         'VVL':VVL,
+        'VVT':VVT,
         'STL':STL,
         'STT':STT,
         'ggH':ggH,
