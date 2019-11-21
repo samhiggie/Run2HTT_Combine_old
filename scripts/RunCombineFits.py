@@ -380,6 +380,20 @@ if args.ComputeGOF:
                  CardNum+=1
 
     os.chdir("../../")
+if (args.RunKappaVKappaF and args.:
+    os.chdir(OutputDir)
+
+    KappaVKappaFcmd = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.HiggsCouplings:cVcF --PO BRU=0 "+OutputDir+"FinalCard_"+DateTag+".txt"+"-o comb_htt_kvkf.root"
+    os.system(KappaVKappaFcmd)
+
+    KappaVKappaFcmd = "combine -M MultiDimFit -m 125 -n htt --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,5.0 comb_htt_kvkf.root --algo=singles --robustFit=1"
+    os.system(KappaVKappaFcmd)
+    
+    KappaVKappaFcmd = "combine -n KvKfgrid_tt -M MultiDimFit -m 125 --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,2.0 comb_htt_kvkf.root --algo=grid --points=1000"   # add parallel here?
+    os.system(KappaVKappaFcmd)
+
+    KappaVKappaFcmd = "python plotKVKF.py -o plot_kVkF -f tau=higgsCombineKvKfgrid_tt.MultiDimFit.mH125.root --order=\"tau\" --legend-order=\"tau\" --layout 1 --x-range 0.0,5.0 --y-range 0.0,3.0 --axis-hist 200,0.0,5.0,200,0.0,3.0"
+    os.system(KappaVKappaFcmd)
 
 if args.RunParallel:
     ThreadHandler.BeginFits()
