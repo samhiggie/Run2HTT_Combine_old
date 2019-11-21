@@ -24,7 +24,7 @@ def setTDRStyle():
     tdrStyle.SetPadGridX(False)
     tdrStyle.SetPadGridY(False)
     tdrStyle.SetGridColor(0)
-    tdrStlye.SetGridStyle(3)
+    tdrStyle.SetGridStyle(3)
     tdrStyle.SetGridWidth(1)
 
     #Frame Settings
@@ -58,7 +58,7 @@ def setTDRStyle():
     #For the statistics box:
     tdrStyle.SetOptFile(0)
     tdrStyle.SetOptStat(0) # To display the mean and RMS:   SetOptStat("mr")
-    tdrStyle.SetStatColor(kWhite)
+    tdrStyle.SetStatColor(ROOT.kWhite)
     tdrStyle.SetStatFont(42)
     tdrStyle.SetStatFontSize(0.025)
     tdrStyle.SetStatTextColor(1)
@@ -108,7 +108,7 @@ def setTDRStyle():
     # For the axis:
     
     tdrStyle.SetAxisColor(1, "XYZ")
-    tdrStyle.SetStripDecimals(kTRUE)
+    tdrStyle.SetStripDecimals(True)
     tdrStyle.SetTickLength(0.03, "XYZ")
     tdrStyle.SetNdivisions(510, "XYZ")
     tdrStyle.SetPadTickX(1)  # To get tick marks on the opposite side of the frame
