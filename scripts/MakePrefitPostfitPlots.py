@@ -56,7 +56,10 @@ def MakePrefitPlots(tag,years,channels,DontPerformCalculation = False):
                     #Create the canvas and pads needed
                     theCanvas = ROOT.TCanvas(prefitOrPostfit+"_"+category,prefitOrPostfit+"_"+category)
                     print("Performing pad set-up...")
-                    prefitPostfitSettings.plotPad.SetupPad(theCanvas)
+                    plotPad,ratioPad = prefitPostfitSettings.plotPad.CreatePads(theCanvas)
+                    prefitPostfitSettings.plotPad.SetupPad(plotPad)
+                    prefitPostfitSettings.ratioPad.SetUpRatioPad(ratioPad)
+                    
                     
                     #color in any distributions
                     print("Creating colors...")
@@ -78,16 +81,27 @@ def MakePrefitPlots(tag,years,channels,DontPerformCalculation = False):
                     prefitPostfitSettings.legend.AppendToLegend(theLegend,histograms[channel][year][category][prefitOrPostfit]['Signals']['Higgs'],'Higgs')
                     prefitPostfitSettings.legend.AppendToLegend(theLegend,histograms[channel][year][category][prefitOrPostfit]['Data']['data_obs'],'data_obs')
                     prefitPostfitSettings.legend.AppendToLegend(theLegend,backgroundStackErrors,'background_error')
+
+                    #make the ratio plots
+                    ratioPlot, ratioErrors = prefitPostfitSettings.ratioPlot.MakeRatioPlot(backgroundStack,
+                                                                  histograms[channel][year][category][prefitOrPostfit]['Data']['data_obs'])
                     
                     #draw everything
                     print("Drawing...")
+                    plotPad.cd()
                     backgroundStack.SetMinimum(0.1)
                     backgroundStack.Draw()
                     backgroundStackErrors.Draw("SAME e2")
                     histograms[channel][year][category][prefitOrPostfit]['Signals']['Higgs'].Draw("SAME HIST")
                     histograms[channel][year][category][prefitOrPostfit]['Data']['data_obs'].Draw("SAME e1")
                     theLegend.Draw()                
-                
+
+                    ratioPad.cd()
+                    ratioPlot.Draw('ex0')
+                    ratioErrors.Draw('SAME e2')
+                    ratioPlot.Draw('SAME ex0')
+                    
+
                     raw_input("Press enter to continue...")
                     
     if len(channels) > 1:
@@ -109,4 +123,4 @@ if __name__ == "__main__":
     parser.add_argument('--DontRecalculate',help="Dont preform the PostfitShapesFromWorkspace step again.",action = 'store_true')
 
     args = parser.parse_args()
-    MakePrefitPlots(args.tag,args.year,args.channels,args.DontRecalculate)
+    MakePrefitPlots(args.tag,args.years,args.channels,args.DontRecalculate)

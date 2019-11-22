@@ -5,3 +5,5 @@ import legend
 import RetrievePlots
 import blinding
 import dataSettings
+import ratioPlot
+import ratioPad

@@ -21,11 +21,12 @@ histogramFormats = {
     'data_obs':'pe',
     'background_error':'f',
     }
+nLegendColumns = 2
 
 def CreateLegend(histogramDictionary):
     theLegend = ROOT.TLegend(legendPosition[0],legendPosition[1],legendPosition[2],legendPosition[3])
     
-    theLegend.SetNColumns(2)
+    theLegend.SetNColumns(nLegendColumns)
 
     for entry in histogramDictionary:
         AppendToLegend(theLegend,histogramDictionary[entry],entry)
