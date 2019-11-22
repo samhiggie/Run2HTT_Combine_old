@@ -89,7 +89,7 @@ for year in args.years:
             DataCardCreationCommand+=" -q"
         DataCardCreationCommand+=" --Categories"
         for Category in cfg.Categories[channel]:
-            DataCardCreationCommand+=" "+cfg.Categories[channel][Category]
+            DataCardCreationCommand+=" "+Category
         print("Creating data cards")
         logging.info("Data Card Creation Command:")
         logging.info('\n\n'+DataCardCreationCommand+'\n')
@@ -109,7 +109,7 @@ for year in args.years:
         CardNum = 1
         TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
         for Directory in TheFile.GetListOfKeys():
-            if Directory.GetName() in cfg.Categories[channel].values():
+            if Directory.GetName() in cfg.Categories[channel]:
                 if not args.RunWithoutAutoMCStats:
                     CardFile = open(OutputDir+"smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt","a+")
                     CardFile.write("* autoMCStats 0.0\n")
@@ -365,7 +365,7 @@ if args.ComputeGOF:
           CardNum = 1
           TheFile = ROOT.TFile(os.environ['CMSSW_BASE']+"/src/auxiliaries/shapes/smh"+year+channel+".root")
           for Directory in TheFile.GetListOfKeys():
-              if Directory.GetName() in cfg.Categories[channel].values():
+              if Directory.GetName() in cfg.Categories[channel]:
                  ImpactCommand = "text2workspace.py -m 125 smh"+year+"_"+channel+"_"+str(CardNum)+"_13TeV_.txt "
                  os.system(ImpactCommand)
                  GOFJsonName = "gof_"+channel+"_"+year+"_"+str(CardNum)+"_"+DateTag+".json"

@@ -137,21 +137,21 @@ def RetrieveOriginalDatacardPath(channel,year):
 #and a TFile or TDirectory.
 #the years of the plot to be retrieved
 def RetrievePlotsFromAllDirectories(channels,location,years,withYears = True):
+    location.ls()
     histograms = {}
     for channel in channels:
         histograms[channel] = {}        
         for year in years:
             histograms[channel][year]={}
-            for categoryName in CategoryConfigurations.Categories[channel].values():
-                directoryName = categoryName+'_'+year
-                candidateDirectory = location.Get(directoryName)
-                if candidateDirectory == None:
-                    print("Could not load all histograms from the files because it was missing a directory: "+directoryName)
-                    continue
-                else:
-                    print("loading plots from : "+directoryName)
-                    histograms[channel][year][categoryName] = RetrievePlotsFromDirectory(candidateDirectory)                    
-
-    #retrieve data directly from the datacard.
-    
+            for categoryName in CategoryConfigurations.Categories[channel]:
+                histograms[channel][year][categoryName] = {}
+                for prefitOrPostfit in ['prefit','postfit']:                    
+                    directoryName = categoryName+'_'+year+'_'+prefitOrPostfit
+                    candidateDirectory = location.Get(directoryName)
+                    if candidateDirectory == None:
+                        print("Could not load all histograms from the files because it was missing a directory: "+directoryName)
+                        continue
+                    else:
+                        print("loading plots from : "+directoryName)
+                        histograms[channel][year][categoryName][prefitOrPostfit] = RetrievePlotsFromDirectory(candidateDirectory)                    
     return histograms
