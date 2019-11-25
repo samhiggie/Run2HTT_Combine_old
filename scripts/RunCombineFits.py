@@ -36,6 +36,8 @@ parser.add_argument('--RunParallel',help='Run all fits in parallel using threads
 parser.add_argument('--numthreads',nargs='?',help='Number of threads to use to run fits in parallel',type=int,default=12)
 parser.add_argument('--DecorrelateForMe',help="Run the decorrelator as part of the overall run. Looks for a datacard named smh<year><channel>_nocorrelation.root",action="store_true")
 parser.add_argument('--StoreShapes', help = "Store pre and post-fit shapes for use later",action = "store_true")
+parser.add_argument('--RunKappaVKappaF',help="Runs kappa_V and kappa_F scan",action="store_true")
+parser.add_argument('--Asimov',help="Use the Asimov dataset in the limit calculation - only available for kappa_V and kappa_F scan at the moment",action="store_true")
 print("Parsing command line arguments.")
 args = parser.parse_args() 
 
@@ -384,16 +386,31 @@ if args.ComputeGOF:
                  CardNum+=1
 
     os.chdir("../../")
-if (args.RunKappaVKappaF and args.:
+if (args.RunKappaVKappaF and args.Asimov):
     os.chdir(OutputDir)
 
     KappaVKappaFcmd = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.HiggsCouplings:cVcF --PO BRU=0 "+OutputDir+"FinalCard_"+DateTag+".txt"+"-o comb_htt_kvkf.root"
     os.system(KappaVKappaFcmd)
 
-    KappaVKappaFcmd = "combine -M MultiDimFit -m 125 -n htt --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,5.0 comb_htt_kvkf.root --algo=singles --robustFit=1"
+    KappaVKappaFcmd = "combine -M MultiDimFit -m 125 -n htt -t -1000 --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,5.0 comb_htt_kvkf.root --algo=singles --robustFit=1" # get the central point!  
     os.system(KappaVKappaFcmd)
     
-    KappaVKappaFcmd = "combine -n KvKfgrid_tt -M MultiDimFit -m 125 --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,2.0 comb_htt_kvkf.root --algo=grid --points=1000"   # add parallel here?
+    KappaVKappaFcmd = "combine -n KvKfgrid_tt -M MultiDimFit -m 125 -t -1000 --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,2.0 comb_htt_kvkf.root --algo=grid --points=1000 --parallel=8"   #  now dance around the central point - change the points for granularity
+    os.system(KappaVKappaFcmd)
+
+    KappaVKappaFcmd = "python plotKVKF.py -o plot_kVkF -f tau=higgsCombineKvKfgrid_tt.MultiDimFit.mH125.root --order=\"tau\" --legend-order=\"tau\" --layout 1 --x-range 0.0,5.0 --y-range 0.0,3.0 --axis-hist 200,0.0,5.0,200,0.0,3.0"
+    os.system(KappaVKappaFcmd)
+
+if (args.RunKappaVKappaF and not args.Asimov):
+    os.chdir(OutputDir)
+
+    KappaVKappaFcmd = "text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.HiggsCouplings:cVcF --PO BRU=0 "+OutputDir+"FinalCard_"+DateTag+".txt"+"-o comb_htt_kvkf.root"
+    os.system(KappaVKappaFcmd)
+
+    KappaVKappaFcmd = "combine -M MultiDimFit -m 125 -n htt --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,5.0 comb_htt_kvkf.root --algo=singles --robustFit=1" # get the central point!  
+    os.system(KappaVKappaFcmd)
+    
+    KappaVKappaFcmd = "combine -n KvKfgrid_tt -M MultiDimFit -m 125 --setParameterRanges kappa_V=0.0,5.0:kappa_F=0.0,2.0 comb_htt_kvkf.root --algo=grid --points=1000 --parallel=8"   #  now dance around the central point
     os.system(KappaVKappaFcmd)
 
     KappaVKappaFcmd = "python plotKVKF.py -o plot_kVkF -f tau=higgsCombineKvKfgrid_tt.MultiDimFit.mH125.root --order=\"tau\" --legend-order=\"tau\" --layout 1 --x-range 0.0,5.0 --y-range 0.0,3.0 --axis-hist 200,0.0,5.0,200,0.0,3.0"
