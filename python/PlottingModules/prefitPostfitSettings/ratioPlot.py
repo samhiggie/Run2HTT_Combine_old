@@ -7,7 +7,7 @@ YBounds = (0.7,1.3)
 ratioMarkerStyle = 20
 ratioYAxisTitle = 'Data/Predicted'
 ratioYAxisTitleSize = 0.1
-ratioYAxisTitleOffset = 0.22
+ratioYAxisTitleOffset = 0.3
 ratioYAxisLabelSize = 0.10
 ratioYAxisNDivisions = (6,0,0)
 

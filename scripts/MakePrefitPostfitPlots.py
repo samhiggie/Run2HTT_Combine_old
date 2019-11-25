@@ -5,6 +5,7 @@ import os
 import CombineHarvester.Run2HTT_Combine.PlottingModules.prefitPostfitSettings as prefitPostfitSettings
 import CombineHarvester.Run2HTT_Combine.PlottingModules.Utilities as Utils
 import CombineHarvester.Run2HTT_Combine.PlottingModules.globalSettings as globalSettings
+import CombineHarvester.Run2HTT_Combine.PlottingModules as plotModules
 
 def MakePrefitPlots(tag,years,channels,DontPerformCalculation = False):
     globalSettings.style.setTDRStyle()
@@ -95,6 +96,9 @@ def MakePrefitPlots(tag,years,channels,DontPerformCalculation = False):
                     histograms[channel][year][category][prefitOrPostfit]['Signals']['Higgs'].Draw("SAME HIST")
                     histograms[channel][year][category][prefitOrPostfit]['Data']['data_obs'].Draw("SAME e1")
                     theLegend.Draw()                
+                    plotModules.lumiText.CreateLumiText(year)
+                    #Titles                    
+                    prefitPostfitSettings.title.CreateTitle(year,channel,category,backgroundStack)
 
                     ratioPad.cd()
                     ratioPlot.Draw('ex0')

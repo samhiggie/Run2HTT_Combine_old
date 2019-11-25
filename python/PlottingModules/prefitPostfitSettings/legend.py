@@ -4,7 +4,7 @@ legendPosition = (0.7,0.82,0.95,0.97)
 histogramEntries = {
     'jetFakes':'Jet Fakes',
     'ZT':'Z #rightarrow #tau#tau',
-    'ZL':'Z #rightarrow #ell #ell',
+    'ZL':'Z #rightarrow ll',
     'Top':'t#bar{t}',
     'Other':'Others',
     'Higgs':'Higgs Signal (#times 20)',
