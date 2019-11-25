@@ -167,11 +167,14 @@ int main(int argc, char **argv)
                           TheFile,CategoryArgs);
 
       // QCD shape      
-      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016","CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016","CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016","CMS_QCD_antiiso_2016"},
-                          {"QCD"},
-                          &cb,
-                          1.00,
-                          TheFile,CategoryArgs);
+      AddShapesIfNotEmpty({"CMS_QCD_njet0_intercept_2016","CMS_QCD_njet0_slope_2016",
+	    "CMS_QCD_njet1_intercept_2016","CMS_QCD_njet1_slope_2016",
+	    "CMS_QCD_njet2_intercept_2016","CMS_QCD_njet2_slope_2016",
+	    "CMS_QCD_antiiso_2016"},
+	{"QCD"},
+	&cb,
+	1.00,
+	TheFile,CategoryArgs);
 
       //MET Unclustered Energy Scale      
       std::cout<<"MET UES"<<std::endl;
@@ -268,7 +271,7 @@ int main(int argc, char **argv)
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_eff_m_embedded_2016","lnN",SystMap<>::init(1.01732));
 
       // Embedded normalization
-      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg", "lnN", SystMap<>::init(1.04));
+      cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_doublemutrg_2016", "lnN", SystMap<>::init(1.04));
 
       //ttbar contamination in embedded
       cb.cp().process({"embedded"}).AddSyst(cb,"CMS_htt_emb_ttbar_2016", "shape", SystMap<>::init(1.00));
